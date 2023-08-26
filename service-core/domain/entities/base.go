@@ -1,9 +1,13 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type BaseEntity struct {
-	Id        string
+	Id        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
