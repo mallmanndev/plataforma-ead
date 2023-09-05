@@ -2,12 +2,10 @@ package entities
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type BaseEntity struct {
-	Id        uuid.UUID
+	Id        string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  service-core-db:
+    image: postgres:latest
+    container_name: service-core-db
+    environment:
+      POSTGRES_DB: service-core
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/service-core-db:/var/lib/postgresql/data
+
+  service-core-migrate:
+    image: migrate/migrate
+    container_name: service-core-migrate
+    volumes:
+      - ./service-core/migrations:/migrations
+    depends_on:
+      - service-core-db
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://postgres:postgres@service-core-db:5432/service-core?sslmode=disable",
+        "up",
+      ]
+
+  service-core:
+    container_name: service-core
+    build: ./service-core
+    ports:
+      - "3000:3000"
+    depends_on:
+      - service-core-db
+      - service-core-migrate
+    volumes:
+      - ./service-core:/app
