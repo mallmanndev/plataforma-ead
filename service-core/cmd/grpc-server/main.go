@@ -11,9 +11,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting gRPC server!")
+	fmt.Println("Starting gRPC server!!!")
 
-	lis, err := net.Listen("tcp", "localhost:9000")
+	lis, err := net.Listen("tcp", "localhost:3000")
 	if err != nil {
 		log.Fatal("Error to listen server in port")
 	}
