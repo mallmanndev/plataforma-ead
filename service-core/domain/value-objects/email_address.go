@@ -9,23 +9,25 @@ type EmailAddress struct {
 	Email string
 }
 
-func NewEmailAddress(email string) (*EmailAddress, error) {
-	emailAddress := &EmailAddress{
-		Email: email,
-	}
-	if isValid := emailAddress.IsValid(); !isValid {
-		return nil, errors.New("Email inválido!")
+func NewEmailAddress(Email string) (*EmailAddress, error) {
+	emailAddess := &EmailAddress{
+		Email: Email,
 	}
 
-	return emailAddress, nil
+	if err := emailAddess.Validate(); err != nil {
+		return nil, err
+	}
+	return emailAddess, nil
 }
 
-func (e *EmailAddress) IsValid() bool {
-	if len(e.Email) > 40 {
-		return false
+func (ea *EmailAddress) Validate() error {
+	if len(ea.Email) > 40 {
+		return errors.New("Email inválido!")
 	}
 
-	valid, _ := regexp.MatchString(`[^\s]*@[a-z0-9.-]*\.[a-z]{2,6}`, e.Email)
+	if valid, _ := regexp.MatchString(`[^\s]*@[a-z0-9.-]*\.[a-z]{2,6}`, ea.Email); !valid {
+		return errors.New("Email inválido!")
+	}
 
-	return valid
+	return nil
 }

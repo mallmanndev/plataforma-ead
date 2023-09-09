@@ -6,21 +6,18 @@ type Phone struct {
 	Phone string
 }
 
-func NewPhone(phone string) (*Phone, error) {
-	phoneStruct := &Phone{
-		Phone: phone,
+func NewPhone(PhoneNumber string) (*Phone, error) {
+	phone := &Phone{Phone: PhoneNumber}
+	if err := phone.Validate(); err != nil {
+		return nil, err
 	}
-	if isValid := phoneStruct.IsValid(); !isValid {
-		return nil, errors.New("Telefone inválido!")
-	}
-
-	return phoneStruct, nil
+	return phone, nil
 }
 
-func (p *Phone) IsValid() bool {
+func (p *Phone) Validate() error {
 	if len(p.Phone) < 10 {
-		return false
+		return errors.New("Telefone inválido!")
 	}
 
-	return true
+	return nil
 }

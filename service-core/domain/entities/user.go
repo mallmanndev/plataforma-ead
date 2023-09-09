@@ -2,27 +2,30 @@ package entities
 
 import (
 	"errors"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type User struct {
-	BaseEntity
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
+	Id        string `json:"id"`
+	Name      string `json:"name"`
+	Email     *value_objects.EmailAddress
+	Phone     *value_objects.Phone
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewUser(Name string, Email string, Phone string, Password string) (*User, error) {
+func NewUser(Name string, Email *value_objects.EmailAddress, Phone *value_objects.Phone, Password string) (*User, error) {
 	user := &User{
+		Id:       uuid.NewString(),
 		Name:     Name,
 		Email:    Email,
 		Phone:    Phone,
 		Password: Password,
 	}
-
-	user.Id = uuid.New()
 
 	err := user.Validate()
 	if err != nil {
@@ -35,12 +38,6 @@ func NewUser(Name string, Email string, Phone string, Password string) (*User, e
 func (u *User) Validate() error {
 	if u.Name == "" {
 		return errors.New("User name invalid!")
-	}
-	if u.Email == "" {
-		return errors.New("User email invalid!")
-	}
-	if u.Phone == "" {
-		return errors.New("User phone invalid!")
 	}
 	if u.Password == "" || len(u.Password) < 8 {
 		return errors.New("User password invalid!")

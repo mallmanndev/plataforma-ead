@@ -57,4 +57,3 @@ Serviço para o gerenciamento e disponibilização de cursos.
 - Upload de arquivos
 - Streaming de videos
 - Gerenciamento de progresso de curso
-
