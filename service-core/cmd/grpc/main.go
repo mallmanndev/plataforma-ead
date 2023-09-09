@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/grpc"
 	"log"
 	"net"
 
-	grpcroutes "github.com/matheusvmallmann/plataforma-ead/service-core/aplication/grpc-routes"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/pb"
 	"google.golang.org/grpc"
 )
