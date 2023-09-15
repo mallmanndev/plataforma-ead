@@ -1,6 +1,7 @@
 package entities_test
 
 import (
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 	"testing"
 
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/entities"
@@ -12,40 +13,26 @@ func TestUserEntity(t *testing.T) {
 		Id:   "student",
 		Name: "Student",
 	}
+	email, _ := value_objects.NewEmailAddress("matheus@email.com")
+	phone, _ := value_objects.NewPhone("5599999999")
 	t.Run("Should return error when user name is invalid", func(t *testing.T) {
-
-		_, err := entities.NewUser("", "matheus@email.com", "5599999999", studentUserType, "123456789")
+		_, err := entities.NewUser("", email, phone, studentUserType, "123456789")
 		assert.EqualError(t, err, "User name invalid!")
 	})
 
-	t.Run("Should return error when user email is invalid", func(t *testing.T) {
-		_, err := entities.NewUser("Matheus", "", "5599999999", studentUserType, "123456789")
-		assert.EqualError(t, err, "User email invalid!")
-
-		_, err = entities.NewUser("Matheus", "email", "5599999999", studentUserType, "123456789")
-		assert.EqualError(t, err, "User email invalid!")
-	})
-
-	t.Run("Should return error when user phone is invalid", func(t *testing.T) {
-		_, err := entities.NewUser("Matheus", "matheus@email.com", "", studentUserType, "123456789")
-		assert.EqualError(t, err, "User phone invalid!")
-	})
-
 	t.Run("Should return error when user password is invalid", func(t *testing.T) {
-		_, err := entities.NewUser("Matheus", "matheus@email.com", "5599999999", studentUserType, "")
+		_, err := entities.NewUser("Matheus", email, phone, studentUserType, "")
 		assert.EqualError(t, err, "User password invalid!")
 
-		_, err = entities.NewUser("Matheus", "matheus@email.com", "5599999999", studentUserType, "12345")
+		_, err = entities.NewUser("Matheus", email, phone, studentUserType, "12345")
 		assert.EqualError(t, err, "User password invalid!")
 	})
 
 	t.Run("Shoud return user entity when user is valid", func(t *testing.T) {
-		user, err := entities.NewUser("Matheus", "matheus@email.com", "5599999999", studentUserType, "123456789")
+		user, err := entities.NewUser("Matheus", email, phone, studentUserType, "123456789")
 		assert.Nil(t, err)
 		assert.NotNil(t, user)
 		assert.NotEmpty(t, user.Id)
 		assert.Equal(t, user.Name, "Matheus")
-		assert.Equal(t, user.Email, "matheus@email.com")
-		assert.Equal(t, user.Phone, "5599999999")
 	})
 }

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/ports"
@@ -34,12 +35,17 @@ func (u *UpdateUserUseCase) Execute(Data UpdateUserUseCaseInput) (*entities.User
 		return nil, errors.New("Usuário não encontrado!")
 	}
 
-	user.SetName(Data.Name).SetPhone(Data.Phone)
-
-	updatedUser, err := u.UsersRepository.Update(user)
+	phone, err := value_objects.NewPhone(Data.Phone)
 	if err != nil {
+		return nil, err
+	}
+
+	user.SetName(Data.Name).SetPhone(phone)
+
+	errUpdate := u.UsersRepository.Update(user)
+	if errUpdate != nil {
 		return nil, errors.New("Não foi possível atualizar o usuário!!")
 	}
 
-	return updatedUser, nil
+	return user, nil
 }

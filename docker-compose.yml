@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
+    networks:
+      - service-core-backend
     volumes:
       - ./data/service-core-db:/var/lib/postgresql/data
 
@@ -19,6 +21,8 @@ services:
       - ./service-core/migrations:/migrations
     depends_on:
       - service-core-db
+    networks:
+      - service-core-backend
     command:
       [
         "-path",
@@ -36,5 +40,11 @@ services:
     depends_on:
       - service-core-db
       - service-core-migrate
+    networks:
+      - service-core-backend
     volumes:
       - ./service-core:/app
+
+networks:
+  service-core-backend:
+    driver: "bridge"

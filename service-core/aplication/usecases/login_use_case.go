@@ -2,17 +2,32 @@ package usecases
 
 import (
 	"errors"
+	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/ports"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/entities"
-	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/ports"
 )
 
 type LoginUseCase struct {
 	UsersRepository ports.UsersRepository
 }
 
-func (u *LoginUseCase) Execute(Email string, Password string) (*entities.User, error) {
-	user, err := u.UsersRepository.FindByEmail(Email)
+func NewLoginUseCase(UsersRepository ports.UsersRepository) *LoginUseCase {
+	return &LoginUseCase{UsersRepository: UsersRepository}
+}
+
+type LoginUseCaseOutput struct {
+	user  *entities.User
+	token string
+}
+
+func (u *LoginUseCase) Execute(Email string, Password string) (*LoginUseCaseOutput, error) {
+	email, err := value_objects.NewEmailAddress(Email)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := u.UsersRepository.FindByEmail(email)
 	if err != nil {
 		return nil, errors.New("Error on find user!")
 	}
@@ -25,5 +40,5 @@ func (u *LoginUseCase) Execute(Email string, Password string) (*entities.User, e
 		return nil, errors.New("Invalid password!")
 	}
 
-	return user, nil
+	return &LoginUseCaseOutput{user: user, token: "tetete"}, nil
 }

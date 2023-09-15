@@ -3,22 +3,30 @@ package entities
 import (
 	"errors"
 	"github.com/google/uuid"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 	"golang.org/x/crypto/bcrypt"
-	"net/mail"
 	"time"
 )
 
 type User struct {
-	BaseEntity
-	Name     string
-	Email    string
-	Phone    string
-	Type     *UserType
-	Approved bool
-	password string
+	Id        string
+	Name      string
+	Email     *value_objects.EmailAddress
+	Phone     *value_objects.Phone
+	Type      *UserType
+	Approved  bool
+	password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
-func NewUser(Name string, Email string, Phone string, Type *UserType, Password string) (*User, error) {
+func NewUser(
+	Name string,
+	Email *value_objects.EmailAddress,
+	Phone *value_objects.Phone,
+	Type *UserType,
+	Password string,
+) (*User, error) {
 	user := &User{
 		Name:     Name,
 		Email:    Email,
@@ -28,8 +36,8 @@ func NewUser(Name string, Email string, Phone string, Type *UserType, Password s
 	}
 
 	user.Id = uuid.NewString()
-	errPassword := user.SetPassword(Password)
-	errValidate := user.ValidateForCreate()
+	errPassword := user.ChangePassword(Password)
+	errValidate := user.Validate()
 	errs := errors.Join(errPassword, errValidate)
 	user.CreatedAt = time.Now()
 
@@ -39,7 +47,37 @@ func NewUser(Name string, Email string, Phone string, Type *UserType, Password s
 	return user, nil
 }
 
-func (u *User) SetPassword(Password string) error {
+func (u *User) GetPassword() string {
+	return u.password
+}
+
+func (u *User) ComparePassword(Password string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(u.password), []byte(Password)); err != nil {
+		return errors.New("Invalid password!")
+	}
+
+	return nil
+}
+
+func (u *User) Validate() error {
+	if u.Name == "" {
+		return errors.New("User name invalid!")
+	}
+
+	return nil
+}
+
+func (u *User) SetName(Name string) *User {
+	u.Name = Name
+	return u
+}
+
+func (u *User) SetPhone(Phone *value_objects.Phone) *User {
+	u.Phone = Phone
+	return u
+}
+
+func (u *User) ChangePassword(Password string) error {
 	if Password == "" || len(Password) < 8 {
 		return errors.New("User password invalid!")
 	}
@@ -53,39 +91,6 @@ func (u *User) SetPassword(Password string) error {
 	return nil
 }
 
-func (u *User) GetPassword() string {
-	return u.password
-}
-
-func (u *User) ComparePassword(Password string) error {
-	return nil
-}
-
-func (u *User) ValidateForCreate() error {
-	if u.Name == "" {
-		return errors.New("User name invalid!")
-	}
-	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return errors.New("User email invalid!")
-	}
-	if u.Phone == "" || len(u.Phone) < 10 {
-		return errors.New("User phone invalid!")
-	}
-
-	return nil
-}
-
-func (u *User) SetName(Name string) *User {
-	u.Name = Name
-	return u
-}
-
-func (u *User) SetEmail(Email string) *User {
-	u.Email = Email
-	return u
-}
-
-func (u *User) SetPhone(Phone string) *User {
-	u.Phone = Phone
-	return u
+func (u *User) SetPassword(Password string) {
+	u.password = Password
 }

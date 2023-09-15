@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	grpcAdapter "github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/grpc"
+	grpcadapter "github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/grpc"
 	"log"
 	"net"
 	"strconv"
@@ -22,7 +22,7 @@ func main() {
 
 	// REGISTER ROUTES HERE
 	grpcServer := grpc.NewServer()
-	pb.RegisterUsersServiceServer(grpcServer, &grpcAdapter.UsersServer{})
+	pb.RegisterUsersServiceServer(grpcServer, &grpcadapter.UsersServer{})
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal("Error to serve gRPC!")
