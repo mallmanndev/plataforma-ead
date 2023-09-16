@@ -45,6 +45,16 @@ services:
     volumes:
       - ./service-core:/app
 
+  service-course:
+    container_name: service-course
+    build: ./service-course
+    ports:
+      - "3001:3000"
+    networks:
+      - service-core-backend
+    volumes:
+      - ./service-course:/app
+
 networks:
   service-core-backend:
     driver: "bridge"

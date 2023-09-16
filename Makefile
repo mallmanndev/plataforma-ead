@@ -10,9 +10,13 @@ build:
 restart: 
 	docker compose restart
 
-.PHONY: logs
-logs:
+.PHONY: servcore-logs
+servcore-logs:
 	docker logs -f service-core
+
+.PHONY: servcourse-logs
+servcourse-logs:
+	docker logs -f service-course
 
 .PHONY: down
 down:
@@ -22,13 +26,22 @@ down:
 psql:
 	docker exec -it service-core-db psql -U postgres service-core
 
-.PHONY: bash
-bash:
+.PHONY: servcore-bash
+servcore-bash:
 	docker exec -it service-core /bin/bash
 
+.PHONY: servcourse-bash
+servcourse-bash:
+	docker exec -it service-course /bin/bash
 
-servcore-tests:
+.PHONY: servcore-test
+servcore-test:
 	docker exec -it service-core go test ./...
 
-generate-service-core-protoc:
+.PHONY: servcourse-test
+servcourse-test:
+	docker exec -it service-course go test ./...
+
+.PHONY: servcore-protoc
+servcore-protoc:
 	protoc --go_out=./service-core --go-grpc_out=./service-core ./service-core/protos/*.proto
