@@ -45,3 +45,7 @@ servcourse-test:
 .PHONY: servcore-protoc
 servcore-protoc:
 	protoc --go_out=./service-core --go-grpc_out=./service-core ./service-core/protos/*.proto
+
+.PHONY: servcourse-protoc
+servcourse-protoc:
+	protoc --go_out=./service-course --go-grpc_out=./service-course ./service-course/protos/*.proto
