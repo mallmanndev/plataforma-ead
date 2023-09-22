@@ -53,6 +53,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - service-core-backend
     volumes:
       - ./data/service-course-db:/data/db
 

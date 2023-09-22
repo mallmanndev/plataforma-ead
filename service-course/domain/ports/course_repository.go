@@ -7,4 +7,7 @@ type CourseRepository interface {
 	Create(Course *entities.Course) error
 	Update(Course *entities.Course) error
 	Delete(Id string) error
+	AddSection(Section *entities.CourseSection) error
+	UpdateSection(Section *entities.CourseSection) error
+	RemoveSection(Id string) error
 }

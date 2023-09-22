@@ -34,6 +34,20 @@ func (m *MockCourseRepository) EXPECT() *MockCourseRepositoryMockRecorder {
 	return m.recorder
 }
 
+// AddSection mocks base method.
+func (m *MockCourseRepository) AddSection(Section *entities.CourseSection) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddSection", Section)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddSection indicates an expected call of AddSection.
+func (mr *MockCourseRepositoryMockRecorder) AddSection(Section interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddSection", reflect.TypeOf((*MockCourseRepository)(nil).AddSection), Section)
+}
+
 // Create mocks base method.
 func (m *MockCourseRepository) Create(Course *entities.Course) error {
 	m.ctrl.T.Helper()
@@ -77,6 +91,20 @@ func (mr *MockCourseRepositoryMockRecorder) FindById(Id interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindById", reflect.TypeOf((*MockCourseRepository)(nil).FindById), Id)
 }
 
+// RemoveSection mocks base method.
+func (m *MockCourseRepository) RemoveSection(Id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveSection", Id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveSection indicates an expected call of RemoveSection.
+func (mr *MockCourseRepositoryMockRecorder) RemoveSection(Id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveSection", reflect.TypeOf((*MockCourseRepository)(nil).RemoveSection), Id)
+}
+
 // Update mocks base method.
 func (m *MockCourseRepository) Update(Course *entities.Course) error {
 	m.ctrl.T.Helper()
@@ -89,4 +117,18 @@ func (m *MockCourseRepository) Update(Course *entities.Course) error {
 func (mr *MockCourseRepositoryMockRecorder) Update(Course interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockCourseRepository)(nil).Update), Course)
+}
+
+// UpdateSection mocks base method.
+func (m *MockCourseRepository) UpdateSection(Section *entities.CourseSection) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSection", Section)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSection indicates an expected call of UpdateSection.
+func (mr *MockCourseRepositoryMockRecorder) UpdateSection(Section interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSection", reflect.TypeOf((*MockCourseRepository)(nil).UpdateSection), Section)
 }

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+message People {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string photoUrl = 4;
+}
+
+message Course {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool visible = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+}
+
+message CreateCourseRequest {
+  string name = 1;
+  string description = 2;
+  People instructor = 3;
+}
+
+message CreateCourseResponse {
+  Course course = 1;
+}
+
+service CoursesService {
+  rpc Create(CreateCourseRequest) returns (CreateCourseResponse) {};
+}

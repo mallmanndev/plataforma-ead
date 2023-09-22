@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	grpc2 "github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/grpc"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -17,9 +20,13 @@ func main() {
 		log.Fatalf("Error to listen server in port %s", strconv.Itoa(port))
 	}
 
+	db, disconnect := utils.GetDb("dev")
+	defer disconnect()
+
 	// REGISTER ROUTES HERE
 	grpcServer := grpc.NewServer()
-	// pb.RegisterUsersServiceServer(grpcServer, &grpcadapter.UsersServer{})
+	coursesServer := grpc2.NewCourseServer(db)
+	pb.RegisterCoursesServiceServer(grpcServer, coursesServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal("Error to serve gRPC!")

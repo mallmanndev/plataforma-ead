@@ -42,6 +42,11 @@ servcore-test:
 servcourse-test:
 	docker exec -it service-course go test ./...
 
+.PHONY: servcourse-coverage
+servcourse-coverage:
+	docker exec -it service-course go test -coverprofile=coverage.out ./...
+	docker exec -it service-course go tool cover -html=coverage.out -o coverage.html
+
 .PHONY: servcore-protoc
 servcore-protoc:
 	protoc --go_out=./service-core --go-grpc_out=./service-core ./service-core/protos/*.proto
