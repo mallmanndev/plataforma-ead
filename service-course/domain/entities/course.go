@@ -1,8 +1,8 @@
 package entities
 
 import (
-	"errors"
 	"github.com/google/uuid"
+	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"time"
 )
@@ -32,22 +32,40 @@ func NewCourse(Name string, Description string, Image *value_objects.Image, Inst
 	if err := course.Validate(); err != nil {
 		return nil, err
 	}
-
 	return course, nil
+}
+
+func NewCourseComplete(
+	Id string, Name string, Description string, Image *value_objects.Image,
+	InstructorId string, Visible bool, CreatedAt time.Time, UpdatedAt time.Time,
+) *Course {
+	return &Course{
+		id: Id, name: Name, description: Description, image: Image, instructorID: InstructorId,
+		visible: Visible, createdAt: CreatedAt, updatedAt: UpdatedAt,
+	}
 }
 
 func (c *Course) Validate() error {
 	if len(c.name) < 5 {
-		return errors.New("Invalid course name (min: 5)!")
+		return errs.NewInvalidAttributeError(
+			"Course",
+			"name",
+			"must be longer than 5")
 	}
 	if len(c.description) < 20 {
-		return errors.New("Invalid course description (min: 20)!")
-	}
-	if _, err := uuid.Parse(c.instructorID); err != nil {
-		return errors.New("Invalid instructor ID!")
+		return errs.NewInvalidAttributeError(
+			"Course",
+			"description",
+			"must be longer than 20")
 	}
 
 	return nil
+}
+
+func (c *Course) Update(Name string, Description string) error {
+	c.name = Name
+	c.description = Description
+	return c.Validate()
 }
 
 func (c *Course) Id() string {
@@ -88,4 +106,13 @@ func (c *Course) UpdatedAt() time.Time {
 
 func (c *Course) AddSection(Section *CourseSection) {
 	c.sections = append(c.sections, Section)
+}
+
+func (c *Course) FindSection(Id string) *CourseSection {
+	for _, valor := range c.sections {
+		if valor.id == Id {
+			return valor
+		}
+	}
+	return nil
 }

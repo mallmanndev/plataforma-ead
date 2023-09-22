@@ -1,7 +1,6 @@
 package entities_test
 
 import (
-	"errors"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"testing"
@@ -17,23 +16,18 @@ func TestNewCourseSection(t *testing.T) {
 		name    string
 		args    args
 		want    *entities.CourseSection
-		wantErr error
+		wantErr string
 	}{
 		{
 			name:    "Should return error when name is invalid",
 			args:    args{Name: "f", Description: "F", CourseId: "123"},
-			wantErr: errors.New("Invalid section name (min: 5)!"),
-		},
-		{
-			name:    "Should return error when course id is invalid",
-			args:    args{Name: "First Section", Description: "", CourseId: "123"},
-			wantErr: errors.New("Invalid course ID!"),
+			wantErr: "[Course Section] Invalid 'name': must be longer than 5.",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := entities.NewCourseSection(tt.args.Name, tt.args.Description, tt.args.CourseId)
-			if err.Error() != tt.wantErr.Error() {
+			if err.Error() != tt.wantErr {
 				t.Errorf("NewCourseSection() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}

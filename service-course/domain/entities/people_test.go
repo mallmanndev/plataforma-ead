@@ -1,7 +1,6 @@
 package entities_test
 
 import (
-	"errors"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
@@ -18,23 +17,23 @@ func TestNewPeople(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantErr error
+		wantErr string
 	}{
 		{
 			"Should return error whe ID is invalid",
 			args{"123", "Matheus", "admin", nil},
-			errors.New("Invalid ID format!"),
+			"[People] Invalid 'id': must be valid UUID.",
 		},
 		{
 			"Should return error when name is invalid",
 			args{uuid.NewString(), "Mat", "admin", nil},
-			errors.New("Invalid name (min: 5)!"),
+			"[People] Invalid 'name': must be longer than 5.",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := entities.NewPeople(tt.args.Id, tt.args.Name, tt.args.Type, tt.args.Photo)
-			if err.Error() != tt.wantErr.Error() {
+			if err.Error() != tt.wantErr {
 				t.Errorf("NewPeople() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}

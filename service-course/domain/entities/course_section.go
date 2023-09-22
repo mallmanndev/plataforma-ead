@@ -1,8 +1,8 @@
 package entities
 
 import (
-	"errors"
 	"github.com/google/uuid"
+	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"time"
 )
 
@@ -24,21 +24,52 @@ func NewCourseSection(Name string, Description string, CourseId string) (*Course
 		courseId:    CourseId,
 		createdAt:   time.Now(),
 	}
-
 	if err := section.Validate(); err != nil {
 		return nil, err
 	}
-
 	return section, nil
+}
+
+func (cs *CourseSection) Update(Name string, Description string) error {
+	cs.name = Name
+	cs.description = Description
+	return cs.Validate()
 }
 
 func (cs *CourseSection) Validate() error {
 	if len(cs.name) < 5 {
-		return errors.New("Invalid section name (min: 5)!")
+		return errs.NewInvalidAttributeError(
+			"Course Section",
+			"name",
+			"must be longer than 5")
 	}
-	if _, err := uuid.Parse(cs.courseId); err != nil {
-		return errors.New("Invalid course ID!")
-	}
-
 	return nil
+}
+
+func (cs *CourseSection) Id() string {
+	return cs.id
+}
+
+func (cs *CourseSection) Name() string {
+	return cs.name
+}
+
+func (cs *CourseSection) Description() string {
+	return cs.description
+}
+
+func (cs *CourseSection) CourseId() string {
+	return cs.courseId
+}
+
+func (cs *CourseSection) Itens() []*CourseItem {
+	return cs.itens
+}
+
+func (cs *CourseSection) CreatedAt() time.Time {
+	return cs.createdAt
+}
+
+func (cs *CourseSection) UpdatedAt() time.Time {
+	return cs.updatedAt
 }

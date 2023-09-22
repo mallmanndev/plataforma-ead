@@ -16,9 +16,10 @@ func TestCourseEntity(t *testing.T) {
 		expected          *entities.Course
 		expectedErr       string
 	}{
-		{"Go", "Go", nil, "fdsfsfsfsf", nil, "Invalid course name (min: 5)!"},
-		{"Go Course", "Go", nil, "fdsfsfsfsf", nil, "Invalid course description (min: 20)!"},
-		{"Go Course", "This is a Go Lang Course!", nil, "fdsfsfsfsf", nil, "Invalid instructor ID!"},
+		{"Go", "Go", nil, "fdsfsfsfsf", nil,
+			"[Course] Invalid 'name': must be longer than 5."},
+		{"Go Course", "Go", nil, "fdsfsfsfsf", nil,
+			"[Course] Invalid 'description': must be longer than 20."},
 	}
 
 	for _, test := range testCenarios {
@@ -34,8 +35,11 @@ func TestCourseEntity(t *testing.T) {
 	}
 
 	t.Run("Should return course pointer when struct is valid", func(t *testing.T) {
-		course, err := entities.NewCourse("Go Course", "This is a Go Lang Course!", nil, uuid.NewString())
-
+		course, err := entities.NewCourse(
+			"Go Course",
+			"This is a Go Lang Course!",
+			nil,
+			uuid.NewString())
 		if err != nil {
 			t.Errorf("Error must be nil, received(%s)!", err.Error())
 		}
@@ -44,6 +48,30 @@ func TestCourseEntity(t *testing.T) {
 		}
 		if course.IsVisible() {
 			t.Error("Course must be created not visible!")
+		}
+	})
+}
+
+func TestCourseEntitySections(t *testing.T) {
+	t.Run("Should return nil when not found section", func(t *testing.T) {
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
+
+		course.AddSection(section)
+		findSection := course.FindSection(uuid.NewString())
+		if findSection != nil {
+			t.Error("Find section must return nil")
+		}
+	})
+
+	t.Run("Should return nil when not found section", func(t *testing.T) {
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
+
+		course.AddSection(section)
+		findSection := course.FindSection(section.Id())
+		if findSection != section {
+			t.Error("Find section must return section.")
 		}
 	})
 }
