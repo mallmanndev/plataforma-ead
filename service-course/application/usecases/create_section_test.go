@@ -7,6 +7,7 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -32,12 +33,8 @@ func TestCreateSectionUseCase(t *testing.T) {
 			Description: "",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Course Section] Invalid 'name': must be longer than 5."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "[Course Section] Invalid 'name': must be longer than 5.")
 		}
 	})
 
@@ -50,12 +47,8 @@ func TestCreateSectionUseCase(t *testing.T) {
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Create Section] Course not found."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Course not found.")
 		}
 	})
 
@@ -68,18 +61,14 @@ func TestCreateSectionUseCase(t *testing.T) {
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "Permission denied to create section."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Permission denied to create section.")
 		}
 	})
 
 	t.Run("Should return error when create section returns error", func(t *testing.T) {
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().AddSection(gomock.Any()).Return(errors.New("Test!"))
+		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test!"))
 		data := usecases.CreateSectionDTO{
 			CourseId:    courseId,
 			UserId:      userId,
@@ -87,30 +76,24 @@ func TestCreateSectionUseCase(t *testing.T) {
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Create Section] Could not create section: Test!"
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "[Create Section] Could not create section: Test!")
 		}
 	})
 
 	t.Run("Should create section successfully", func(t *testing.T) {
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().AddSection(gomock.Any()).Return(nil)
+		mockCourseRepository.EXPECT().Update(course).Return(nil)
 		data := usecases.CreateSectionDTO{
 			CourseId:    courseId,
 			UserId:      userId,
 			Name:        "First Section",
 			Description: "A test section",
 		}
-		section, err := useCase.Execute(data)
-		if err != nil {
-			t.Errorf("Error must be nil!")
-		}
-		if section.Name() != "First Section" || section.Description() != "A test section" {
-			t.Errorf("Received section different of expected.")
-		}
+		response, err := useCase.Execute(data)
+		assert.Nil(t, err)
+		assert.Equal(t, course, response)
+		assert.Equal(t, data.Name, course.Sections()[0].Name())
+		assert.Equal(t, data.Description, course.Sections()[0].Description())
 	})
 }

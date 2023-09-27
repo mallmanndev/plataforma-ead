@@ -4,12 +4,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"google.golang.org/grpc/status"
 	"testing"
 )
 
 func TestCreateCourse(t *testing.T) {
-	ctx, client, closer := testutils.CoursesServer()
+	db, disconnect := utils.GetDb("test")
+	defer disconnect()
+	ctx, client, closer := testutils.CoursesServer(db)
 	defer closer()
 
 	t.Run("Should return error when people is invalid", func(t *testing.T) {
@@ -79,11 +82,11 @@ func TestCreateCourse(t *testing.T) {
 		if response == nil {
 			t.Error("Response must be not nil!")
 		}
-		if response.Course.Id == "" ||
-			response.Course.Name != "Go Lang Course" ||
-			response.Course.Description != "This is a Go lang course" ||
-			response.Course.Visible != false ||
-			response.Course.CreatedAt == "" {
+		if response.Id == "" ||
+			response.Name != "Go Lang Course" ||
+			response.Description != "This is a Go lang course" ||
+			response.Visible != false ||
+			response.CreatedAt == "" {
 			t.Error("Course response are invalid!")
 		}
 	})

@@ -7,17 +7,19 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestUpdateSectionUseCase(t *testing.T) {
+func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUseCase, *entities.Course, func()) {
 	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
+	closer := func() {
+		mockCtrl.Finish()
+	}
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 	useCase := usecases.NewUpdateSectionUseCase(mockCourseRepository)
-	courseId := uuid.NewString()
+
 	userId := uuid.NewString()
-	sectionId := uuid.NewString()
 	course, _ := entities.NewCourse(
 		"A Go Lang course",
 		"This is a Golang course",
@@ -25,127 +27,136 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		userId,
 	)
 
+	return mockCourseRepository, useCase, course, closer
+}
+
+func TestUpdateSectionUseCase(t *testing.T) {
+
 	t.Run("Should return error when course is not found", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(nil, nil)
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(nil, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
-			SectionId:   sectionId,
-			UserId:      userId,
+			CourseId:    course.Id(),
+			SectionId:   uuid.NewString(),
+			UserId:      uuid.NewString(),
 			Name:        "First Section",
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Update Section] Course not found."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "[Update Section] Course not found.")
 		}
 	})
 
 	t.Run("Should return error when instructor id is different of user id", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
-			SectionId:   sectionId,
+			CourseId:    course.Id(),
+			SectionId:   uuid.NewString(),
 			UserId:      uuid.NewString(), // Different ID
 			Name:        "First Section",
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "Permission denied to update section."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Permission denied to update section.")
 		}
 	})
 
 	t.Run("Should return error when section is not found", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
-			SectionId:   sectionId,
-			UserId:      userId,
+			CourseId:    course.Id(),
+			SectionId:   uuid.NewString(),
+			UserId:      course.InstructorID(),
 			Name:        "First Section",
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "Section not found."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Section not found.")
 		}
 	})
 
 	t.Run("Should return error when section data is invalid.", func(t *testing.T) {
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
+			CourseId:    course.Id(),
 			SectionId:   section.Id(),
-			UserId:      userId,
+			UserId:      course.InstructorID(),
 			Name:        "Fir",
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Course Section] Invalid 'name': must be longer than 5."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "[Course Section] Invalid 'name': must be longer than 5.")
 		}
 	})
 
 	t.Run("Should return error when update section return error", func(t *testing.T) {
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().UpdateSection(section).Return(errors.New("Test"))
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test"))
+
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
+			CourseId:    course.Id(),
 			SectionId:   section.Id(),
-			UserId:      userId,
+			UserId:      course.InstructorID(),
 			Name:        "First Section",
 			Description: "A test section",
 		}
 		_, err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "[Update Section] Could not update section: Test"
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
+
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "[Update Section] Could not update section: Test")
 		}
 	})
 
 	t.Run("Should return section when update section successfully", func(t *testing.T) {
-		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
+		mockCourseRepository, useCase, course, closer := setup(t)
+		defer closer()
+
+		section, _ := entities.NewCourseSection(
+			"Section one",
+			"This is a section one",
+			course.Id(),
+		)
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().UpdateSection(section).Return(nil)
+		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		mockCourseRepository.EXPECT().Update(course).Return(nil)
+
 		data := usecases.UpdateSectionDTO{
-			CourseId:    courseId,
+			CourseId:    course.Id(),
 			SectionId:   section.Id(),
-			UserId:      userId,
+			UserId:      course.InstructorID(),
 			Name:        "First Section",
 			Description: "A test section",
 		}
-		updated, err := useCase.Execute(data)
-		if err != nil {
-			t.Errorf("Error must be nil!")
-		}
-		if updated.Name() != data.Name || updated.Description() != data.Description {
-			t.Errorf("Received section different of expected.")
-		}
+		response, err := useCase.Execute(data)
+
+		assert.Nil(t, err)
+		assert.Equal(t, course, response)
+		assert.Equal(t, data.Name, course.Sections()[0].Name())
+		assert.Equal(t, data.Description, course.Sections()[0].Description())
 	})
 }

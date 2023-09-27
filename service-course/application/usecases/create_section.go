@@ -23,7 +23,7 @@ type CreateSectionDTO struct {
 	Description string
 }
 
-func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.CourseSection, error) {
+func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course, error) {
 	section, err := entities.NewCourseSection(Data.Name, Data.Description, Data.CourseId)
 	if err != nil {
 		return nil, err
@@ -31,14 +31,16 @@ func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course
 
 	course, _ := cs.coursesRepository.FindById(Data.CourseId)
 	if course == nil {
-		return nil, errs.NewCreateSectionUseCaseError("Course not found", nil)
+		return nil, errs.NewNotFoundError("Course")
 	}
 	if course.InstructorID() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("create section")
 	}
 
-	if err := cs.coursesRepository.AddSection(section); err != nil {
+	course.AddSection(section)
+
+	if err := cs.coursesRepository.Update(course); err != nil {
 		return nil, errs.NewCreateSectionUseCaseError("Could not create section", err)
 	}
-	return section, nil
+	return course, nil
 }

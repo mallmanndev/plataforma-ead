@@ -57,13 +57,13 @@
 				
 				<option value="file0">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/data_not_found_error.go (0.0%)</option>
 				
-				<option value="file1">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/grpc_parser.go (87.5%)</option>
+				<option value="file1">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/grpc_parser.go (100.0%)</option>
 				
 				<option value="file2">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/invalid_attribute_error.go (100.0%)</option>
 				
-				<option value="file3">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/not_found_error.go (0.0%)</option>
+				<option value="file3">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/not_found_error.go (100.0%)</option>
 				
-				<option value="file4">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/permission_denied.go (0.0%)</option>
+				<option value="file4">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/permission_denied.go (100.0%)</option>
 				
 				<option value="file5">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/usecase_error.go (50.0%)</option>
 				
@@ -79,7 +79,7 @@
 				
 				<option value="file11">github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases/update_section.go (100.0%)</option>
 				
-				<option value="file12">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course.go (59.3%)</option>
+				<option value="file12">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course.go (69.4%)</option>
 				
 				<option value="file13">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course_section.go (47.1%)</option>
 				
@@ -124,11 +124,14 @@ import (
 
 var invalidAttribute *InvalidAttributeError
 var useCaseError *UseCaseError
+var notFoundError *NotFoundError
+var permissionDeniedError *PermissionDeniedError
 
 func NewGrpcError(err error) error <span class="cov8" title="1">{
         if errors.As(err, &amp;invalidAttribute) </span><span class="cov8" title="1">{
                 return status.Error(codes.InvalidArgument, err.Error())
         }</span>
+
         <span class="cov8" title="1">if errors.As(err, &amp;useCaseError) </span><span class="cov8" title="1">{
                 parts := strings.Split(err.Error(), ":")
                 if len(parts) &gt; 1 </span><span class="cov8" title="1">{
@@ -136,7 +139,16 @@ func NewGrpcError(err error) error <span class="cov8" title="1">{
                 }</span>
                 <span class="cov8" title="1">return status.Error(codes.Internal, err.Error())</span>
         }
-        <span class="cov0" title="0">return status.Error(codes.Internal, err.Error())</span>
+
+        <span class="cov8" title="1">if errors.As(err, &amp;notFoundError) </span><span class="cov8" title="1">{
+                return status.Error(codes.NotFound, err.Error())
+        }</span>
+
+        <span class="cov8" title="1">if errors.As(err, &amp;permissionDeniedError) </span><span class="cov8" title="1">{
+                return status.Error(codes.PermissionDenied, err.Error())
+        }</span>
+
+        <span class="cov8" title="1">return status.Error(codes.Internal, "Internal server error.")</span>
 }
 </pre>
 		
@@ -174,11 +186,11 @@ type NotFoundError struct {
         name string
 }
 
-func NewNotFoundError(Name string) *NotFoundError <span class="cov0" title="0">{
+func NewNotFoundError(Name string) *NotFoundError <span class="cov8" title="1">{
         return &amp;NotFoundError{Name}
 }</span>
 
-func (nf *NotFoundError) Error() string <span class="cov0" title="0">{
+func (nf *NotFoundError) Error() string <span class="cov8" title="1">{
         return fmt.Sprintf("%s not found.", nf.name)
 }</span>
 </pre>
@@ -191,13 +203,13 @@ type PermissionDeniedError struct {
         action string
 }
 
-func NewPermissionDeniedError(Action string) *PermissionDeniedError <span class="cov0" title="0">{
+func NewPermissionDeniedError(Action string) *PermissionDeniedError <span class="cov8" title="1">{
         return &amp;PermissionDeniedError{
                 action: Action,
         }
 }</span>
 
-func (pd *PermissionDeniedError) Error() string <span class="cov0" title="0">{
+func (pd *PermissionDeniedError) Error() string <span class="cov8" title="1">{
         return fmt.Sprintf("Permission denied to %s.", pd.action)
 }</span>
 </pre>
@@ -317,9 +329,11 @@ func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.C
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
+
         <span class="cov8" title="1">if err := cc.peopleRepository.Upsert(people); err != nil </span><span class="cov8" title="1">{
                 return nil, errs.NewCreateUserUseCaseError("Could not insert or update people", err)
         }</span>
+
         <span class="cov8" title="1">course, err := entities.NewCourse(
                 Data.Name,
                 Data.Description,
@@ -329,6 +343,7 @@ func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.C
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
+
         <span class="cov8" title="1">if err := cc.courseRepository.Create(course); err != nil </span><span class="cov8" title="1">{
                 return nil, errs.NewCreateUserUseCaseError("Could not create course", err)
         }</span>
@@ -362,7 +377,7 @@ type CreateSectionDTO struct {
         Description string
 }
 
-func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.CourseSection, error) <span class="cov8" title="1">{
+func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course, error) <span class="cov8" title="1">{
         section, err := entities.NewCourseSection(Data.Name, Data.Description, Data.CourseId)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
@@ -376,10 +391,12 @@ func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course
                 return nil, errs.NewPermissionDeniedError("create section")
         }</span>
 
-        <span class="cov8" title="1">if err := cs.coursesRepository.AddSection(section); err != nil </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">course.AddSection(section)
+
+        if err := cs.coursesRepository.Update(course); err != nil </span><span class="cov8" title="1">{
                 return nil, errs.NewCreateSectionUseCaseError("Could not create section", err)
         }</span>
-        <span class="cov8" title="1">return section, nil</span>
+        <span class="cov8" title="1">return course, nil</span>
 }
 </pre>
 		
@@ -411,9 +428,11 @@ func (dc *DeleteCourseUseCase) Execute(Data DeleteCourseUseCaseDataDTO) error <s
         <span class="cov8" title="1">if findCourse.InstructorID() != Data.UserId </span><span class="cov8" title="1">{
                 return errs.NewPermissionDeniedError("delete course")
         }</span>
+
         <span class="cov8" title="1">if err := dc.courseRepository.Delete(Data.Id); err != nil </span><span class="cov8" title="1">{
                 return errs.NewDeleteCourseUseCaseError("Could not delete course", err)
         }</span>
+        
         <span class="cov8" title="1">return nil</span>
 }
 </pre>
@@ -447,11 +466,12 @@ func (ds *DeleteSectionUseCase) Execute(Data DeleteSectionDTO) error <span class
         <span class="cov8" title="1">if course.InstructorID() != Data.UserId </span><span class="cov8" title="1">{
                 return errs.NewPermissionDeniedError("update section")
         }</span>
-        <span class="cov8" title="1">section := course.FindSection(Data.SectionId)
-        if section == nil </span><span class="cov8" title="1">{
+
+        <span class="cov8" title="1">if err := course.RemoveSection(Data.SectionId); err != nil </span><span class="cov8" title="1">{
                 return errs.NewNotFoundError("Section")
         }</span>
-        <span class="cov8" title="1">if err := ds.coursesRepository.Delete(section.Id()); err != nil </span><span class="cov8" title="1">{
+
+        <span class="cov8" title="1">if err := ds.coursesRepository.Update(course); err != nil </span><span class="cov8" title="1">{
                 return errs.NewDeleteSectionUseCaseError("Could not delete section", err)
         }</span>
         <span class="cov8" title="1">return nil</span>
@@ -495,18 +515,22 @@ type UpdateCourseUseCaseDTO struct {
 }
 
 func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.Course, error) <span class="cov8" title="1">{
-        people, err := entities.NewPeople(Data.Instructor.Id, Data.Instructor.Name, Data.Instructor.Type, nil)
+        course, _ := uc.courseRepository.FindById(Data.Id)
+        if course == nil </span><span class="cov8" title="1">{
+                return nil, errs.NewNotFoundError("Course")
+        }</span>
+
+        <span class="cov8" title="1">if course.InstructorID() != Data.Instructor.Id </span><span class="cov8" title="1">{
+                return nil, errs.NewPermissionDeniedError("update course")
+        }</span>
+
+        <span class="cov8" title="1">people, err := entities.NewPeople(Data.Instructor.Id, Data.Instructor.Name, Data.Instructor.Type, nil)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">if err := uc.peopleRepository.Upsert(people); err != nil </span><span class="cov8" title="1">{
                 return nil, errs.NewUpdateCourseUseCaseError("Could not insert or update people", err)
-        }</span>
-
-        <span class="cov8" title="1">course, _ := uc.courseRepository.FindById(Data.Id)
-        if course == nil </span><span class="cov8" title="1">{
-                return nil, errs.NewDataNotFoundError("Course not found!")
         }</span>
 
         <span class="cov8" title="1">if err := course.Update(Data.Name, Data.Description); err != nil </span><span class="cov8" title="1">{
@@ -547,7 +571,7 @@ type UpdateSectionDTO struct {
         Description string
 }
 
-func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.CourseSection, error) <span class="cov8" title="1">{
+func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course, error) <span class="cov8" title="1">{
         course, _ := cs.coursesRepository.FindById(Data.CourseId)
         if course == nil </span><span class="cov8" title="1">{
                 return nil, errs.NewUpdateSectionUseCaseError("Course not found", nil)
@@ -555,17 +579,21 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
         <span class="cov8" title="1">if course.InstructorID() != Data.UserId </span><span class="cov8" title="1">{
                 return nil, errs.NewPermissionDeniedError("update section")
         }</span>
+
         <span class="cov8" title="1">section := course.FindSection(Data.SectionId)
         if section == nil </span><span class="cov8" title="1">{
                 return nil, errs.NewNotFoundError("Section")
         }</span>
+
         <span class="cov8" title="1">if err := section.Update(Data.Name, Data.Description); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
-        <span class="cov8" title="1">if err := cs.coursesRepository.UpdateSection(section); err != nil </span><span class="cov8" title="1">{
+
+        <span class="cov8" title="1">if err := cs.coursesRepository.Update(course); err != nil </span><span class="cov8" title="1">{
                 return nil, errs.NewUpdateSectionUseCaseError("Could not update section", err)
         }</span>
-        <span class="cov8" title="1">return section, nil</span>
+
+        <span class="cov8" title="1">return course, nil</span>
 }
 </pre>
 		
@@ -636,8 +664,36 @@ func (c *Course) Validate() error <span class="cov8" title="1">{
 func (c *Course) Update(Name string, Description string) error <span class="cov0" title="0">{
         c.name = Name
         c.description = Description
+        c.updatedAt = time.Now()
         return c.Validate()
 }</span>
+
+func (c *Course) AddSection(Section *CourseSection) <span class="cov8" title="1">{
+        c.sections = append(c.sections, Section)
+}</span>
+
+func (c *Course) RemoveSection(Id string) error <span class="cov8" title="1">{
+        findKey := -1
+        for key, section := range c.sections </span><span class="cov8" title="1">{
+                if section.Id() == Id </span><span class="cov8" title="1">{
+                        findKey = key
+                }</span>
+        }
+        <span class="cov8" title="1">if findKey &lt; 0 </span><span class="cov8" title="1">{
+                return errs.NewNotFoundError("Section")
+        }</span>
+        <span class="cov8" title="1">c.sections = append(c.sections[:findKey], c.sections[findKey+1:]...)
+        return nil</span>
+}
+
+func (c *Course) FindSection(Id string) *CourseSection <span class="cov8" title="1">{
+        for _, valor := range c.sections </span><span class="cov8" title="1">{
+                if valor.id == Id </span><span class="cov8" title="1">{
+                        return valor
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
 
 func (c *Course) Id() string <span class="cov8" title="1">{
         return c.id
@@ -659,7 +715,7 @@ func (c *Course) InstructorID() string <span class="cov0" title="0">{
         return c.instructorID
 }</span>
 
-func (c *Course) Sections() []*CourseSection <span class="cov0" title="0">{
+func (c *Course) Sections() []*CourseSection <span class="cov8" title="1">{
         return c.sections
 }</span>
 
@@ -674,19 +730,6 @@ func (c *Course) CreatedAt() time.Time <span class="cov0" title="0">{
 func (c *Course) UpdatedAt() time.Time <span class="cov0" title="0">{
         return c.updatedAt
 }</span>
-
-func (c *Course) AddSection(Section *CourseSection) <span class="cov8" title="1">{
-        c.sections = append(c.sections, Section)
-}</span>
-
-func (c *Course) FindSection(Id string) *CourseSection <span class="cov8" title="1">{
-        for _, valor := range c.sections </span><span class="cov8" title="1">{
-                if valor.id == Id </span><span class="cov8" title="1">{
-                        return valor
-                }</span>
-        }
-        <span class="cov8" title="1">return nil</span>
-}
 </pre>
 		
 		<pre class="file" id="file13" style="display: none">package entities

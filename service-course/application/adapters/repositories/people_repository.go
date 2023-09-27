@@ -9,10 +9,10 @@ import (
 )
 
 type PeopleRepository struct {
-	db *mongo.Client
+	db *mongo.Database
 }
 
-func NewPeopleRepository(db *mongo.Client) *PeopleRepository {
+func NewPeopleRepository(db *mongo.Database) *PeopleRepository {
 	return &PeopleRepository{db}
 }
 
@@ -24,7 +24,7 @@ type PeopleModel struct {
 }
 
 func (pr *PeopleRepository) Upsert(People *entities.People) error {
-	collection := pr.db.Database("service-courses").Collection("people")
+	collection := pr.db.Collection("people")
 	var photoUrl string = ""
 	if People.Photo() != nil {
 		photoUrl = People.Photo().Url()

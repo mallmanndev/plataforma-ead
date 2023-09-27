@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func GetDb(env string) (*mongo.Client, func()) {
+func GetDb(env string) (*mongo.Database, func()) {
 	timeout := 10 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -22,6 +22,12 @@ func GetDb(env string) (*mongo.Client, func()) {
 			panic(err)
 		}
 	}
+	
+	dbName := "service-courses"
+	if env == "test" {
+		dbName = "service-courses-test"
+	}
+	db := client.Database(dbName)
 
-	return client, disconnect
+	return db, disconnect
 }

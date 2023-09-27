@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -73,5 +74,25 @@ func TestCourseEntitySections(t *testing.T) {
 		if findSection != section {
 			t.Error("Find section must return section.")
 		}
+	})
+}
+
+func TestRemoveSection(t *testing.T) {
+	course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+	section1, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
+	section2, _ := entities.NewCourseSection("Section two", "this is a section two", course.Id())
+	course.AddSection(section1)
+	course.AddSection(section2)
+
+	t.Run("When section is not found", func(t *testing.T) {
+		err := course.RemoveSection(uuid.NewString())
+		assert.Error(t, err, "Section not found.")
+	})
+
+	t.Run("When remove section successfully", func(t *testing.T) {
+		assert.Len(t, course.Sections(), 2)
+		err := course.RemoveSection(section2.Id())
+		assert.Nil(t, err)
+		assert.Len(t, course.Sections(), 1)
 	})
 }

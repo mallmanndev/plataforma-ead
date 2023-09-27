@@ -65,7 +65,35 @@ func (c *Course) Validate() error {
 func (c *Course) Update(Name string, Description string) error {
 	c.name = Name
 	c.description = Description
+	c.updatedAt = time.Now()
 	return c.Validate()
+}
+
+func (c *Course) AddSection(Section *CourseSection) {
+	c.sections = append(c.sections, Section)
+}
+
+func (c *Course) RemoveSection(Id string) error {
+	findKey := -1
+	for key, section := range c.sections {
+		if section.Id() == Id {
+			findKey = key
+		}
+	}
+	if findKey < 0 {
+		return errs.NewNotFoundError("Section")
+	}
+	c.sections = append(c.sections[:findKey], c.sections[findKey+1:]...)
+	return nil
+}
+
+func (c *Course) FindSection(Id string) *CourseSection {
+	for _, valor := range c.sections {
+		if valor.id == Id {
+			return valor
+		}
+	}
+	return nil
 }
 
 func (c *Course) Id() string {
@@ -102,17 +130,4 @@ func (c *Course) CreatedAt() time.Time {
 
 func (c *Course) UpdatedAt() time.Time {
 	return c.updatedAt
-}
-
-func (c *Course) AddSection(Section *CourseSection) {
-	c.sections = append(c.sections, Section)
-}
-
-func (c *Course) FindSection(Id string) *CourseSection {
-	for _, valor := range c.sections {
-		if valor.id == Id {
-			return valor
-		}
-	}
-	return nil
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	grpc2 "github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/grpc"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
@@ -12,9 +12,7 @@ import (
 	"net"
 )
 
-func CoursesServer() (context.Context, pb.CoursesServiceClient, func()) {
-	db, disconnect := utils.GetDb("test")
-
+func CoursesServer(db *mongo.Database) (context.Context, pb.CoursesServiceClient, func()) {
 	coursesServer := grpc2.NewCourseServer(db)
 
 	// Crie um ouvinte de buffer para comunicação de loopback
@@ -49,7 +47,6 @@ func CoursesServer() (context.Context, pb.CoursesServiceClient, func()) {
 	closer := func() {
 		conn.Close()
 		server.Stop()
-		disconnect()
 	}
 
 	return ctx, client, closer

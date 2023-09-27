@@ -35,6 +35,15 @@ type UpdateCourseUseCaseDTO struct {
 }
 
 func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.Course, error) {
+	course, _ := uc.courseRepository.FindById(Data.Id)
+	if course == nil {
+		return nil, errs.NewNotFoundError("Course")
+	}
+
+	if course.InstructorID() != Data.Instructor.Id {
+		return nil, errs.NewPermissionDeniedError("update course")
+	}
+
 	people, err := entities.NewPeople(Data.Instructor.Id, Data.Instructor.Name, Data.Instructor.Type, nil)
 	if err != nil {
 		return nil, err
@@ -42,11 +51,6 @@ func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.C
 
 	if err := uc.peopleRepository.Upsert(people); err != nil {
 		return nil, errs.NewUpdateCourseUseCaseError("Could not insert or update people", err)
-	}
-
-	course, _ := uc.courseRepository.FindById(Data.Id)
-	if course == nil {
-		return nil, errs.NewDataNotFoundError("Course not found!")
 	}
 
 	if err := course.Update(Data.Name, Data.Description); err != nil {

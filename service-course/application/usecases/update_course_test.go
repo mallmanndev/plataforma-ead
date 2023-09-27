@@ -12,21 +12,35 @@ import (
 )
 
 func TestUpdateCourseUseCase(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
-	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
-	useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
 
 	t.Run("Should return error when instructor name is invalid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
+		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
+		course := entities.NewCourseComplete(
+			courseId,
+			"Go Lang Course",
+			"This is a Go Lang course",
+			nil,
+			instructorId,
+			true,
+			time.Now(),
+			time.Now(),
+		)
+		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		_, err := useCase.Execute(
 			usecases.UpdateCourseUseCaseDTO{
-				Id:          uuid.NewString(),
-				Name:        "Go",
-				Description: "",
+				Id:          courseId,
+				Name:        "Javascript course",
+				Description: "This is a Javascript course",
 				Instructor: usecases.UpdateCourseInstructorDTO{
-					Id:   uuid.NewString(),
+					Id:   instructorId,
 					Name: "M",
 					Type: "admin",
 				},
@@ -42,13 +56,21 @@ func TestUpdateCourseUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return error when course name is invalid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
 		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
 		course := entities.NewCourseComplete(
 			courseId,
 			"Go Lang Course",
 			"This is a Go Lang course",
 			nil,
-			"123",
+			instructorId,
 			true,
 			time.Now(),
 			time.Now(),
@@ -61,7 +83,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 				Name:        "Go",
 				Description: "",
 				Instructor: usecases.UpdateCourseInstructorDTO{
-					Id:   uuid.NewString(),
+					Id:   instructorId,
 					Name: "Matheus Mallmann",
 					Type: "admin",
 				},
@@ -76,8 +98,14 @@ func TestUpdateCourseUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return error when not find course", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
 		courseId := uuid.NewString()
-		mockPeopleRepository.EXPECT().Upsert(gomock.Any()).Return(nil)
 		mockCourseRepository.EXPECT().FindById(courseId).Return(nil, nil)
 		_, err := useCase.Execute(
 			usecases.UpdateCourseUseCaseDTO{
@@ -93,26 +121,50 @@ func TestUpdateCourseUseCase(t *testing.T) {
 		if err == nil {
 			t.Error("Error must be not nil!")
 		}
-		expectedErr := "Course not found!"
+		expectedErr := "Course not found."
 		if err.Error() != expectedErr {
 			t.Errorf("Ivalid error! Expected: %s, Received: %s.", expectedErr, err.Error())
 		}
 	})
 
 	t.Run("Should return error when people repository return error", func(t *testing.T) {
+		// GIVEN
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
 		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
+		course := entities.NewCourseComplete(
+			courseId,
+			"Go Lang Course",
+			"This is a Go Lang course",
+			nil,
+			instructorId,
+			true,
+			time.Now(),
+			time.Now(),
+		)
+		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		mockPeopleRepository.EXPECT().Upsert(gomock.Any()).Return(errors.New("Test"))
+
+		// WHEN
 		_, err := useCase.Execute(
 			usecases.UpdateCourseUseCaseDTO{
 				Id:          courseId,
 				Name:        "Javascript course",
 				Description: "This is a Javascript course",
 				Instructor: usecases.UpdateCourseInstructorDTO{
-					Id:   uuid.NewString(),
+					Id:   instructorId,
 					Name: "Matheus Mallmann",
 					Type: "admin",
 				},
 			})
+
+		// THEN
 		if err == nil {
 			t.Error("Error must be not nil!")
 		}
@@ -123,13 +175,21 @@ func TestUpdateCourseUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return error when courses repository return error", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
 		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
 		course := entities.NewCourseComplete(
 			courseId,
 			"Go Lang Course",
 			"This is a Go Lang course",
 			nil,
-			uuid.NewString(),
+			instructorId,
 			true,
 			time.Now(),
 			time.Now(),
@@ -143,7 +203,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 				Name:        "Javascript course",
 				Description: "This is a Javascript course",
 				Instructor: usecases.UpdateCourseInstructorDTO{
-					Id:   uuid.NewString(),
+					Id:   instructorId,
 					Name: "Matheus Mallmann",
 					Type: "admin",
 				},
@@ -157,14 +217,63 @@ func TestUpdateCourseUseCase(t *testing.T) {
 		}
 	})
 
-	t.Run("Should update course successfully", func(t *testing.T) {
+	t.Run("Should return error when course instructor is difference of user", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
 		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
 		course := entities.NewCourseComplete(
 			courseId,
 			"Go Lang Course",
 			"This is a Go Lang course",
 			nil,
-			uuid.NewString(),
+			instructorId,
+			true,
+			time.Now(),
+			time.Now(),
+		)
+		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		_, err := useCase.Execute(
+			usecases.UpdateCourseUseCaseDTO{
+				Id:          courseId,
+				Name:        "Javascript course",
+				Description: "This is a Javascript course",
+				Instructor: usecases.UpdateCourseInstructorDTO{
+					Id:   uuid.NewString(),
+					Name: "Matheus Mallmann",
+					Type: "admin",
+				},
+			})
+		if err == nil {
+			t.Error("Error must be not nil!")
+		}
+		expectedErr := "Permission denied to update course."
+		if err.Error() != expectedErr {
+			t.Errorf("Ivalid error! Expected: %s, Received: %s.", expectedErr, err.Error())
+		}
+	})
+
+	t.Run("Should update course successfully", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockPeopleRepository := mocks.NewMockPeopleRepository(mockCtrl)
+		mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
+		useCase := usecases.NewUpdateCourseUseCase(mockPeopleRepository, mockCourseRepository)
+
+		courseId := uuid.NewString()
+		instructorId := uuid.NewString()
+		course := entities.NewCourseComplete(
+			courseId,
+			"Go Lang Course",
+			"This is a Go Lang course",
+			nil,
+			instructorId,
 			true,
 			time.Now(),
 			time.Now(),
@@ -178,16 +287,17 @@ func TestUpdateCourseUseCase(t *testing.T) {
 				Name:        "Javascript course",
 				Description: "This is a Javascript course",
 				Instructor: usecases.UpdateCourseInstructorDTO{
-					Id:   uuid.NewString(),
+					Id:   instructorId,
 					Name: "Matheus Mallmann",
 					Type: "admin",
 				},
 			})
 		if err != nil {
-			t.Error("Error must be nil!")
+			t.Errorf("Error must be nil. Error: %s", err.Error())
 		}
 		if editedCourse.Name() != "Javascript course" || editedCourse.Description() != "This is a Javascript course" {
 			t.Error("Course not edited!")
 		}
 	})
+
 }

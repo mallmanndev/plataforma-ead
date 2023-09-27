@@ -43,9 +43,11 @@ func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.C
 	if err != nil {
 		return nil, err
 	}
+
 	if err := cc.peopleRepository.Upsert(people); err != nil {
 		return nil, errs.NewCreateUserUseCaseError("Could not insert or update people", err)
 	}
+
 	course, err := entities.NewCourse(
 		Data.Name,
 		Data.Description,
@@ -55,6 +57,7 @@ func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.C
 	if err != nil {
 		return nil, err
 	}
+
 	if err := cc.courseRepository.Create(course); err != nil {
 		return nil, errs.NewCreateUserUseCaseError("Could not create course", err)
 	}

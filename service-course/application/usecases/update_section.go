@@ -24,7 +24,7 @@ type UpdateSectionDTO struct {
 	Description string
 }
 
-func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.CourseSection, error) {
+func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course, error) {
 	course, _ := cs.coursesRepository.FindById(Data.CourseId)
 	if course == nil {
 		return nil, errs.NewUpdateSectionUseCaseError("Course not found", nil)
@@ -32,15 +32,19 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 	if course.InstructorID() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("update section")
 	}
+
 	section := course.FindSection(Data.SectionId)
 	if section == nil {
 		return nil, errs.NewNotFoundError("Section")
 	}
+
 	if err := section.Update(Data.Name, Data.Description); err != nil {
 		return nil, err
 	}
-	if err := cs.coursesRepository.UpdateSection(section); err != nil {
+
+	if err := cs.coursesRepository.Update(course); err != nil {
 		return nil, errs.NewUpdateSectionUseCaseError("Could not update section", err)
 	}
-	return section, nil
+
+	return course, nil
 }

@@ -62,4 +62,52 @@ func TestGrpcParser(t *testing.T) {
 			t.Errorf("Expected message: %s, Received: %s.", s.Message(), expectedErrorMessage)
 		}
 	})
+
+	t.Run("When error is 'DataNotFoundError'", func(t *testing.T) {
+		err := errs.NewNotFoundError("Test")
+		grpcError := errs.NewGrpcError(err)
+		s, ok := status.FromError(grpcError)
+		if !ok {
+			t.Errorf("Invalid error!")
+		}
+		if s.Code() != codes.NotFound {
+			t.Errorf("Expected status code: %s, Received: %s.", codes.NotFound, s.Code())
+		}
+		expectedErrorMessage := "Test not found."
+		if s.Message() != expectedErrorMessage {
+			t.Errorf("Expected message: %s, Received: %s.", s.Message(), expectedErrorMessage)
+		}
+	})
+
+	t.Run("When error is 'PermissionDeniedError'", func(t *testing.T) {
+		err := errs.NewPermissionDeniedError("test")
+		grpcError := errs.NewGrpcError(err)
+		s, ok := status.FromError(grpcError)
+		if !ok {
+			t.Errorf("Invalid error!")
+		}
+		if s.Code() != codes.PermissionDenied {
+			t.Errorf("Expected status code: %s, Received: %s.", codes.PermissionDenied, s.Code())
+		}
+		expectedErrorMessage := "Permission denied to test."
+		if s.Message() != expectedErrorMessage {
+			t.Errorf("Expected message: %s, Received: %s.", s.Message(), expectedErrorMessage)
+		}
+	})
+
+	t.Run("When is error default", func(t *testing.T) {
+		err := errors.New("Default error!")
+		grpcError := errs.NewGrpcError(err)
+		s, ok := status.FromError(grpcError)
+		if !ok {
+			t.Errorf("Invalid error!")
+		}
+		if s.Code() != codes.Internal {
+			t.Errorf("Expected status code: %s, Received: %s.", codes.Internal, s.Code())
+		}
+		expectedErrorMessage := "Internal server error."
+		if s.Message() != expectedErrorMessage {
+			t.Errorf("Expected message: %s, Received: %s.", s.Message(), expectedErrorMessage)
+		}
+	})
 }

@@ -27,11 +27,12 @@ func (ds *DeleteSectionUseCase) Execute(Data DeleteSectionDTO) error {
 	if course.InstructorID() != Data.UserId {
 		return errs.NewPermissionDeniedError("update section")
 	}
-	section := course.FindSection(Data.SectionId)
-	if section == nil {
+
+	if err := course.RemoveSection(Data.SectionId); err != nil {
 		return errs.NewNotFoundError("Section")
 	}
-	if err := ds.coursesRepository.Delete(section.Id()); err != nil {
+
+	if err := ds.coursesRepository.Update(course); err != nil {
 		return errs.NewDeleteSectionUseCaseError("Could not delete section", err)
 	}
 	return nil

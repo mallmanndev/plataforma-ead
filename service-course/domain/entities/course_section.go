@@ -30,6 +30,26 @@ func NewCourseSection(Name string, Description string, CourseId string) (*Course
 	return section, nil
 }
 
+type NewCompleteSectionData struct {
+	Id          string
+	Name        string
+	Description string
+	CourseId    string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+func NewCompleteSection(data NewCompleteSectionData) *CourseSection {
+	return &CourseSection{
+		id:          data.Id,
+		name:        data.Name,
+		description: data.Description,
+		courseId:    data.CourseId,
+		createdAt:   data.CreatedAt,
+		updatedAt:   data.UpdatedAt,
+	}
+}
+
 func (cs *CourseSection) Update(Name string, Description string) error {
 	cs.name = Name
 	cs.description = Description

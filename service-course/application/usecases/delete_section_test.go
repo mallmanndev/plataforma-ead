@@ -81,7 +81,7 @@ func TestDeleteSectionUseCase(t *testing.T) {
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().Delete(section.Id()).Return(errors.New("Test"))
+		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test"))
 		data := usecases.DeleteSectionDTO{
 			CourseId:  courseId,
 			SectionId: section.Id(),
@@ -102,7 +102,7 @@ func TestDeleteSectionUseCase(t *testing.T) {
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		mockCourseRepository.EXPECT().Delete(section.Id()).Return(nil)
+		mockCourseRepository.EXPECT().Update(course).Return(nil)
 		data := usecases.DeleteSectionDTO{
 			CourseId:  courseId,
 			SectionId: section.Id(),
