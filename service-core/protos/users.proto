@@ -2,18 +2,27 @@ syntax = "proto3";
 
 option go_package = "./pb";
 
-message CreateUserRequest {
-    string name = 1;
-    string email = 2;
-    string phone = 3;
-    string password = 4;
-}
-
-message CreateUSerResponse {
-    int32 status = 1;
-    string message = 2;
-}
-
 service UsersService {
-    rpc Create(CreateUserRequest) returns (CreateUSerResponse) {};
+  rpc Create(CreateUserRequest) returns (User) {};
+  rpc Login(LoginRequest) returns (User) {};
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string type = 5;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string phone = 4;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
 }

@@ -5,32 +5,48 @@ import (
 	"database/sql"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/aplication/usecases"
+	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UsersServer struct {
 	pb.UsersServiceServer
 	createUserUseCase *usecases.CreateUserUseCase
+	loginUseCase      *usecases.LoginUseCase
 }
 
 func NewUsersServer(db *sql.DB) *UsersServer {
 	usersRepository := repositories.NewUsersRepository(db)
-	useCase := usecases.NewCreateUserUseCase(usersRepository)
-	return &UsersServer{createUserUseCase: useCase}
+	return &UsersServer{
+		createUserUseCase: usecases.NewCreateUserUseCase(usersRepository),
+		loginUseCase:      usecases.NewLoginUseCase(usersRepository),
+	}
 }
 
-func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUSerResponse, error) {
-	res := &pb.CreateUSerResponse{}
-
-	_, err := s.createUserUseCase.Execute(req.Name, req.Email, req.Phone, req.Password)
-
+func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+	user, err := s.createUserUseCase.Execute(req.Name, req.Email, req.Phone, req.Password)
 	if err != nil {
-		res.Status = 400
-		res.Message = err.Error()
-		return res, nil
+		return nil, status.Error(codes.Internal, err.Error())
 	}
+	return entityToGrpcUser(user), nil
+}
 
-	res.Status = 200
-	res.Message = "Usuário criado com sucesso!"
-	return res, nil
+func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.User, error) {
+	login, err := s.loginUseCase.Execute(req.Email, req.Password)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return entityToGrpcUser(login.User), nil
+}
+
+func entityToGrpcUser(user *entities.User) *pb.User {
+	return &pb.User{
+		Id:    user.Id,
+		Name:  user.Name,
+		Email: user.Email.Email,
+		Phone: user.Phone.Phone,
+		Type:  user.Type.Id,
+	}
 }

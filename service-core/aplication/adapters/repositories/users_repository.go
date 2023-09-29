@@ -42,7 +42,7 @@ func (ur *UsersRepository) FindByEmail(email *value_objects.EmailAddress) (*enti
 		email.Email)
 
 	model := &UserModel{}
-	err := row.Scan(&model.Id, &model.Name, &model.Password,
+	err := row.Scan(&model.Id, &model.Name, &model.Email,
 		&model.Phone, &model.Password, &model.Type,
 		&model.CreatedAt, &model.UpdatedAt, &model.DeletedAt)
 

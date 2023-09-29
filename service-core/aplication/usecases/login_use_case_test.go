@@ -6,6 +6,7 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/entities"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/tests/mocks"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -77,11 +78,13 @@ func TestLoginUseCase(t *testing.T) {
 		repo.EXPECT().FindByEmail(email).Return(user, nil)
 
 		login, err := usecase.Execute(email.Email, password)
-		if err != nil {
-			t.Errorf("Error to login!")
-		}
-		if login == nil {
-			t.Errorf("Expected user entity on login!")
+		if assert.Nil(t, err) {
+			assert.NotNil(t, login.Token)
+			assert.Equal(t, user.Id, login.User.Id)
+			assert.Equal(t, "Matheus", login.User.Name)
+			assert.Equal(t, "matheus@email.com", login.User.Email.Email)
+			assert.Equal(t, "5599999999", login.User.Phone.Phone)
+			assert.Equal(t, "student", login.User.Type.Id)
 		}
 	})
 }

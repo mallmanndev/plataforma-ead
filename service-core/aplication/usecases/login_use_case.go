@@ -17,8 +17,8 @@ func NewLoginUseCase(UsersRepository ports.UsersRepository) *LoginUseCase {
 }
 
 type LoginUseCaseOutput struct {
-	user  *entities.User
-	token string
+	User  *entities.User
+	Token string
 }
 
 func (u *LoginUseCase) Execute(Email string, Password string) (*LoginUseCaseOutput, error) {
@@ -40,5 +40,5 @@ func (u *LoginUseCase) Execute(Email string, Password string) (*LoginUseCaseOutp
 		return nil, errors.New("Invalid password!")
 	}
 
-	return &LoginUseCaseOutput{user: user, token: "tetete"}, nil
+	return &LoginUseCaseOutput{User: user, Token: "tetete"}, nil
 }

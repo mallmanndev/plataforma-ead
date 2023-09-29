@@ -1,10 +1,11 @@
 package integration_test
 
 import (
-	"fmt"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-core/tests/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-core/utils"
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/status"
 	"testing"
 )
 
@@ -20,15 +21,12 @@ func TestCreateUserGrpcRoute(t *testing.T) {
 			Phone:    "559999048223",
 			Password: "12345678",
 		}
-		response, err := client.Create(ctx, request)
-		fmt.Println(response, err)
-		if response.Status != 200 {
-			t.Errorf("Invalid status! Expected %d, Received %d", 200, response.Status)
-		}
-		if response.Message != "Usuário criado com sucesso!" {
-			t.Errorf("Invalid status! Expected %s, Received %s",
-				"Usuário criado com sucesso!",
-				response.Message)
+		user, err := client.Create(ctx, request)
+		if assert.Nil(t, err) {
+			assert.NotNil(t, user.Id)
+			assert.Equal(t, "Matheus", user.Name)
+			assert.Equal(t, "559999048223", user.Phone)
+			assert.Equal(t, "matheus@email.com", user.Email)
 		}
 	})
 
@@ -49,15 +47,11 @@ func TestCreateUserGrpcRoute(t *testing.T) {
 			Phone:    "559999048223",
 			Password: "12345678",
 		}
-		response, err := client.Create(ctx, request)
-		fmt.Println(response, err)
-		if response.Status != 400 {
-			t.Errorf("Invalid status! Expected %d, Received %d", 400, response.Status)
-		}
-		if response.Message != "Email already registered!" {
-			t.Errorf("Invalid Message! Expected %s, Received %s",
-				"Email already registered!",
-				response.Message)
+
+		_, err := client.Create(ctx, request)
+		s, _ := status.FromError(err)
+		if assert.NotNil(t, s) {
+			assert.Equal(t, "Email already registered!", s.Message())
 		}
 	})
 }
