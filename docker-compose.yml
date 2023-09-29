@@ -68,6 +68,18 @@ services:
     volumes:
       - ./service-course:/app
 
+  front:
+    container_name: front
+    build: ./front
+    ports:
+      - "3002:3000"
+    networks:
+      - service-core-backend
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+      - /app/.next
+
 networks:
   service-core-backend:
     driver: "bridge"

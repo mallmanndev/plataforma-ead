@@ -18,6 +18,10 @@ servcore-logs:
 servcourse-logs:
 	docker logs -f service-course
 
+.PHONY: front-logs
+front-logs:
+	docker logs -f front
+
 .PHONY: down
 down:
 	docker compose down
@@ -33,6 +37,10 @@ servcore-bash:
 .PHONY: servcourse-bash
 servcourse-bash:
 	docker exec -it service-course /bin/bash
+
+.PHONY: front-bash
+front-bash:
+	docker exec -it front /bin/bash
 
 .PHONY: servcore-test
 servcore-test:
