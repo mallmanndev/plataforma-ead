@@ -62,7 +62,3 @@ servcore-protoc:
 .PHONY: servcourse-protoc
 servcourse-protoc:
 	protoc --go_out=./service-course --go-grpc_out=./service-course ./service-course/protos/*.proto
-
-.PHONY: protoc
-protoc:
-	cd front && protoc --proto_path=../protos/service-core --js_out=import_style=commonjs,binary:./pb/service-core ../protos/service-core/*.proto

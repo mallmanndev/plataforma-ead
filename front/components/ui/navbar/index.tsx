@@ -3,9 +3,10 @@ import {cn} from "@/lib/utils";
 import React from "react";
 import {DarkModeToggle} from "@/components/ui/dark-mode";
 import NavUser from "@/components/ui/navbar/user";
+import User from "@/entities/user";
 
 
-export default function NavBar() {
+export default function NavBar({user}: { user: User }) {
     return (
         <header className="border-b">
             <div className="container flex h-14 items-center">
@@ -29,7 +30,7 @@ export default function NavBar() {
 
                 <div className="ml-auto flex items-center space-x-4">
                     <DarkModeToggle/>
-                    <NavUser/>
+                    <NavUser user={user}/>
                 </div>
             </div>
         </header>

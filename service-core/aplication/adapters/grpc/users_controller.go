@@ -25,7 +25,7 @@ func NewUsersServer(db *sql.DB) *UsersServer {
 	}
 }
 
-func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+func (s *UsersServer) Create(_ context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
 	user, err := s.createUserUseCase.Execute(req.Name, req.Email, req.Phone, req.Password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -33,7 +33,7 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 	return entityToGrpcUser(user), nil
 }
 
-func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.User, error) {
+func (s *UsersServer) Login(_ context.Context, req *pb.LoginRequest) (*pb.User, error) {
 	login, err := s.loginUseCase.Execute(req.Email, req.Password)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
