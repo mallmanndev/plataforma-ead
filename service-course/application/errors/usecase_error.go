@@ -66,3 +66,11 @@ func NewDeleteSectionUseCaseError(Message string, error error) *UseCaseError {
 		wrapError: error,
 	}
 }
+
+func NewVideoUploadUseCaseError(Message string, error error) *UseCaseError {
+	return &UseCaseError{
+		usecase:   "Video Upload",
+		message:   Message,
+		wrapError: error,
+	}
+}

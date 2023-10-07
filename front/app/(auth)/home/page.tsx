@@ -28,7 +28,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold tracking-tight pt-4">Cursos</h2>
 
             <div
-                className="hidden items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
+                className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
                 {courses.map(course => <CourseCard key={course.id} course={course}/>)}
             </div>
         </>

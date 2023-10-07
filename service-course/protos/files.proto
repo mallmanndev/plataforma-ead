@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+service FileUploadService {
+  rpc VideoUpload(stream VideoUploadRequest) returns (VideoUploadResponse) {}
+}
+
+message VideoInfo {
+  string type = 1;
+  int64 size = 2;
+}
+
+message VideoUploadRequest {
+  oneof data{
+    VideoInfo info = 1;
+    bytes chunk = 2;
+  }
+}
+
+message VideoUploadResponse {
+  string id = 1;
+}

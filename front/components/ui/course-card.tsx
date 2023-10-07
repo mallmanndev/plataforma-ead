@@ -15,12 +15,10 @@ type TCourseCardProps = {
 export default function CourseCard({course}: TCourseCardProps) {
     return (
         <Card>
-            <Image
+            <img
                 src={course.image}
-                width={500}
-                height={500}
                 alt="Capa do curso: Go Lang"
-                className={"rounded-t-lg"}
+                className="w-full rounded-t-lg"
             />
             <CardHeader>
                 <CardTitle>{course.name}</CardTitle>
