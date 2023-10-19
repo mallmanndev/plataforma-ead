@@ -26,7 +26,9 @@ func main() {
 	// REGISTER ROUTES HERE
 	grpcServer := grpc.NewServer()
 	coursesServer := grpc2.NewCourseServer(db)
+	fileUploadService := grpc2.NewFilesServer(db)
 	pb.RegisterCoursesServiceServer(grpcServer, coursesServer)
+	pb.RegisterFileUploadServiceServer(grpcServer, fileUploadService)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal("Error to serve gRPC!")

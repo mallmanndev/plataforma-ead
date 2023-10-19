@@ -3,7 +3,7 @@ import CreateCourseForm from "@/app/(auth)/create-course/components/create-cours
 export default function MyCourses() {
     return (
         <>
-            <h2 className="text-3xl font-bold tracking-tight mt-12">Criar curso</h2>
+            <h2 className="text-3xl font-bold tracking-tight mt-12">Criar Curso</h2>
 
             <div className="mt-12 flex-1 lg:max-w-2xl">
                 <CreateCourseForm/>

@@ -9,6 +9,7 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"io"
+	"log"
 )
 
 type FilesServer struct {
@@ -31,6 +32,8 @@ func NewFilesServer(db *mongo.Database) *FilesServer {
 }
 
 func (s *FilesServer) VideoUpload(stream pb.FileUploadService_VideoUploadServer) error {
+	log.Println("Receiving a new video upload request")
+
 	req, err := stream.Recv()
 	if err != nil {
 		return err

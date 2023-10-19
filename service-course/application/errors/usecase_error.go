@@ -74,3 +74,11 @@ func NewVideoUploadUseCaseError(Message string, error error) *UseCaseError {
 		wrapError: error,
 	}
 }
+
+func NewProcessVideoUseCaseError(Message string, error error) *UseCaseError {
+	return &UseCaseError{
+		usecase:   "Process video",
+		message:   Message,
+		wrapError: error,
+	}
+}

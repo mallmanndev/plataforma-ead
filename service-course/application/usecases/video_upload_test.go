@@ -2,14 +2,15 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/golang/mock/gomock"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestVideoUpload_CreateFile(t *testing.T) {
@@ -75,7 +76,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 			assert.Equal(t, "123456789", file.Video().Id())
 			assert.Equal(t, "/app/tmp/videos/123456789.mp4", file.Video().TmpUrl())
 			assert.Equal(t, "mp4", file.Video().Type())
-			assert.Equal(t, false, file.Video().Processed())
+			assert.Equal(t, "pending", file.Video().Status())
 		}
 	})
 }

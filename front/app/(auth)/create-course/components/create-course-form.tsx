@@ -7,18 +7,22 @@ import * as React from "react";
 import {Icons} from "@/components/ui/icons";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
-import FileUpload from "@/components/file-upload";
+import {z} from "zod";
+
+const required_error = "Este campo é obrigatório."
+const loginSchema = z.object({
+    email: z.string({required_error}).email({message: "Email inválido!"}),
+    password: z.string({required_error})
+        .min(8, {message: "A senha deve conter mais de 8 digitos!"})
+})
+
+type TLoginSchema = z.infer<typeof loginSchema>
 
 export default function CreateCourseForm() {
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const form = useForm()
 
-    const onFileUpload = () => {
-    }
-
-    const onSubmit = () => {
-
-    }
+    const onSubmit = () => {}
 
     return (
         <div>
@@ -51,11 +55,6 @@ export default function CreateCourseForm() {
                             </FormItem>
                         )}
                     />
-
-
-                    <input type="hidden" name="imageUrl"/>
-
-                    <FileUpload onFileUpload={onFileUpload}/>
 
                     <Button type="submit" disabled={isLoading}>
                         {isLoading && (

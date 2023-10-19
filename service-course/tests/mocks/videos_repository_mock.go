@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	entities "github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	ports "github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 )
 
 // MockVideosRepository is a mock of VideosRepository interface.
@@ -46,4 +47,62 @@ func (m *MockVideosRepository) Create(video *entities.Video) error {
 func (mr *MockVideosRepositoryMockRecorder) Create(video interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVideosRepository)(nil).Create), video)
+}
+
+// Delete mocks base method.
+func (m *MockVideosRepository) Delete(id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockVideosRepositoryMockRecorder) Delete(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVideosRepository)(nil).Delete), id)
+}
+
+// Find mocks base method.
+func (m *MockVideosRepository) Find(id string) (*entities.Video, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Find", id)
+	ret0, _ := ret[0].(*entities.Video)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockVideosRepositoryMockRecorder) Find(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockVideosRepository)(nil).Find), id)
+}
+
+// Get mocks base method.
+func (m *MockVideosRepository) Get(filters ports.GetFilters) ([]*entities.Video, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", filters)
+	ret0, _ := ret[0].([]*entities.Video)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockVideosRepositoryMockRecorder) Get(filters interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVideosRepository)(nil).Get), filters)
+}
+
+// Update mocks base method.
+func (m *MockVideosRepository) Update(video *entities.Video) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", video)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockVideosRepositoryMockRecorder) Update(video interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVideosRepository)(nil).Update), video)
 }

@@ -58,3 +58,36 @@ Serviço para o gerenciamento e disponibilização de cursos.
 - Streaming de videos
 - Gerenciamento de progresso de curso
 
+// ffmpeg -i video-editado.mp4 -c:v libx264 -vf scale=640:480 -f segment -segment_time 10 -segment_list test_480/segment-list.m3u8 -c copy -re
+set_timestamps 1 test_480/segmento%d.mp4
+
+Redimensiona o video mantendo a qualidade
+
+ffmpeg \
+    -i input.mp4 \
+    -vf scale=1280:720 \
+    -preset slow \
+    -crf 18 \
+    -hls_time 10 \
+    -hls_list_size 0 \
+    -hls_segment_filename "resolucao-720/segment%d.ts" \
+    -f hls resolucao-720/index.m3u8
+
+ffmpeg \
+-i input.mp4 \
+-vf scale=640:480 \
+-preset slow \
+-crf 18 \
+-hls_time 10 \
+-hls_list_size 0 \
+-hls_segment_filename "resolucao-480/segment%d.ts" \
+-f hls resolucao-480/index.m3u8
+
+Somente gerar segmentos:
+ffmpeg \
+    -i input.mp4 \
+    -hls_time 10 \
+    -hls_list_size 0 \
+    -hls_segment_filename "resolucao-1080/segment%d.ts" \
+    -f hls resolucao-1080/index.m3u8
+

@@ -6,9 +6,17 @@ type FileInfo struct {
 	Type string
 }
 
+type GetResolutionOutput struct {
+	Resolution string
+	Size       int64
+	Type       string
+}
+
 type FilesService interface {
 	CreateFile(File FileInfo) (FilesService, error)
 	SendChunk(chunk []byte) error
 	Close() error
 	Remove() error
+	GetResolution(Url string) (string, error)
+	ProcessVideo(InputUrl string, OutputPath string, Resolution string) error
 }

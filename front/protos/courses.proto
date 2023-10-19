@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+service CoursesService {
+  rpc Create(CreateCourseRequest) returns (Course) {};
+  rpc Update(UpdateCourseRequest) returns (Course) {};
+  rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {}
+  rpc CreateCourseSection(CreateCourseSectionRequest) returns (Course) {}
+}
+
+message People {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string photoUrl = 4;
+}
+
+message CourseSection {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
+message Course {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool   visible = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+  repeated CourseSection sections = 7;
+}
+
+message CreateCourseRequest {
+  string name = 1;
+  string description = 2;
+  People instructor = 3;
+}
+
+message CreateUpdateCourseResponse {
+  Course course = 1;
+}
+
+message UpdateCourseRequest {
+  People instructor = 1;
+  string course_id = 2;
+  string name = 3;
+  string description = 4;
+}
+
+message DeleteCourseRequest {
+  string user_id = 1;
+  string course_id = 2;
+}
+
+message DeleteCourseResponse {
+  string message = 1;
+}
+
+message CreateCourseSectionRequest {
+  string course_id = 1;
+  string user_id = 2;
+  string name = 3;
+  string description = 4;
+}

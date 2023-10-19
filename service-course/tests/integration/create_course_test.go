@@ -5,6 +5,7 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
 	"testing"
 )
@@ -14,6 +15,19 @@ func TestCreateCourse(t *testing.T) {
 	defer disconnect()
 	ctx, client, closer := testutils.CoursesServer(db)
 	defer closer()
+
+	t.Run("Should return error when instructor is not provided", func(t *testing.T) {
+		request := &pb.CreateCourseRequest{
+			Name:        "Go Lang Course",
+			Description: "This is a Go lang course",
+			Instructor:  nil,
+		}
+
+		_, err := client.Create(ctx, request)
+		s, _ := status.FromError(err)
+		assert.Equal(t, "InvalidArgument", s.Code().String())
+		assert.Equal(t, "Instructor is required.", s.Message())
+	})
 
 	t.Run("Should return error when people is invalid", func(t *testing.T) {
 		request := &pb.CreateCourseRequest{

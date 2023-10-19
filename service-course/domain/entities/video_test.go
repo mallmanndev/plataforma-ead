@@ -1,11 +1,12 @@
 package entities_test
 
 import (
+	"testing"
+	"time"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestNewVideo(t *testing.T) {
@@ -39,7 +40,7 @@ func TestNewVideo(t *testing.T) {
 			assert.Equal(t, "url", video.TmpUrl())
 			assert.Equal(t, "mp4", video.Type())
 			assert.Equal(t, int64(123), video.Size())
-			assert.Equal(t, false, video.Processed())
+			assert.Equal(t, "pending", video.Status())
 			assert.Equal(t, expectedTime, video.CreatedAt())
 		}
 	})

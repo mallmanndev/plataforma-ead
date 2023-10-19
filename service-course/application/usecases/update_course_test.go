@@ -2,13 +2,14 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
-	"testing"
-	"time"
 )
 
 func TestUpdateCourseUseCase(t *testing.T) {

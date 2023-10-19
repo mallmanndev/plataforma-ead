@@ -41,60 +41,81 @@ func TestUpdateCourse(t *testing.T) {
 	}
 
 	t.Run("When returns error", func(t *testing.T) {
-
 		type ExpectedErrors struct {
 			status  string
 			message string
 		}
 		cenarios := []struct {
-			test           string
-			id             string
-			name           string
-			description    string
-			instructorId   string
-			instructorName string
-			instructorType string
-			expect         ExpectedErrors
-		}{{
-			test:           "When course is not found",
-			id:             uuid.NewString(),
-			name:           "Go lang course",
-			description:    "This is a go lang course",
-			instructorId:   instructorId,
-			instructorName: "Matheus Mallmann",
-			instructorType: "admin",
-			expect: ExpectedErrors{
-				status:  "NotFound",
-				message: "Course not found.",
+			test    string
+			request *pb.UpdateCourseRequest
+			expect  ExpectedErrors
+		}{
+			{
+				test: "When instructor is nil",
+				request: &pb.UpdateCourseRequest{
+					CourseId:    uuid.NewString(),
+					Name:        "Go lang course",
+					Description: "This is a go lang course",
+					Instructor:  nil,
+				},
+				expect: ExpectedErrors{
+					status:  "InvalidArgument",
+					message: "Instructor is required.",
+				},
 			},
-		}, {
-			test:           "When permission is denied",
-			id:             course.Id(),
-			name:           "Go lang course",
-			description:    "This is a go lang course",
-			instructorId:   uuid.NewString(),
-			instructorName: "Matheus Mallmann",
-			instructorType: "admin",
-			expect: ExpectedErrors{
-				status:  "PermissionDenied",
-				message: "Permission denied to update course.",
-			},
-		}}
+			{
+				test: "When course is not found",
+				request: &pb.UpdateCourseRequest{
+					CourseId:    uuid.NewString(),
+					Name:        "Go lang course",
+					Description: "This is a go lang course",
+					Instructor: &pb.People{
+						Id:   instructorId,
+						Name: "Matheus Mallmann",
+						Type: "admin",
+					},
+				},
+				expect: ExpectedErrors{
+					status:  "NotFound",
+					message: "Course not found.",
+				},
+			}, {
+				test: "When instructor is invalid",
+				request: &pb.UpdateCourseRequest{
+					CourseId:    uuid.NewString(),
+					Name:        "Go lang course",
+					Description: "This is a go lang course",
+					Instructor: &pb.People{
+						Id:   uuid.NewString(),
+						Name: "Matheus Mallmann",
+						Type: "admin",
+					},
+				},
+				expect: ExpectedErrors{
+					status:  "NotFound",
+					message: "Course not found.",
+				},
+			}, {
+				test: "When permission is denied",
+				request: &pb.UpdateCourseRequest{
+					CourseId:    course.Id(),
+					Name:        "Go lang course",
+					Description: "This is a go lang course",
+					Instructor: &pb.People{
+						Id:   uuid.NewString(),
+						Name: "Matheus Mallmann",
+						Type: "admin",
+					},
+				},
+				expect: ExpectedErrors{
+					status:  "PermissionDenied",
+					message: "Permission denied to update course.",
+				},
+			}}
 
 		for _, test := range cenarios {
 			t.Run(test.test, func(t *testing.T) {
-				request := &pb.UpdateCourseRequest{
-					CourseId:    test.id,
-					Name:        test.name,
-					Description: test.description,
-					Instructor: &pb.People{
-						Id:       test.instructorId,
-						Name:     test.name,
-						Type:     test.instructorType,
-						PhotoUrl: "",
-					},
-				}
-				_, err := client.Update(ctx, request)
+				_, err := client.Update(ctx, test.request)
 				s, _ := status.FromError(err)
 				assert.Equal(t, test.expect.status, s.Code().String())
 				assert.Equal(t, test.expect.message, s.Message())

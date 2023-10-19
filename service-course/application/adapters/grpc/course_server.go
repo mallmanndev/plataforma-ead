@@ -8,6 +8,8 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CourseServer struct {
@@ -34,6 +36,10 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 }
 
 func (cs *CourseServer) Create(_ context.Context, req *pb.CreateCourseRequest) (*pb.Course, error) {
+	if req.Instructor == nil {
+		return nil, status.Error(codes.InvalidArgument, "Instructor is required.")
+	}
+
 	course, err := cs.createCourseUseCase.Execute(usecases.CreateCourseUseCaseDTO{
 		Name:        req.Name,
 		Description: req.Description,
@@ -51,6 +57,10 @@ func (cs *CourseServer) Create(_ context.Context, req *pb.CreateCourseRequest) (
 }
 
 func (cs *CourseServer) Update(_ context.Context, req *pb.UpdateCourseRequest) (*pb.Course, error) {
+	if req.Instructor == nil {
+		return nil, status.Error(codes.InvalidArgument, "Instructor is required.")
+	}
+
 	course, err := cs.updateCourseUseCase.Execute(usecases.UpdateCourseUseCaseDTO{
 		Id: req.CourseId,
 		Instructor: usecases.UpdateCourseInstructorDTO{

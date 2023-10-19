@@ -1,4 +1,4 @@
-import UsersService from "@/configs/users-grpc-client";
+import {UsersService} from "@/configs/grpc-client";
 import * as grpc from '@grpc/grpc-js'
 
 type TCreateData = {

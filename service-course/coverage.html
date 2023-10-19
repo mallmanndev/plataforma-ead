@@ -65,7 +65,7 @@
 				
 				<option value="file4">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/permission_denied.go (100.0%)</option>
 				
-				<option value="file5">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/usecase_error.go (50.0%)</option>
+				<option value="file5">github.com/matheusvmallmann/plataforma-ead/service-course/application/errors/usecase_error.go (45.5%)</option>
 				
 				<option value="file6">github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases/create_course.go (100.0%)</option>
 				
@@ -79,11 +79,17 @@
 				
 				<option value="file11">github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases/update_section.go (100.0%)</option>
 				
-				<option value="file12">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course.go (69.4%)</option>
+				<option value="file12">github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases/video_upload.go (96.8%)</option>
 				
-				<option value="file13">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course_section.go (47.1%)</option>
+				<option value="file13">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course.go (69.4%)</option>
 				
-				<option value="file14">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/people.go (56.2%)</option>
+				<option value="file14">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course_item.go (0.0%)</option>
+				
+				<option value="file15">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/course_section.go (44.4%)</option>
+				
+				<option value="file16">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/people.go (56.2%)</option>
+				
+				<option value="file17">github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities/video.go (86.7%)</option>
 				
 				</select>
 			</div>
@@ -282,6 +288,14 @@ func NewDeleteSectionUseCaseError(Message string, error error) *UseCaseError <sp
                 wrapError: error,
         }
 }</span>
+
+func NewVideoUploadUseCaseError(Message string, error error) *UseCaseError <span class="cov0" title="0">{
+        return &amp;UseCaseError{
+                usecase:   "Video Upload",
+                message:   Message,
+                wrapError: error,
+        }
+}</span>
 </pre>
 		
 		<pre class="file" id="file6" style="display: none">package usecases
@@ -385,7 +399,7 @@ func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course
 
         <span class="cov8" title="1">course, _ := cs.coursesRepository.FindById(Data.CourseId)
         if course == nil </span><span class="cov8" title="1">{
-                return nil, errs.NewCreateSectionUseCaseError("Course not found", nil)
+                return nil, errs.NewNotFoundError("Course")
         }</span>
         <span class="cov8" title="1">if course.InstructorID() != Data.UserId </span><span class="cov8" title="1">{
                 return nil, errs.NewPermissionDeniedError("create section")
@@ -597,7 +611,112 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 }
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package entities
+		<pre class="file" id="file12" style="display: none">package usecases
+
+import (
+        "fmt"
+        errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
+        "github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
+        "github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+        "github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
+)
+
+type VideoUpload struct {
+        filesService ports.FilesService
+        uuidService  ports.UUIDService
+        repository   ports.VideosRepository
+        video        *entities.Video
+        size         int64
+        chunkSize    int64
+        timer        apptimer.Timer
+}
+
+func NewVideoUpload(
+        FilesService ports.FilesService,
+        UUIDService ports.UUIDService,
+        VideosRepository ports.VideosRepository,
+        Timer apptimer.Timer,
+) *VideoUpload <span class="cov8" title="1">{
+        return &amp;VideoUpload{
+                filesService: FilesService,
+                uuidService:  UUIDService,
+                repository:   VideosRepository,
+                timer:        Timer,
+        }
+}</span>
+
+func (v *VideoUpload) CreateFile(Type string, Size int64) (*VideoUpload, error) <span class="cov8" title="1">{
+        videoId := v.uuidService.Generate()
+        videoUrl := fmt.Sprintf("/app/tmp/videos/%s.%s", videoId, Type)
+        video, err := entities.NewVideo(v.timer, videoId, videoUrl, Type, Size)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">newService, err := v.filesService.CreateFile(ports.FileInfo{
+                Url:  videoUrl,
+                Size: Size,
+                Type: Type,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, errs.NewVideoUploadUseCaseError("Could not create video", err)
+        }</span>
+
+        <span class="cov8" title="1">newVideoUpload := &amp;VideoUpload{
+                video:        video,
+                filesService: newService,
+                repository:   v.repository,
+        }
+        return newVideoUpload, nil</span>
+}
+
+func (v *VideoUpload) SendChunk(data []byte) error <span class="cov8" title="1">{
+        if v.video == nil </span><span class="cov8" title="1">{
+                return errs.NewVideoUploadUseCaseError("Video has not been created", nil)
+        }</span>
+
+        <span class="cov8" title="1">if err := v.filesService.SendChunk(data); err != nil </span><span class="cov8" title="1">{
+                return errs.NewVideoUploadUseCaseError("Could not send video chunk", err)
+        }</span>
+        <span class="cov8" title="1">v.size += int64(len(data))
+        v.chunkSize = int64(len(data))
+
+        return nil</span>
+}
+
+func (v *VideoUpload) Execute() (*entities.Video, error) <span class="cov8" title="1">{
+        if v.video == nil </span><span class="cov8" title="1">{
+                return nil, errs.NewVideoUploadUseCaseError("Video has not been created", nil)
+        }</span>
+
+        <span class="cov8" title="1">if err := v.filesService.Close(); err != nil </span><span class="cov8" title="1">{
+                return nil, errs.NewVideoUploadUseCaseError("Could not save video", err)
+        }</span>
+
+        <span class="cov8" title="1">sizeDiff := v.video.Size() - v.size
+        if v.size == 0 || sizeDiff &gt; v.chunkSize </span><span class="cov8" title="1">{
+                v.filesService.Remove()
+                return nil, errs.NewInvalidAttributeError(
+                        "Video Upload",
+                        "size",
+                        fmt.Sprintf("Expected %d bytes, Received %d bytes", v.video.Size(), v.size),
+                )
+        }</span>
+
+        <span class="cov8" title="1">if err := v.repository.Create(v.video); err != nil </span><span class="cov8" title="1">{
+                v.filesService.Remove()
+                return nil, errs.NewVideoUploadUseCaseError("Could not save video", err)
+        }</span>
+
+        <span class="cov0" title="0">return v.video, nil</span>
+}
+
+func (v *VideoUpload) Video() *entities.Video <span class="cov8" title="1">{
+        return v.video
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package entities
 
 import (
         "github.com/google/uuid"
@@ -732,7 +851,73 @@ func (c *Course) UpdatedAt() time.Time <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package entities
+		<pre class="file" id="file14" style="display: none">package entities
+
+import "time"
+
+type CourseItem struct {
+        id          string
+        title       string
+        description string
+        sectionId   string
+        itemType    string
+        video       Video
+        createdAt   time.Time
+        updatedAt   time.Time
+}
+
+func NewCourseItem(
+        Id string,
+        Title string,
+        Description string,
+        SectionId string,
+        Type string,
+        Video Video,
+) *CourseItem <span class="cov0" title="0">{
+        return &amp;CourseItem{
+                id:          Id,
+                title:       Title,
+                description: Description,
+                sectionId:   SectionId,
+                itemType:    Type,
+                video:       Video,
+        }
+}</span>
+
+func (c CourseItem) Id() string <span class="cov0" title="0">{
+        return c.id
+}</span>
+
+func (c CourseItem) Title() string <span class="cov0" title="0">{
+        return c.title
+}</span>
+
+func (c CourseItem) Description() string <span class="cov0" title="0">{
+        return c.description
+}</span>
+
+func (c CourseItem) SectionId() string <span class="cov0" title="0">{
+        return c.sectionId
+}</span>
+
+func (c CourseItem) Type() string <span class="cov0" title="0">{
+        return c.itemType
+}</span>
+
+func (c CourseItem) Video() Video <span class="cov0" title="0">{
+        return c.video
+}</span>
+
+func (c CourseItem) CreatedAt() time.Time <span class="cov0" title="0">{
+        return c.createdAt
+}</span>
+
+func (c CourseItem) UpdatedAt() time.Time <span class="cov0" title="0">{
+        return c.updatedAt
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package entities
 
 import (
         "github.com/google/uuid"
@@ -763,6 +948,26 @@ func NewCourseSection(Name string, Description string, CourseId string) (*Course
         }</span>
         <span class="cov8" title="1">return section, nil</span>
 }
+
+type NewCompleteSectionData struct {
+        Id          string
+        Name        string
+        Description string
+        CourseId    string
+        CreatedAt   time.Time
+        UpdatedAt   time.Time
+}
+
+func NewCompleteSection(data NewCompleteSectionData) *CourseSection <span class="cov0" title="0">{
+        return &amp;CourseSection{
+                id:          data.Id,
+                name:        data.Name,
+                description: data.Description,
+                courseId:    data.CourseId,
+                createdAt:   data.CreatedAt,
+                updatedAt:   data.UpdatedAt,
+        }
+}</span>
 
 func (cs *CourseSection) Update(Name string, Description string) error <span class="cov0" title="0">{
         cs.name = Name
@@ -809,7 +1014,7 @@ func (cs *CourseSection) UpdatedAt() time.Time <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package entities
+		<pre class="file" id="file16" style="display: none">package entities
 
 import (
         "github.com/google/uuid"
@@ -871,6 +1076,89 @@ func (p *People) Photo() *value_objects.Image <span class="cov0" title="0">{
 
 func (p *People) GetType() string <span class="cov0" title="0">{
         return p.peopleType
+}</span>
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package entities
+
+import (
+        errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
+        "github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
+        "time"
+)
+
+type Video struct {
+        timer     apptimer.Timer
+        id        string
+        videoType string
+        tmpUrl    string
+        processed bool
+        duration  float32
+        size      int64
+        createdAt time.Time
+        updatedAt time.Time
+}
+
+func NewVideo(Timer apptimer.Timer, Id string, TmpUrl string, Type string, Size int64) (*Video, error) <span class="cov8" title="1">{
+        video := &amp;Video{
+                timer:     Timer,
+                id:        Id,
+                tmpUrl:    TmpUrl,
+                videoType: Type,
+                processed: false,
+                size:      Size,
+                createdAt: Timer.Now(),
+        }
+
+        if err := video.Validate(); err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return video, nil</span>
+}
+
+func (v *Video) Validate() error <span class="cov8" title="1">{
+        if v.videoType != "mp4" </span><span class="cov8" title="1">{
+                return errs.NewInvalidAttributeError(
+                        "Video",
+                        "type",
+                        "must be mp4.",
+                )
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (v *Video) Id() string <span class="cov8" title="1">{
+        return v.id
+}</span>
+
+func (v *Video) Type() string <span class="cov8" title="1">{
+        return v.videoType
+}</span>
+
+func (v *Video) TmpUrl() string <span class="cov8" title="1">{
+        return v.tmpUrl
+}</span>
+
+func (v *Video) Processed() bool <span class="cov8" title="1">{
+        return v.processed
+}</span>
+
+func (v *Video) Duration() float32 <span class="cov0" title="0">{
+        return v.duration
+}</span>
+
+func (v *Video) Size() int64 <span class="cov8" title="1">{
+        return v.size
+}</span>
+
+func (v *Video) CreatedAt() time.Time <span class="cov8" title="1">{
+        return v.createdAt
+}</span>
+
+func (v *Video) UpdatedAt() time.Time <span class="cov0" title="0">{
+        return v.updatedAt
 }</span>
 </pre>
 		
