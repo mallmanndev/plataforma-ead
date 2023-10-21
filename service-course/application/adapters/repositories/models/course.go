@@ -2,12 +2,23 @@ package models
 
 import "time"
 
-type CourseSectionModel struct {
+type CourseItemModel struct {
 	Id          string    `bson:"_id"`
 	Name        string    `bson:"name"`
 	Description string    `bson:"description"`
+	Type        string    `bson:"type"`
+	VideoId     string    `bson:"videoId"`
 	CreatedAt   time.Time `bson:"createdAt"`
 	UpdatedAt   time.Time `bson:"updatedAt"`
+}
+
+type CourseSectionModel struct {
+	Id          string            `bson:"_id"`
+	Name        string            `bson:"name"`
+	Description string            `bson:"description"`
+	Itens       []CourseItemModel `bson:"itens"`
+	CreatedAt   time.Time         `bson:"createdAt"`
+	UpdatedAt   time.Time         `bson:"updatedAt"`
 }
 
 type CourseModel struct {

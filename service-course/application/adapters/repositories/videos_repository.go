@@ -3,8 +3,9 @@ package repositories
 import (
 	"context"
 	"errors"
-	"time"
 
+	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories/mappers"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories/models"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
@@ -18,17 +19,6 @@ type VideosRepository struct {
 	db *mongo.Database
 }
 
-type VideoModel struct {
-	Id        string    `bson:"_id"`
-	Type      string    `bson:"type"`
-	TmpUrl    string    `bson:"url"`
-	Status    string    `bson:"status"`
-	Duration  float32   `bson:"duration"`
-	Size      int64     `bson:"size"`
-	CreatedAt time.Time `bson:"createdAt"`
-	UpdatedAt time.Time `bson:"updatedAt"`
-}
-
 func NewVideosRepository(db *mongo.Database) ports.VideosRepository {
 	return &VideosRepository{db: db}
 }
@@ -36,7 +26,7 @@ func NewVideosRepository(db *mongo.Database) ports.VideosRepository {
 func (vr *VideosRepository) Create(video *entities.Video) error {
 	collection := vr.db.Collection("videos")
 
-	insertModel := VideoModel{
+	insertModel := models.VideoModel{
 		Id:        video.Id(),
 		Type:      video.Type(),
 		TmpUrl:    video.TmpUrl(),
@@ -53,7 +43,12 @@ func (vr *VideosRepository) Create(video *entities.Video) error {
 }
 
 func (vr *VideosRepository) Find(Id string) (*entities.Video, error) {
-	return nil, errors.New("not implemented")
+	collection := vr.db.Collection("videos")
+	var video models.VideoModel
+	if err := collection.FindOne(context.Background(), bson.M{"_id": Id}).Decode(&video); err != nil {
+		return nil, err
+	}
+	return mappers.VideoModelToVideoEntity(video), nil
 }
 
 func (vr *VideosRepository) Get(filters ports.GetFilters) ([]*entities.Video, error) {
@@ -66,7 +61,7 @@ func (vr *VideosRepository) Get(filters ports.GetFilters) ([]*entities.Video, er
 	}
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
-		var videoModel VideoModel
+		var videoModel models.VideoModel
 		err := cursor.Decode(&videoModel)
 		if err != nil {
 			return nil, err
@@ -91,13 +86,22 @@ func (vr *VideosRepository) Update(video *entities.Video) error {
 
 	filter := bson.M{"_id": video.Id()}
 
+	var resolutions []models.VideoResolution
+	for _, res := range video.GetResolutions() {
+		resolutions = append(resolutions, models.VideoResolution{
+			Resolution: res.Resolution,
+			URL:        res.URL,
+		})
+	}
+
 	update := bson.M{"$set": bson.M{
-		"type":      video.Type(),
-		"url":       video.TmpUrl(),
-		"status":    video.Status(),
-		"duration":  video.Duration(),
-		"size":      video.Size(),
-		"updatedAt": video.UpdatedAt(),
+		"type":        video.Type(),
+		"url":         video.TmpUrl(),
+		"status":      video.Status(),
+		"duration":    video.Duration(),
+		"size":        video.Size(),
+		"updatedAt":   video.UpdatedAt(),
+		"resolutions": resolutions,
 	}}
 
 	_, err := collection.UpdateOne(context.Background(), filter, update)

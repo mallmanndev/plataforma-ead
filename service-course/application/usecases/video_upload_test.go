@@ -46,7 +46,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 
 		uuidService.EXPECT().Generate().Return("123456789")
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 10000}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 10000}).
 			Return(nil, errors.New("Test!"))
 
 		// WHEN
@@ -64,7 +64,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 
 		uuidService.EXPECT().Generate().Return("123456789")
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 10000}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 10000}).
 			Return(filesServiceTwo, nil)
 
 		// WHEN
@@ -74,7 +74,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 		assert.Nil(t, err)
 		if assert.NotNil(t, file) {
 			assert.Equal(t, "123456789", file.Video().Id())
-			assert.Equal(t, "/app/tmp/videos/123456789.mp4", file.Video().TmpUrl())
+			assert.Equal(t, "/videos/tmp/123456789.mp4", file.Video().TmpUrl())
 			assert.Equal(t, "mp4", file.Video().Type())
 			assert.Equal(t, "pending", file.Video().Status())
 		}
@@ -112,7 +112,7 @@ func TestVideoUpload_SendChunk(t *testing.T) {
 
 		uuidService.EXPECT().Generate().Return("123456789")
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 10000}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 10000}).
 			Return(filesServiceTwo, nil)
 		filesServiceTwo.EXPECT().SendChunk([]byte("test")).Return(errors.New("Test!"))
 
@@ -158,7 +158,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 
 		uuidService.EXPECT().Generate().Return("123456789")
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 25}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 25}).
 			Return(filesServiceTwo, nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)
@@ -185,7 +185,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 
 		uuidService.EXPECT().Generate().Return("123456789")
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 25}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 25}).
 			Return(filesServiceTwo, nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)
@@ -211,7 +211,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 		uuidService.EXPECT().Generate().Return("123456789")
 
 		filesService.EXPECT().
-			CreateFile(ports.FileInfo{Url: "/app/tmp/videos/123456789.mp4", Type: "mp4", Size: 25}).
+			CreateFile(ports.FileInfo{Url: "/videos/tmp/123456789.mp4", Type: "mp4", Size: 25}).
 			Return(filesServiceTwo, nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)
 		filesServiceTwo.EXPECT().SendChunk(chunk).Return(nil)

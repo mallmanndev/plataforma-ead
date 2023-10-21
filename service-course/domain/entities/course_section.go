@@ -1,9 +1,10 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
-	"time"
 )
 
 type CourseSection struct {
@@ -92,4 +93,8 @@ func (cs *CourseSection) CreatedAt() time.Time {
 
 func (cs *CourseSection) UpdatedAt() time.Time {
 	return cs.updatedAt
+}
+
+func (cs *CourseSection) AddItem(item *CourseItem) {
+	cs.itens = append(cs.itens, item)
 }

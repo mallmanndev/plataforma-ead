@@ -2,10 +2,12 @@ package grpc
 
 import (
 	"context"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/grpc/mappers"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -14,6 +16,7 @@ import (
 
 type CourseServer struct {
 	pb.CoursesServiceServer
+	coursesRepo          ports.CourseRepository
 	createCourseUseCase  *usecases.CreateCourseUseCase
 	updateCourseUseCase  *usecases.UpdateCourseUseCase
 	deleteCourseUseCase  *usecases.DeleteCourseUseCase
@@ -28,6 +31,7 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
 	return &CourseServer{
+		coursesRepo:          coursesRepo,
 		createCourseUseCase:  createCourseUseCase,
 		updateCourseUseCase:  updateCourseUseCase,
 		deleteCourseUseCase:  deleteCourseUseCase,
@@ -105,4 +109,22 @@ func (cs *CourseServer) CreateCourseSection(_ context.Context, req *pb.CreateCou
 	}
 
 	return mappers.CourseEnitiyToGrpc(course), nil
+}
+
+func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.GetCoursesResponse, error) {
+	courses, err := cs.coursesRepo.Get(ports.GetCourseFilters{
+		InstructorId: req.InstructorId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	v := []*pb.Course{}
+	for _, value := range courses {
+		v = append(v, mappers.CourseEnitiyToGrpc(value))
+	}
+
+	response := &pb.GetCoursesResponse{Courses: v}
+
+	return response, nil
 }

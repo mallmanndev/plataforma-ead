@@ -21,7 +21,7 @@ type ProcessVideoInput struct {
 }
 
 type resolutionType struct {
-	resolution         int
+	resolution         string
 	completeResolution string
 	folderName         string
 }
@@ -37,6 +37,7 @@ func NewProcessVideo(
 }
 
 func (p *ProcessVideo) Execute() error {
+
 	videos, err := p.videosRepository.Get(ports.GetFilters{Status: "pending"})
 	if err != nil {
 		log.Println("Error getting videos to process: ", err)
@@ -68,13 +69,12 @@ func (p *ProcessVideo) processVideo(video *entities.Video) *entities.Video {
 
 	resolutionPixels := strings.Split(videoResolution, "x")
 	heightResolution := resolutionPixels[1]
-	intHeihtResolution, err := strconv.Atoi(heightResolution)
+
+	resolutions, err := p.filterResolutions(heightResolution)
 	if err != nil {
-		log.Printf("Error to convert string: %s", err)
+		log.Printf("Error to process videos: %s", err)
 		return video.SetStatus("error")
 	}
-
-	resolutions := p.filterResolutions(intHeihtResolution)
 
 	threads := len(resolutions)
 	var wg sync.WaitGroup
@@ -105,7 +105,7 @@ func (p *ProcessVideo) processResolution(
 ) error {
 	defer wg.Done()
 	log.Printf("[%s-%s] Starting process resolution...", video.Id(), videoResolution.completeResolution)
-	folderPath := fmt.Sprintf("/app/tmp/%s/%s", video.Id(), videoResolution.folderName)
+	folderPath := fmt.Sprintf("/videos/%s/%s", video.Id(), videoResolution.folderName)
 
 	if err := p.filesService.ProcessVideo(video.TmpUrl(), folderPath, videoResolution.completeResolution); err != nil {
 		log.Printf("[%s-%s] Error to process video: %s", video.Id(), videoResolution.completeResolution, err)
@@ -113,27 +113,39 @@ func (p *ProcessVideo) processResolution(
 	}
 
 	resultChannel <- entities.VideoResolution{
-		URL:                folderPath,
-		Resolution:         videoResolution.resolution,
-		CompleteResolution: videoResolution.completeResolution,
+		URL:        folderPath,
+		Resolution: videoResolution.resolution,
 	}
 	log.Printf("[%s-%s] Video processed successfully.", video.Id(), videoResolution.completeResolution)
 	return nil
 }
 
 var resolutions = []resolutionType{
-	{resolution: 1080, completeResolution: "1920:1080", folderName: "1080"},
-	{resolution: 720, completeResolution: "1080:720", folderName: "720"},
-	{resolution: 480, completeResolution: "640:480", folderName: "480"},
+	{resolution: "1080", completeResolution: "1920:1080", folderName: "1080"},
+	{resolution: "720", completeResolution: "1080:720", folderName: "720"},
+	{resolution: "480", completeResolution: "640:480", folderName: "480"},
 }
 
-func (p *ProcessVideo) filterResolutions(fileResolution int) []resolutionType {
+func (p *ProcessVideo) filterResolutions(fileResolution string) ([]resolutionType, error) {
+	fileResolutionInt, _ := strconv.Atoi(fileResolution)
 	filterResolution := []resolutionType{}
+	hasResolution := false
+
 	for _, resolution := range resolutions {
-		if fileResolution < resolution.resolution {
+		resolutionInt, _ := strconv.Atoi(resolution.resolution)
+		if resolutionInt == fileResolutionInt {
+			hasResolution = true
+		}
+
+		if fileResolutionInt < resolutionInt {
 			continue
 		}
 		filterResolution = append(filterResolution, resolution)
 	}
-	return filterResolution
+
+	if !hasResolution {
+		return nil, errs.NewProcessVideoUseCaseError("Invalid file resolution.", nil)
+	}
+
+	return filterResolution, nil
 }

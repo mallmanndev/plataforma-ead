@@ -8,7 +8,7 @@ type CourseItem struct {
 	description string
 	sectionId   string
 	itemType    string
-	video       Video
+	videoId     string
 	createdAt   time.Time
 	updatedAt   time.Time
 }
@@ -19,7 +19,7 @@ func NewCourseItem(
 	Description string,
 	SectionId string,
 	Type string,
-	Video Video,
+	VideoId string,
 ) *CourseItem {
 	return &CourseItem{
 		id:          Id,
@@ -27,7 +27,29 @@ func NewCourseItem(
 		description: Description,
 		sectionId:   SectionId,
 		itemType:    Type,
-		video:       Video,
+		videoId:     VideoId,
+	}
+}
+
+func NewCourseItemComplete(
+	Id string,
+	Title string,
+	Description string,
+	SectionId string,
+	Type string,
+	VideoId string,
+	CreatedAt time.Time,
+	UpdatedAt time.Time,
+) *CourseItem {
+	return &CourseItem{
+		id:          Id,
+		title:       Title,
+		description: Description,
+		sectionId:   SectionId,
+		itemType:    Type,
+		videoId:     VideoId,
+		createdAt:   CreatedAt,
+		updatedAt:   UpdatedAt,
 	}
 }
 
@@ -51,8 +73,8 @@ func (c CourseItem) Type() string {
 	return c.itemType
 }
 
-func (c CourseItem) Video() Video {
-	return c.video
+func (c CourseItem) VideoId() string {
+	return c.videoId
 }
 
 func (c CourseItem) CreatedAt() time.Time {

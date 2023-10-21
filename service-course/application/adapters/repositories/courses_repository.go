@@ -2,9 +2,12 @@ package repositories
 
 import (
 	"context"
+	"log"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories/mappers"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories/models"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -13,7 +16,7 @@ type CoursesRepositories struct {
 	collection *mongo.Collection
 }
 
-func NewCourseRepositories(Db *mongo.Database) *CoursesRepositories {
+func NewCourseRepositories(Db *mongo.Database) ports.CourseRepository {
 	collection := Db.Collection("courses")
 	return &CoursesRepositories{collection}
 }
@@ -60,12 +63,14 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 		sections = append(sections, newSection)
 	}
 
-	update := bson.M{"$set": bson.M{
-		"name":        Course.Name(),
-		"description": Course.Description(),
-		"sections":    sections,
-		"updatedAt":   Course.UpdatedAt(),
-	}}
+	update := bson.M{
+		"$set": bson.M{
+			"name":        Course.Name(),
+			"description": Course.Description(),
+			"sections":    sections,
+			"updatedAt":   Course.UpdatedAt(),
+		},
+	}
 	_, err := cr.collection.UpdateOne(context.Background(), filter, update)
 	return err
 }
@@ -73,4 +78,32 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 func (cr *CoursesRepositories) Delete(Id string) error {
 	_, err := cr.collection.DeleteOne(context.Background(), bson.M{"_id": Id})
 	return err
+}
+
+func (cr *CoursesRepositories) Get(Filters ports.GetCourseFilters) ([]*entities.Course, error) {
+	filter := bson.M{"instructorId": Filters.InstructorId}
+
+	cursor, err := cr.collection.Find(context.Background(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(context.Background())
+
+	var courses []*entities.Course
+
+	for cursor.Next(context.Background()) {
+		courseModel := models.CourseModel{}
+		if err := cursor.Decode(&courseModel); err != nil {
+			log.Fatal(err)
+		}
+
+		courses = append(courses, mappers.CourseModelToEntityMap(courseModel))
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return courses, nil
 }

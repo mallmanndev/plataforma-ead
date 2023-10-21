@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"fmt"
+	"log"
+
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
@@ -34,7 +36,7 @@ func NewVideoUpload(
 
 func (v *VideoUpload) CreateFile(Type string, Size int64) (*VideoUpload, error) {
 	videoId := v.uuidService.Generate()
-	videoUrl := fmt.Sprintf("/app/tmp/videos/%s.%s", videoId, Type)
+	videoUrl := fmt.Sprintf("/videos/tmp/%s.%s", videoId, Type)
 	video, err := entities.NewVideo(v.timer, videoId, videoUrl, Type, Size)
 	if err != nil {
 		return nil, err
@@ -46,6 +48,7 @@ func (v *VideoUpload) CreateFile(Type string, Size int64) (*VideoUpload, error) 
 		Type: Type,
 	})
 	if err != nil {
+		log.Fatal(err)
 		return nil, errs.NewVideoUploadUseCaseError("Could not create video", err)
 	}
 

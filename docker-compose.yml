@@ -67,6 +67,7 @@ services:
       - service-core-backend
     volumes:
       - ./service-course:/app
+      - ./videos:/videos
 
   front:
     container_name: front

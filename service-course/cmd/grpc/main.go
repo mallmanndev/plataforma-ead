@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+	"strconv"
+
 	grpc2 "github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/grpc"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"strconv"
 )
 
 func main() {

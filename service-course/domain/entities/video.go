@@ -2,6 +2,7 @@ package entities
 
 import (
 	"sort"
+	"strconv"
 	"time"
 
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
@@ -9,9 +10,8 @@ import (
 )
 
 type VideoResolution struct {
-	Resolution         int
-	CompleteResolution string
-	URL                string
+	Resolution string
+	URL        string
 }
 
 type Video struct {
@@ -86,8 +86,12 @@ func (v *Video) SetStatus(Status string) *Video {
 
 func (v *Video) AddResolution(Resolution VideoResolution) {
 	res := append(v.resolutions, Resolution)
+
 	sort.Slice(res, func(i int, j int) bool {
-		return res[i].Resolution < res[j].Resolution
+		iRes, _ := strconv.Atoi(res[i].Resolution)
+		jRes, _ := strconv.Atoi(res[j].Resolution)
+
+		return iRes < jRes
 	})
 	v.resolutions = res
 }

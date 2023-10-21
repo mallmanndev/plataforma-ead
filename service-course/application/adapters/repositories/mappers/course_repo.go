@@ -27,6 +27,21 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 				UpdatedAt:   section.UpdatedAt,
 			},
 		)
+
+		for _, item := range section.Itens {
+			itemEntity := entities.NewCourseItemComplete(
+				item.Id,
+				item.Name,
+				item.Description,
+				section.Id,
+				item.Type,
+				item.VideoId,
+				item.CreatedAt,
+				item.UpdatedAt,
+			)
+			sectionEnity.AddItem(itemEntity)
+		}
+
 		course.AddSection(sectionEnity)
 	}
 

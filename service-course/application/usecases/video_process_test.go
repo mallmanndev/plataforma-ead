@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var videosFolder = "/videos"
+
 func TestProcessVideo(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -112,9 +114,9 @@ func TestProcessVideo(t *testing.T) {
 		videosRepository.EXPECT().Update(video).Return(nil)
 
 		filesService.EXPECT().GetResolution("/tmp/123.mp4").Return("1920x1080", nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/480", "640:480").Return(errors.New("test"))
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/1080", "1920:1080").Return(errors.New("test"))
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/720", "1080:720").Return(errors.New("test"))
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/480", "640:480").Return(errors.New("test"))
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/1080", "1920:1080").Return(errors.New("test"))
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/720", "1080:720").Return(errors.New("test"))
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -139,9 +141,9 @@ func TestProcessVideo(t *testing.T) {
 		videosRepository.EXPECT().Update(video).Return(nil)
 
 		filesService.EXPECT().GetResolution("/tmp/123.mp4").Return("1920x1080", nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/480", "640:480").Return(nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/1080", "1920:1080").Return(errors.New("test"))
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/720", "1080:720").Return(nil)
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/480", "640:480").Return(nil)
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/1080", "1920:1080").Return(errors.New("test"))
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/720", "1080:720").Return(nil)
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -154,12 +156,12 @@ func TestProcessVideo(t *testing.T) {
 
 		if assert.Equal(t, len(video.GetResolutions()), 2) {
 			resolution1 := video.GetResolutions()[0]
-			assert.Equal(t, "/app/tmp/123/480", resolution1.URL)
-			assert.Equal(t, 480, resolution1.Resolution)
+			assert.Equal(t, videosFolder+"/123/480", resolution1.URL)
+			assert.Equal(t, "480", resolution1.Resolution)
 
 			resolution3 := video.GetResolutions()[1]
-			assert.Equal(t, "/app/tmp/123/720", resolution3.URL)
-			assert.Equal(t, 720, resolution3.Resolution)
+			assert.Equal(t, videosFolder+"/123/720", resolution3.URL)
+			assert.Equal(t, "720", resolution3.Resolution)
 		}
 	})
 
@@ -176,9 +178,9 @@ func TestProcessVideo(t *testing.T) {
 		videosRepository.EXPECT().Update(video).Return(nil)
 
 		filesService.EXPECT().GetResolution("/tmp/123.mp4").Return("1920x1080", nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/480", "640:480").Return(nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/1080", "1920:1080").Return(nil)
-		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", "/app/tmp/123/720", "1080:720").Return(nil)
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/480", "640:480").Return(nil)
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/1080", "1920:1080").Return(nil)
+		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/720", "1080:720").Return(nil)
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -191,16 +193,16 @@ func TestProcessVideo(t *testing.T) {
 
 		if assert.Equal(t, len(video.GetResolutions()), 3) {
 			resolution1 := video.GetResolutions()[0]
-			assert.Equal(t, "/app/tmp/123/480", resolution1.URL)
-			assert.Equal(t, 480, resolution1.Resolution)
+			assert.Equal(t, videosFolder+"/123/480", resolution1.URL)
+			assert.Equal(t, "480", resolution1.Resolution)
 
 			resolution3 := video.GetResolutions()[1]
-			assert.Equal(t, "/app/tmp/123/720", resolution3.URL)
-			assert.Equal(t, 720, resolution3.Resolution)
+			assert.Equal(t, videosFolder+"/123/720", resolution3.URL)
+			assert.Equal(t, "720", resolution3.Resolution)
 
 			resolution2 := video.GetResolutions()[2]
-			assert.Equal(t, "/app/tmp/123/1080", resolution2.URL)
-			assert.Equal(t, 1080, resolution2.Resolution)
+			assert.Equal(t, videosFolder+"/123/1080", resolution2.URL)
+			assert.Equal(t, "1080", resolution2.Resolution)
 		}
 	})
 }

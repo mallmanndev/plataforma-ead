@@ -3,13 +3,15 @@ package setups
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func CourseServerSetup(t *testing.T) (
@@ -17,7 +19,7 @@ func CourseServerSetup(t *testing.T) (
 	pb.CoursesServiceClient,
 	func(),
 	*entities.Course,
-	*repositories.CoursesRepositories,
+	ports.CourseRepository,
 ) {
 	db, disconnect := utils.GetDb("test")
 	coursesRepo := repositories.NewCourseRepositories(db)

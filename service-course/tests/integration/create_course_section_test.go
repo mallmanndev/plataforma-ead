@@ -3,22 +3,24 @@ package integration_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func setupCreateSection(t *testing.T) (
 	context.Context,
 	pb.CoursesServiceClient, func(),
 	*entities.Course,
-	*repositories.CoursesRepositories,
+	ports.CourseRepository,
 ) {
 	db, disconnect := utils.GetDb("test")
 	coursesRepo := repositories.NewCourseRepositories(db)

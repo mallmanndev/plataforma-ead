@@ -26,6 +26,7 @@ type CoursesServiceClient interface {
 	Update(ctx context.Context, in *UpdateCourseRequest, opts ...grpc.CallOption) (*Course, error)
 	Delete(ctx context.Context, in *DeleteCourseRequest, opts ...grpc.CallOption) (*DeleteCourseResponse, error)
 	CreateCourseSection(ctx context.Context, in *CreateCourseSectionRequest, opts ...grpc.CallOption) (*Course, error)
+	Get(ctx context.Context, in *GetCoursesRequest, opts ...grpc.CallOption) (*GetCoursesResponse, error)
 }
 
 type coursesServiceClient struct {
@@ -72,6 +73,15 @@ func (c *coursesServiceClient) CreateCourseSection(ctx context.Context, in *Crea
 	return out, nil
 }
 
+func (c *coursesServiceClient) Get(ctx context.Context, in *GetCoursesRequest, opts ...grpc.CallOption) (*GetCoursesResponse, error) {
+	out := new(GetCoursesResponse)
+	err := c.cc.Invoke(ctx, "/CoursesService/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoursesServiceServer is the server API for CoursesService service.
 // All implementations must embed UnimplementedCoursesServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type CoursesServiceServer interface {
 	Update(context.Context, *UpdateCourseRequest) (*Course, error)
 	Delete(context.Context, *DeleteCourseRequest) (*DeleteCourseResponse, error)
 	CreateCourseSection(context.Context, *CreateCourseSectionRequest) (*Course, error)
+	Get(context.Context, *GetCoursesRequest) (*GetCoursesResponse, error)
 	mustEmbedUnimplementedCoursesServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedCoursesServiceServer) Delete(context.Context, *DeleteCourseRe
 }
 func (UnimplementedCoursesServiceServer) CreateCourseSection(context.Context, *CreateCourseSectionRequest) (*Course, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCourseSection not implemented")
+}
+func (UnimplementedCoursesServiceServer) Get(context.Context, *GetCoursesRequest) (*GetCoursesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedCoursesServiceServer) mustEmbedUnimplementedCoursesServiceServer() {}
 
@@ -184,6 +198,24 @@ func _CoursesService_CreateCourseSection_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoursesService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCoursesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoursesServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CoursesService/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoursesServiceServer).Get(ctx, req.(*GetCoursesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoursesService_ServiceDesc is the grpc.ServiceDesc for CoursesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var CoursesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCourseSection",
 			Handler:    _CoursesService_CreateCourseSection_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _CoursesService_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
