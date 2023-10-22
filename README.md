@@ -23,7 +23,7 @@
 A plataforma de ensino a distância (EAD) é um projeto em desenvolvimento que utiliza a arquitetura de microsserviços em GO e o framework Next.js 13. O objetivo é fornecer uma solução eficiente para o ensino à distância, permitindo a criação, gerenciamento e entrega de cursos online de alta qualidade.
 
 > [!WARNING]  
-> Este projeto está em desenvolvimento e está sub a licença [MIT](LICENSE).
+> Este projeto está em desenvolvimento e está licenciado sob a licença [APACHE 2.0](LICENSE).
 
 ## 🚀 FERRAMENTAS
 
