@@ -1,11 +1,11 @@
 package entities
 
 import (
-	"sort"
 	"strconv"
 	"time"
 
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
+	"github.com/matheusvmallmann/plataforma-ead/service-course/application/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
 )
 
@@ -87,13 +87,13 @@ func (v *Video) SetStatus(Status string) *Video {
 func (v *Video) AddResolution(Resolution VideoResolution) {
 	res := append(v.resolutions, Resolution)
 
-	sort.Slice(res, func(i int, j int) bool {
+	orderedResolutions := utils.SortSlice[VideoResolution](res, func(i int, j int) bool {
 		iRes, _ := strconv.Atoi(res[i].Resolution)
 		jRes, _ := strconv.Atoi(res[j].Resolution)
-
 		return iRes < jRes
 	})
-	v.resolutions = res
+
+	v.resolutions = orderedResolutions
 }
 
 func (v *Video) Id() string {

@@ -2,13 +2,14 @@ package integration
 
 import (
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"os"
-	"testing"
 )
 
 func TestVideoUpload(t *testing.T) {
@@ -172,7 +173,7 @@ func TestVideoUpload(t *testing.T) {
 		if assert.NotNil(t, res) {
 			assert.NotEmpty(t, res.Id)
 
-			_, err = os.Stat(fmt.Sprintf("/app/tmp/videos/%s.%s", res.Id, "mp4"))
+			_, err = os.Stat(fmt.Sprintf("/videos/tmp/%s.%s", res.Id, "mp4"))
 			if err != nil {
 				t.Fatalf("O arquivo não foi criado: %v", err)
 			}

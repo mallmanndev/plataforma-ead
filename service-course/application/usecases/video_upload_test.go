@@ -53,6 +53,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 		_, err := useCase.CreateFile("mp4", 10000)
 
 		// THEN
+		t.Log(err)
 		assert.ErrorContains(t, err, "[Video Upload] Could not create video: Test!")
 	})
 

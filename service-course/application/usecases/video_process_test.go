@@ -2,6 +2,7 @@ package usecases_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -136,6 +137,7 @@ func TestProcessVideo(t *testing.T) {
 
 		videosRepository := mocks.NewMockVideosRepository(mockCtrl)
 		filesService := mocks.NewMockFilesService(mockCtrl)
+		filesServiceWithFile := mocks.NewMockFilesService(mockCtrl)
 
 		videosRepository.EXPECT().Get(ports.GetFilters{Status: "pending"}).Return(videos, nil)
 		videosRepository.EXPECT().Update(video).Return(nil)
@@ -144,6 +146,14 @@ func TestProcessVideo(t *testing.T) {
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/480", "640:480").Return(nil)
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/1080", "1920:1080").Return(errors.New("test"))
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/720", "1080:720").Return(nil)
+
+		filesService.EXPECT().CreateFile(ports.FileInfo{Url: "/videos/123/playlist.m3u8", Type: "m3u8", Size: 0}).Return(filesServiceWithFile, nil)
+
+		expectedQualityFile := "#EXTM3U\n#EXT-X-VERSION:3\n"
+		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 1400000, "640x480", "480")
+		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 2800000, "1080x720", "720")
+		filesServiceWithFile.EXPECT().WriteString(expectedQualityFile).Return(nil)
+		filesServiceWithFile.EXPECT().Close()
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -173,6 +183,7 @@ func TestProcessVideo(t *testing.T) {
 
 		videosRepository := mocks.NewMockVideosRepository(mockCtrl)
 		filesService := mocks.NewMockFilesService(mockCtrl)
+		filesServiceWithFile := mocks.NewMockFilesService(mockCtrl)
 
 		videosRepository.EXPECT().Get(ports.GetFilters{Status: "pending"}).Return(videos, nil)
 		videosRepository.EXPECT().Update(video).Return(nil)
@@ -181,6 +192,15 @@ func TestProcessVideo(t *testing.T) {
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/480", "640:480").Return(nil)
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/1080", "1920:1080").Return(nil)
 		filesService.EXPECT().ProcessVideo("/tmp/123.mp4", videosFolder+"/123/720", "1080:720").Return(nil)
+
+		filesService.EXPECT().CreateFile(ports.FileInfo{Url: "/videos/123/playlist.m3u8", Type: "m3u8", Size: 0}).Return(filesServiceWithFile, nil)
+
+		expectedQualityFile := "#EXTM3U\n#EXT-X-VERSION:3\n"
+		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 1400000, "640x480", "480")
+		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 2800000, "1080x720", "720")
+		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 5000000, "1920x1080", "1080")
+		filesServiceWithFile.EXPECT().WriteString(expectedQualityFile).Return(nil)
+		filesServiceWithFile.EXPECT().Close()
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -205,4 +225,5 @@ func TestProcessVideo(t *testing.T) {
 			assert.Equal(t, "1080", resolution2.Resolution)
 		}
 	})
+
 }

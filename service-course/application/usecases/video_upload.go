@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"fmt"
-	"log"
 
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/apptimer"
@@ -48,7 +47,6 @@ func (v *VideoUpload) CreateFile(Type string, Size int64) (*VideoUpload, error) 
 		Type: Type,
 	})
 	if err != nil {
-		log.Fatal(err)
 		return nil, errs.NewVideoUploadUseCaseError("Could not create video", err)
 	}
 

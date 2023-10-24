@@ -15,6 +15,7 @@ type GetResolutionOutput struct {
 type FilesService interface {
 	CreateFile(File FileInfo) (FilesService, error)
 	SendChunk(chunk []byte) error
+	WriteString(content string) error
 	Close() error
 	Remove() error
 	GetResolution(Url string) (string, error)

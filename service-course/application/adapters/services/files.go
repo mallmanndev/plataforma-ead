@@ -39,6 +39,13 @@ func (r *FilesService) SendChunk(chunk []byte) error {
 	return err
 }
 
+func (r *FilesService) WriteString(content string) error {
+	if _, err := r.file.WriteString(content); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *FilesService) Close() error {
 	return r.file.Close()
 }
@@ -49,8 +56,13 @@ func (r *FilesService) Remove() error {
 
 func (r *FilesService) GetResolution(Url string) (string, error) {
 	cmd := exec.Command(
-		"ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
-		"stream=width,height", "-of", "csv=s=x:p=0", Url,
+		"ffprobe",
+		"-v", "error",
+		"-select_streams", "v:0",
+		"-show_entries",
+		"stream=width,height",
+		"-of", "csv=s=x:p=0",
+		Url,
 	)
 	output, err := cmd.Output()
 	if err != nil {
