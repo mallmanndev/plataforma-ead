@@ -5,8 +5,9 @@ option go_package = "./pb";
 service CoursesService {
   rpc Create(CreateCourseRequest) returns (Course) {};
   rpc Update(UpdateCourseRequest) returns (Course) {};
-  rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {}
-  rpc CreateCourseSection(CreateCourseSectionRequest) returns (Course) {}
+  rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {};
+  rpc CreateCourseSection(CreateCourseSectionRequest) returns (Course) {};
+  rpc Get(GetCoursesRequest) returns (GetCoursesResponse) {};
 }
 
 message People {
@@ -16,12 +17,22 @@ message People {
   string photoUrl = 4;
 }
 
+message CourseItem {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string videoId = 6;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
 message CourseSection {
   string id = 1;
   string name = 2;
   string description = 3;
   string createdAt = 4;
   string updatedAt = 5;
+  repeated CourseItem itens = 6;
 }
 
 message Course {
@@ -65,4 +76,14 @@ message CreateCourseSectionRequest {
   string user_id = 2;
   string name = 3;
   string description = 4;
+}
+
+message GetCoursesRequest {
+  string id = 1;
+  string instructor_id = 2;
+  bool visible = 3;
+}
+
+message GetCoursesResponse {
+  repeated Course courses = 1;
 }

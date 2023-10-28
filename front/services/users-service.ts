@@ -1,61 +1,54 @@
-import {UsersService} from "@/configs/grpc-client";
-import * as grpc from '@grpc/grpc-js'
+import { usersService } from "@/configs/grpc-client";
+import { TResponse } from "./response";
 
 type TCreateData = {
-    name: string
-    email: string
-    phone: string
-    password: string
-}
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
 
 type TCreateResponse = {
-    id: string
-    name: string
-    email: string
-    phone: string
-    password: string
-}
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
 
 type TLoginData = {
-    email: string
-    password: string
-}
-
-type TResponse<T> = {
-    error?: { code: number, message: string },
-    response?: T
-}
+  email: string;
+  password: string;
+};
 
 class UsersServiceGrpc {
-    // @ts-ignore
-    private service: UsersService
+  private service: any;
 
-    constructor() {
-        this.service = new UsersService("service-core:3000", grpc.credentials.createInsecure());
-    }
+  constructor() {
+    this.service = usersService;
+  }
 
-    public async Create(data: TCreateData): Promise<TResponse<TCreateResponse>> {
-        return new Promise((resolve, _) => {
-            this.service.Create(data, (err: any, response: TCreateResponse) => {
-                if (err) {
-                    return resolve({error: {code: err.code, message: err.details}})
-                }
-                return resolve({response: response})
-            })
-        })
-    }
+  public async Create(data: TCreateData): Promise<TResponse<TCreateResponse>> {
+    return new Promise((resolve, _) => {
+      this.service.Create(data, (err: any, response: TCreateResponse) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
 
-    public async Login(data: TLoginData): Promise<TResponse<TCreateResponse>> {
-        return new Promise((resolve, _) => {
-            this.service.Login(data, (err: any, response: TCreateResponse) => {
-                if (err) {
-                    return resolve({error: {code: err.code, message: err.details}})
-                }
-                return resolve({response: response})
-            })
-        })
-
-    }
+  public async Login(data: TLoginData): Promise<TResponse<TCreateResponse>> {
+    return new Promise((resolve, _) => {
+      this.service.Login(data, (err: any, response: TCreateResponse) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
 }
 
-export default UsersServiceGrpc
+export default UsersServiceGrpc;

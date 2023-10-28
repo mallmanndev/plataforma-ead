@@ -31,4 +31,4 @@ export const FilesUploadService = (
 export const filesGrpcClient = new FilesUploadService(HOST_SERVICE_COURSE, grpc.credentials.createInsecure());
 
 const CoursesService = (grpc.loadPackageDefinition(coursesPackageDefinition) as unknown as any).CoursesService
-export const coursesGrpcClient = new CoursesService(HOST_SERVICE_COURSE, grpc.credentials.createInsecure())
+export const coursesClient = new CoursesService(HOST_SERVICE_COURSE, grpc.credentials.createInsecure())

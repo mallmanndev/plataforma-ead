@@ -10,7 +10,8 @@ message VideoUploadRequest {
 }
 
 service FileUploadService {
-  rpc VideoUpload(stream VideoUploadRequest) returns (VideoUploadResponse) {}
+  rpc VideoUpload(stream VideoUploadRequest) returns (VideoUploadResponse) {};
+  rpc GetVideo(GetVideoRequest) returns (GetVideoResponse) {};
 }
 
 message VideoInfo {
@@ -20,4 +21,25 @@ message VideoInfo {
 
 message VideoUploadResponse {
   string id = 1;
+}
+
+message VideoResolution {
+  string resolution = 1;
+	string complete_resolution = 2;
+	string url = 3;
+}
+
+message GetVideoRequest {
+  string id = 1;
+}
+
+message GetVideoResponse {
+  string id = 1;
+  string type = 2;
+  string status = 3;
+  int64 size = 4;
+  repeated VideoResolution resolutions = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  string url = 8;
 }
