@@ -41,4 +41,5 @@ message GetVideoResponse {
   repeated VideoResolution resolutions = 5;
   string createdAt = 6;
   string updatedAt = 7;
+  string url = 8;
 }

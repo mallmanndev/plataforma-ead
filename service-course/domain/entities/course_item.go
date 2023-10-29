@@ -1,6 +1,10 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type CourseItem struct {
 	id          string
@@ -14,7 +18,6 @@ type CourseItem struct {
 }
 
 func NewCourseItem(
-	Id string,
 	Title string,
 	Description string,
 	SectionId string,
@@ -22,12 +25,13 @@ func NewCourseItem(
 	VideoId string,
 ) *CourseItem {
 	return &CourseItem{
-		id:          Id,
+		id:          uuid.NewString(),
 		title:       Title,
 		description: Description,
 		sectionId:   SectionId,
 		itemType:    Type,
 		videoId:     VideoId,
+		createdAt:   time.Now(),
 	}
 }
 

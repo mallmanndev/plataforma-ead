@@ -54,6 +54,10 @@ func (r *FilesService) Remove() error {
 	return os.Remove(r.url)
 }
 
+func (r *FilesService) Delete(Url string) error {
+	return os.Remove(Url)
+}
+
 func (r *FilesService) GetResolution(Url string) (string, error) {
 	cmd := exec.Command(
 		"ffprobe",
@@ -70,7 +74,6 @@ func (r *FilesService) GetResolution(Url string) (string, error) {
 	}
 
 	resolution := strings.TrimSuffix(string(output), "\n")
-
 	return resolution, nil
 }
 

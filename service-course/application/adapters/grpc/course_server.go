@@ -21,6 +21,8 @@ type CourseServer struct {
 	updateCourseUseCase  *usecases.UpdateCourseUseCase
 	deleteCourseUseCase  *usecases.DeleteCourseUseCase
 	createSectionUseCase *usecases.CreateSectionUseCase
+	updateSectionUseCase *usecases.UpdateSectionUseCase
+	deleteSectionUseCase *usecases.DeleteSectionUseCase
 }
 
 func NewCourseServer(db *mongo.Database) *CourseServer {
@@ -30,12 +32,16 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 	updateCourseUseCase := usecases.NewUpdateCourseUseCase(peopleRepository, coursesRepo)
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
+	updateSectionUseCase := usecases.NewUpdateSectionUseCase(coursesRepo)
+	deleteSectionUseCase := usecases.NewDeleteSectionUseCase(coursesRepo)
 	return &CourseServer{
 		coursesRepo:          coursesRepo,
 		createCourseUseCase:  createCourseUseCase,
 		updateCourseUseCase:  updateCourseUseCase,
 		deleteCourseUseCase:  deleteCourseUseCase,
 		createSectionUseCase: createSectionUseCase,
+		updateSectionUseCase: updateSectionUseCase,
+		deleteSectionUseCase: deleteSectionUseCase,
 	}
 }
 
@@ -97,7 +103,7 @@ func (cs *CourseServer) Delete(_ context.Context, req *pb.DeleteCourseRequest) (
 	return res, nil
 }
 
-func (cs *CourseServer) CreateCourseSection(_ context.Context, req *pb.CreateCourseSectionRequest) (*pb.Course, error) {
+func (cs *CourseServer) CreateSection(_ context.Context, req *pb.CreateCourseSectionRequest) (*pb.Course, error) {
 	course, err := cs.createSectionUseCase.Execute(usecases.CreateSectionDTO{
 		CourseId:    req.CourseId,
 		UserId:      req.UserId,
@@ -111,9 +117,40 @@ func (cs *CourseServer) CreateCourseSection(_ context.Context, req *pb.CreateCou
 	return mappers.CourseEnitiyToGrpc(course), nil
 }
 
+func (cs *CourseServer) UpdateSection(_ context.Context, req *pb.UpdateCourseSectionRequest) (*pb.Course, error) {
+	course, err := cs.updateSectionUseCase.Execute(usecases.UpdateSectionDTO{
+		UserId:      req.UserId,
+		SectionId:   req.Id,
+		Name:        req.Name,
+		Description: req.Description,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return mappers.CourseEnitiyToGrpc(course), nil
+}
+
+func (cs *CourseServer) DeleteSection(_ context.Context, req *pb.DeleteCourseSectionRequest) (*pb.DeleteCourseResponse, error) {
+	err := cs.deleteSectionUseCase.Execute(usecases.DeleteSectionDTO{
+		UserId:    req.UserId,
+		SectionId: req.Id,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	res := &pb.DeleteCourseResponse{
+		Message: "Section deleted successfully.",
+	}
+	return res, nil
+}
+
 func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.GetCoursesResponse, error) {
 	courses, err := cs.coursesRepo.Get(ports.GetCourseFilters{
+		Id:           req.Id,
 		InstructorId: req.InstructorId,
+		Visible:      req.Visible,
 	})
 	if err != nil {
 		return nil, err

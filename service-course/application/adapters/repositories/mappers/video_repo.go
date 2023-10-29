@@ -15,8 +15,10 @@ func VideoModelToVideoEntity(Model models.VideoModel) *entities.Video {
 		Model.Status,
 		Model.Duration,
 		Model.Size,
+		Model.UserId,
 		Model.CreatedAt,
 		Model.UpdatedAt,
+		Model.Url,
 	)
 
 	for _, res := range Model.Resolutions {

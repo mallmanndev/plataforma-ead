@@ -35,6 +35,34 @@ func (cr *CoursesRepositories) FindById(Id string) (*entities.Course, error) {
 	return mappers.CourseModelToEntityMap(courseModel), nil
 }
 
+func (cr *CoursesRepositories) FindBySectionId(Id string) (*entities.Course, error) {
+	courseModel := models.CourseModel{}
+
+	err := cr.collection.FindOne(context.Background(), bson.M{"sections._id": Id}).Decode(&courseModel)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return mappers.CourseModelToEntityMap(courseModel), nil
+}
+
+func (cr *CoursesRepositories) FindByItemId(Id string) (*entities.Course, error) {
+	courseModel := models.CourseModel{}
+
+	err := cr.collection.FindOne(context.Background(), bson.M{"sections.itens._id": Id}).Decode(&courseModel)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return mappers.CourseModelToEntityMap(courseModel), nil
+}
+
 func (cr *CoursesRepositories) Create(Course *entities.Course) error {
 	_, err := cr.collection.InsertOne(context.Background(), models.CourseModel{
 		Id:           Course.Id(),
@@ -81,7 +109,16 @@ func (cr *CoursesRepositories) Delete(Id string) error {
 }
 
 func (cr *CoursesRepositories) Get(Filters ports.GetCourseFilters) ([]*entities.Course, error) {
-	filter := bson.M{"instructorId": Filters.InstructorId}
+	filter := bson.M{}
+	if Filters.InstructorId != "" {
+		filter["instructorId"] = Filters.InstructorId
+	}
+	if Filters.Id != "" {
+		filter["_id"] = Filters.Id
+	}
+	if Filters.Visible {
+		filter["visible"] = true
+	}
 
 	cursor, err := cr.collection.Find(context.Background(), filter)
 	if err != nil {

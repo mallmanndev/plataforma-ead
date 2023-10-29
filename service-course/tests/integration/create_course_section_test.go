@@ -2,54 +2,38 @@ package integration_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
+	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures/courses"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
 	"google.golang.org/grpc/status"
 )
 
-func setupCreateSection(t *testing.T) (
-	context.Context,
-	pb.CoursesServiceClient, func(),
-	*entities.Course,
-	ports.CourseRepository,
-) {
-	db, disconnect := utils.GetDb("test")
-	coursesRepo := repositories.NewCourseRepositories(db)
-	ctx, client, closer := testutils.CoursesServer(db)
-	closeAll := func() {
-		disconnect()
-		closer()
-	}
-
-	instructorId := "cc01cb11-7f45-4563-a6ea-bd159b6e705a"
-	course, _ := entities.NewCourse(
-		"Go lang course",
-		"This is a go lang course",
-		nil,
-		instructorId,
-	)
-
-	err1 := db.Collection("people").Drop(context.Background())
-	err2 := db.Collection("courses").Drop(context.Background())
-	err3 := coursesRepo.Create(course)
-	if err := errors.Join(err1, err2, err3); err != nil {
-		assert.FailNow(t, "Error to setup test")
-	}
-	return ctx, client, closeAll, course, coursesRepo
-}
-
 func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
-	ctx, client, closeAll, course, _ := setupCreateSection(t)
-	defer closeAll()
+	db, closeDB := testutils.DatabaseConnection()
+	ctx, client, closer := testutils.CoursesServer(db)
+	coursesRepo := repositories.NewCourseRepositories(db)
+
+	defer func() {
+		closeDB()
+		closer()
+	}()
+
+	var setup = func(t *testing.T) {
+		_, err := db.Collection("courses").InsertOne(context.TODO(), fixtures.CursoCompleto)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	var teardown = func(t *testing.T) {
+		db.Collection("courses").DeleteOne(context.Background(), bson.M{"_id": "3d515009-56eb-4ed0-aea5-182bd783085e"})
+	}
 
 	type ExpectedErrors struct {
 		status  string
@@ -73,7 +57,7 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 		},
 		"when_permission_is_denied": {
 			request: &pb.CreateCourseSectionRequest{
-				CourseId:    course.Id(),
+				CourseId:    "3d515009-56eb-4ed0-aea5-182bd783085e",
 				UserId:      uuid.NewString(),
 				Name:        "Go lang course",
 				Description: "This is a go lang course",
@@ -87,38 +71,41 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 
 	for name, test := range scenarios {
 		t.Run(name, func(t *testing.T) {
-			_, err := client.CreateCourseSection(ctx, test.request)
+			setup(t)
+			defer teardown(t)
+
+			_, err := client.CreateSection(ctx, test.request)
 			s, _ := status.FromError(err)
 			assert.Equal(t, test.expect.status, s.Code().String())
 			assert.Equal(t, test.expect.message, s.Message())
 		})
 	}
-}
 
-func TestCreateCourseSuccessfully(t *testing.T) {
-	ctx, client, closeAll, course, repo := setupCreateSection(t)
-	defer closeAll()
+	t.Run("should_register_section_successfully", func(t *testing.T) {
+		setup(t)
+		defer teardown(t)
 
-	request := &pb.CreateCourseSectionRequest{
-		CourseId:    course.Id(),
-		UserId:      course.InstructorID(),
-		Name:        "Go lang course",
-		Description: "This is a go lang course",
-	}
+		request := &pb.CreateCourseSectionRequest{
+			CourseId:    "3d515009-56eb-4ed0-aea5-182bd783085e",
+			UserId:      "9111bffd-73d9-49d8-b32c-48353674dc06",
+			Name:        "Go lang course",
+			Description: "This is a go lang course",
+		}
 
-	created, err := client.CreateCourseSection(ctx, request)
-	assert.Nil(t, err)
-	if assert.NotNil(t, created) {
-		assert.Len(t, created.Sections, 1)
-		assert.Equal(t, created.Sections[0].Name, "Go lang course")
-		assert.Equal(t, created.Sections[0].Description, "This is a go lang course")
-	}
+		created, err := client.CreateSection(ctx, request)
+		assert.Nil(t, err)
+		if assert.NotNil(t, created) {
+			assert.Len(t, created.Sections, 3)
+			assert.Equal(t, created.Sections[2].Name, "Go lang course")
+			assert.Equal(t, created.Sections[2].Description, "This is a go lang course")
+		}
 
-	dbCourse, _ := repo.FindById(course.Id())
-	if assert.NotNil(t, dbCourse) {
-		section := dbCourse.Sections()[0]
-		assert.Len(t, dbCourse.Sections(), 1)
-		assert.Equal(t, section.Name(), "Go lang course")
-		assert.Equal(t, section.Description(), "This is a go lang course")
-	}
+		dbCourse, _ := coursesRepo.FindById("3d515009-56eb-4ed0-aea5-182bd783085e")
+		if assert.NotNil(t, dbCourse) {
+			section := dbCourse.Sections()[2]
+			assert.Len(t, dbCourse.Sections(), 3)
+			assert.Equal(t, section.Name(), "Go lang course")
+			assert.Equal(t, section.Description(), "This is a go lang course")
+		}
+	})
 }

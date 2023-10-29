@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"log"
+
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
@@ -18,14 +20,13 @@ func NewUpdateSectionUseCase(
 
 type UpdateSectionDTO struct {
 	UserId      string
-	CourseId    string
 	SectionId   string
 	Name        string
 	Description string
 }
 
 func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course, error) {
-	course, _ := cs.coursesRepository.FindById(Data.CourseId)
+	course, _ := cs.coursesRepository.FindBySectionId(Data.SectionId)
 	if course == nil {
 		return nil, errs.NewUpdateSectionUseCaseError("Course not found", nil)
 	}
@@ -34,9 +35,6 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 	}
 
 	section := course.FindSection(Data.SectionId)
-	if section == nil {
-		return nil, errs.NewNotFoundError("Section")
-	}
 
 	if err := section.Update(Data.Name, Data.Description); err != nil {
 		return nil, err
@@ -46,5 +44,6 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 		return nil, errs.NewUpdateSectionUseCaseError("Could not update section", err)
 	}
 
+	log.Println(course)
 	return course, nil
 }

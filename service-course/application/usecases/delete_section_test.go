@@ -2,12 +2,13 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
-	"testing"
 )
 
 func TestDeleteSectionUseCase(t *testing.T) {
@@ -15,7 +16,6 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	defer mockCtrl.Finish()
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 	useCase := usecases.NewDeleteSectionUseCase(mockCourseRepository)
-	courseId := uuid.NewString()
 	userId := uuid.NewString()
 	sectionId := uuid.NewString()
 	course, _ := entities.NewCourse(
@@ -26,9 +26,8 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	)
 
 	t.Run("Should return error when course is not found", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(nil, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(sectionId).Return(nil, nil)
 		data := usecases.DeleteSectionDTO{
-			CourseId:  courseId,
 			SectionId: sectionId,
 			UserId:    userId,
 		}
@@ -43,9 +42,8 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return error when instructor id is different of user id", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(sectionId).Return(course, nil)
 		data := usecases.DeleteSectionDTO{
-			CourseId:  courseId,
 			SectionId: sectionId,
 			UserId:    uuid.NewString(),
 		}
@@ -59,31 +57,13 @@ func TestDeleteSectionUseCase(t *testing.T) {
 		}
 	})
 
-	t.Run("Should return error when section is not found", func(t *testing.T) {
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
-		data := usecases.DeleteSectionDTO{
-			CourseId:  courseId,
-			SectionId: sectionId,
-			UserId:    userId,
-		}
-		err := useCase.Execute(data)
-		if err == nil {
-			t.Errorf("Error must not be nil!")
-		}
-		expectedError := "Section not found."
-		if err.Error() != expectedError {
-			t.Errorf("Expected: %s, Received: %s", expectedError, err.Error())
-		}
-	})
-
 	t.Run("Should return error when delete section return error", func(t *testing.T) {
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test"))
 		data := usecases.DeleteSectionDTO{
-			CourseId:  courseId,
 			SectionId: section.Id(),
 			UserId:    userId,
 		}
@@ -101,10 +81,9 @@ func TestDeleteSectionUseCase(t *testing.T) {
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(nil)
 		data := usecases.DeleteSectionDTO{
-			CourseId:  courseId,
 			SectionId: section.Id(),
 			UserId:    userId,
 		}

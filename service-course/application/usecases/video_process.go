@@ -109,32 +109,28 @@ func (p *ProcessVideo) processVideo(video *entities.Video) *entities.Video {
 		successResolutions = append(successResolutions, resolution.resolution)
 	}
 
-	log.Println(resolutionsURL)
-	log.Println(successResolutions)
-
 	if len(resolutionsURL) < 1 {
 		return video.SetStatus("error")
 	}
 
-	if err := p.createQualityFile(video, successResolutions); err != nil {
+	url, err := p.createQualityFile(video, successResolutions)
+
+	if err != nil {
 		log.Printf("Error to create quality file: %s", err)
 		return video.SetStatus("error")
 	}
 
 	for index, res := range successResolutions {
-		log.Println(res)
-		log.Println(index, resolutionsURL[index])
 		resolution := entities.VideoResolution{
 			URL:        resolutionsURL[index],
 			Resolution: res.resolution,
 		}
-
-		log.Println(resolution)
-
 		video.AddResolution(resolution)
 	}
 
-	return video.SetStatus("success")
+	p.filesService.Delete(video.TmpUrl())
+
+	return video.SetUrl(url).SetStatus("success")
 }
 
 func (p *ProcessVideo) processResolution(
@@ -185,7 +181,7 @@ func (p *ProcessVideo) filterResolutions(fileResolution string) ([]resolutionTyp
 	return filterResolution, nil
 }
 
-func (p *ProcessVideo) createQualityFile(video *entities.Video, resolutions []resolutionType) error {
+func (p *ProcessVideo) createQualityFile(video *entities.Video, resolutions []resolutionType) (string, error) {
 	sorteredResolutions := utils.SortSlice[resolutionType](resolutions, func(i, j int) bool {
 		return resolutions[i].height < resolutions[j].height
 	})
@@ -205,14 +201,14 @@ func (p *ProcessVideo) createQualityFile(video *entities.Video, resolutions []re
 		Type: "m3u8",
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if err := file.WriteString(fileText); err != nil {
-		return err
+		return "", err
 	}
 
 	file.Close()
 
-	return nil
+	return videoUrl, nil
 }

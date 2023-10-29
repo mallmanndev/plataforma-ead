@@ -2,13 +2,14 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUseCase, *entities.Course, func()) {
@@ -33,13 +34,14 @@ func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUs
 func TestUpdateSectionUseCase(t *testing.T) {
 
 	t.Run("Should return error when course is not found", func(t *testing.T) {
-		mockCourseRepository, useCase, course, closer := setup(t)
+		mockCourseRepository, useCase, _, closer := setup(t)
 		defer closer()
 
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(nil, nil)
+		sectionId := uuid.NewString()
+
+		mockCourseRepository.EXPECT().FindBySectionId(sectionId).Return(nil, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
-			SectionId:   uuid.NewString(),
+			SectionId:   sectionId,
 			UserId:      uuid.NewString(),
 			Name:        "First Section",
 			Description: "A test section",
@@ -54,10 +56,10 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		mockCourseRepository, useCase, course, closer := setup(t)
 		defer closer()
 
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		sectionId := uuid.NewString()
+		mockCourseRepository.EXPECT().FindBySectionId(sectionId).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
-			SectionId:   uuid.NewString(),
+			SectionId:   sectionId,
 			UserId:      uuid.NewString(), // Different ID
 			Name:        "First Section",
 			Description: "A test section",
@@ -68,24 +70,6 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		}
 	})
 
-	t.Run("Should return error when section is not found", func(t *testing.T) {
-		mockCourseRepository, useCase, course, closer := setup(t)
-		defer closer()
-
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
-		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
-			SectionId:   uuid.NewString(),
-			UserId:      course.InstructorID(),
-			Name:        "First Section",
-			Description: "A test section",
-		}
-		_, err := useCase.Execute(data)
-		if assert.Error(t, err) {
-			assert.Equal(t, err.Error(), "Section not found.")
-		}
-	})
-
 	t.Run("Should return error when section data is invalid.", func(t *testing.T) {
 		mockCourseRepository, useCase, course, closer := setup(t)
 		defer closer()
@@ -93,9 +77,8 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
 			SectionId:   section.Id(),
 			UserId:      course.InstructorID(),
 			Name:        "Fir",
@@ -114,11 +97,10 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test"))
 
 		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
 			SectionId:   section.Id(),
 			UserId:      course.InstructorID(),
 			Name:        "First Section",
@@ -142,11 +124,10 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		)
 		course.AddSection(section)
 
-		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
+		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(nil)
 
 		data := usecases.UpdateSectionDTO{
-			CourseId:    course.Id(),
 			SectionId:   section.Id(),
 			UserId:      course.InstructorID(),
 			Name:        "First Section",

@@ -154,6 +154,7 @@ func TestProcessVideo(t *testing.T) {
 		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 2800000, "1080x720", "720")
 		filesServiceWithFile.EXPECT().WriteString(expectedQualityFile).Return(nil)
 		filesServiceWithFile.EXPECT().Close()
+		filesService.EXPECT().Delete("/tmp/123.mp4").Return(nil)
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -201,6 +202,7 @@ func TestProcessVideo(t *testing.T) {
 		expectedQualityFile += fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", 5000000, "1920x1080", "1080")
 		filesServiceWithFile.EXPECT().WriteString(expectedQualityFile).Return(nil)
 		filesServiceWithFile.EXPECT().Close()
+		filesService.EXPECT().Delete("/tmp/123.mp4").Return(nil)
 
 		useCase := usecases.NewProcessVideo(videosRepository, filesService)
 
@@ -210,6 +212,7 @@ func TestProcessVideo(t *testing.T) {
 		// Assert
 		assert.Nil(t, err)
 		assert.Equal(t, "success", video.Status())
+		assert.Equal(t, videosFolder+"/123/playlist.m3u8", video.Url())
 
 		if assert.Equal(t, len(video.GetResolutions()), 3) {
 			resolution1 := video.GetResolutions()[0]

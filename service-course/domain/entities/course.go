@@ -1,10 +1,11 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
-	"time"
 )
 
 type Course struct {
@@ -91,6 +92,44 @@ func (c *Course) FindSection(Id string) *CourseSection {
 	for _, valor := range c.sections {
 		if valor.id == Id {
 			return valor
+		}
+	}
+	return nil
+}
+
+func (c *Course) ChangeOrder(SectionId string, NewOrder int) error {
+	if NewOrder < 1 || NewOrder > len(c.sections) {
+		return errs.NewInvalidAttributeError("Course", "order", "must be valid")
+	}
+	section := c.FindSection(SectionId)
+	if section == nil {
+		return errs.NewNotFoundError("Section")
+	}
+
+	allSections := c.Sections()
+	currentOrder := int(section.Order())
+
+	if NewOrder < currentOrder {
+		for order := NewOrder; order < currentOrder; order++ {
+			i := order - 1
+			j := order
+			iOrder := allSections[i].Order()
+			jOrder := allSections[j].Order()
+			allSections[i].SetOrder(jOrder)
+			allSections[j].SetOrder(iOrder)
+			allSections[i], allSections[j] = allSections[j], allSections[i]
+		}
+	}
+
+	if NewOrder > currentOrder {
+		for order := currentOrder; order < NewOrder; order++ {
+			i := order - 1
+			j := order
+			iOrder := allSections[i].Order()
+			jOrder := allSections[j].Order()
+			allSections[i].SetOrder(jOrder)
+			allSections[j].SetOrder(iOrder)
+			allSections[i], allSections[j] = allSections[j], allSections[i]
 		}
 	}
 	return nil

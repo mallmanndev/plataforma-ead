@@ -63,6 +63,20 @@ func (mr *MockFilesServiceMockRecorder) CreateFile(File interface{}) *gomock.Cal
         return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFile", reflect.TypeOf((*MockFilesService)(nil).CreateFile), File)
 }
 
+// Delete mocks base method.
+func (m *MockFilesService) Delete(Url string) error {
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Delete", Url)
+        ret0, _ := ret[0].(error)
+        return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockFilesServiceMockRecorder) Delete(Url interface{}) *gomock.Call {
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockFilesService)(nil).Delete), Url)
+}
+
 // GetResolution mocks base method.
 func (m *MockFilesService) GetResolution(Url string) (string, error) {
         m.ctrl.T.Helper()

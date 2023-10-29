@@ -20,4 +20,5 @@ type FilesService interface {
 	Remove() error
 	GetResolution(Url string) (string, error)
 	ProcessVideo(InputUrl string, OutputPath string, Resolution string) error
+	Delete(Url string) error
 }

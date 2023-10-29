@@ -1,10 +1,11 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
-	"time"
 )
 
 type People struct {

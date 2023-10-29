@@ -105,6 +105,7 @@ func (s *FilesServer) GetVideo(_ context.Context, req *pb.GetVideoRequest) (*pb.
 		CreatedAt:   video.CreatedAt().String(),
 		UpdatedAt:   video.UpdatedAt().String(),
 		Resolutions: resolutions,
+		Url:         video.Url(),
 	}
 
 	return response, nil

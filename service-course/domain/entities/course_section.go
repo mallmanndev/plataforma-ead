@@ -13,6 +13,7 @@ type CourseSection struct {
 	description string
 	courseId    string
 	itens       []*CourseItem
+	order       int16
 	createdAt   time.Time
 	updatedAt   time.Time
 }
@@ -85,6 +86,15 @@ func (cs *CourseSection) CourseId() string {
 
 func (cs *CourseSection) Itens() []*CourseItem {
 	return cs.itens
+}
+
+func (cs *CourseSection) Order() int16 {
+	return cs.order
+}
+
+func (cs *CourseSection) SetOrder(order int16) *CourseSection {
+	cs.order = order
+	return cs
 }
 
 func (cs *CourseSection) CreatedAt() time.Time {

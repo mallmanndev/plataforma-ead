@@ -33,6 +33,7 @@ func (vr *VideosRepository) Create(video *entities.Video) error {
 		Status:    video.Status(),
 		Duration:  video.Duration(),
 		Size:      video.Size(),
+		Url:       video.Url(),
 		CreatedAt: video.CreatedAt(),
 		UpdatedAt: video.UpdatedAt(),
 	}
@@ -73,8 +74,10 @@ func (vr *VideosRepository) Get(filters ports.GetFilters) ([]*entities.Video, er
 			videoModel.Status,
 			videoModel.Duration,
 			videoModel.Size,
+			videoModel.UserId,
 			videoModel.CreatedAt,
 			videoModel.UpdatedAt,
+			videoModel.Url,
 		)
 		videos = append(videos, video)
 	}
@@ -96,12 +99,13 @@ func (vr *VideosRepository) Update(video *entities.Video) error {
 
 	update := bson.M{"$set": bson.M{
 		"type":        video.Type(),
-		"url":         video.TmpUrl(),
+		"tmp":         video.TmpUrl(),
 		"status":      video.Status(),
 		"duration":    video.Duration(),
 		"size":        video.Size(),
 		"updatedAt":   video.UpdatedAt(),
 		"resolutions": resolutions,
+		"url":         video.Url(),
 	}}
 
 	_, err := collection.UpdateOne(context.Background(), filter, update)

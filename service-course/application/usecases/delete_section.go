@@ -15,12 +15,11 @@ func NewDeleteSectionUseCase(CoursesRepository ports.CourseRepository) *DeleteSe
 
 type DeleteSectionDTO struct {
 	UserId    string
-	CourseId  string
 	SectionId string
 }
 
 func (ds *DeleteSectionUseCase) Execute(Data DeleteSectionDTO) error {
-	course, _ := ds.coursesRepository.FindById(Data.CourseId)
+	course, _ := ds.coursesRepository.FindBySectionId(Data.SectionId)
 	if course == nil {
 		return errs.NewDeleteSectionUseCaseError("Course not found", nil)
 	}

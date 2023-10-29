@@ -19,9 +19,11 @@ type Video struct {
 	id          string
 	videoType   string
 	tmpUrl      string
+	url         string
 	status      string
 	duration    float32
 	size        int64
+	userId      string
 	createdAt   time.Time
 	updatedAt   time.Time
 	resolutions []VideoResolution
@@ -51,8 +53,10 @@ func NewCompleteVideo(
 	status string,
 	duration float32,
 	size int64,
+	userId string,
 	createdAt time.Time,
 	updatedAt time.Time,
+	url string,
 ) *Video {
 	return &Video{
 		timer:     timer,
@@ -62,8 +66,10 @@ func NewCompleteVideo(
 		status:    status,
 		duration:  duration,
 		size:      size,
+		userId:    userId,
 		createdAt: createdAt,
 		updatedAt: updatedAt,
+		url:       url,
 	}
 }
 
@@ -96,6 +102,11 @@ func (v *Video) AddResolution(Resolution VideoResolution) {
 	v.resolutions = orderedResolutions
 }
 
+func (v *Video) SetUrl(Url string) *Video {
+	v.url = Url
+	return v
+}
+
 func (v *Video) Id() string {
 	return v.id
 }
@@ -108,6 +119,10 @@ func (v *Video) TmpUrl() string {
 	return v.tmpUrl
 }
 
+func (v *Video) Url() string {
+	return v.url
+}
+
 func (v *Video) Status() string {
 	return v.status
 }
@@ -118,6 +133,10 @@ func (v *Video) Duration() float32 {
 
 func (v *Video) Size() int64 {
 	return v.size
+}
+
+func (v *Video) UserId() string {
+	return v.userId
 }
 
 func (v *Video) CreatedAt() time.Time {
