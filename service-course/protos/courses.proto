@@ -10,9 +10,9 @@ service CoursesService {
   rpc CreateSection(CreateCourseSectionRequest) returns (Course) {};
   rpc UpdateSection(UpdateCourseSectionRequest) returns (Course) {}
   rpc DeleteSection(DeleteCourseSectionRequest) returns (DeleteCourseResponse) {}
-  rpc CreateItem() returns (Course) {}
-  rpc UpdateItem() returns (Course) {}
-  rpc DeleteItem() returns (bool) {}
+  rpc CreateItem(CreateItemRequest) returns (Course) {}
+  rpc UpdateItem(UpdateItemRequest) returns (Course) {}
+  rpc DeleteItem(DeleteItemRequest) returns (Course) {}
 }
 
 message People {
@@ -103,4 +103,24 @@ message GetCoursesRequest {
 
 message GetCoursesResponse {
   repeated Course courses = 1;
+}
+
+message CreateItemRequest {
+  string section_id = 1;
+  string user_id = 2;
+  string title = 3;
+  string description = 4;
+  string video_id = 5;
+}
+
+message UpdateItemRequest {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  string description = 4;
+}
+
+message DeleteItemRequest {
+  string id = 1;
+  string user_id = 2;
 }

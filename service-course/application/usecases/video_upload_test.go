@@ -32,7 +32,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 		uuidService.EXPECT().Generate().Return("123456789")
 
 		// WHEN
-		_, err := useCase.CreateFile("mp", 10000)
+		_, err := useCase.CreateFile("mp", 10000, "user_id")
 
 		// THEN
 		assert.ErrorContains(t, err, "[Video] Invalid 'type': must be mp4.")
@@ -50,10 +50,9 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 			Return(nil, errors.New("Test!"))
 
 		// WHEN
-		_, err := useCase.CreateFile("mp4", 10000)
+		_, err := useCase.CreateFile("mp4", 10000, "user_id")
 
 		// THEN
-		t.Log(err)
 		assert.ErrorContains(t, err, "[Video Upload] Could not create video: Test!")
 	})
 
@@ -69,7 +68,7 @@ func TestVideoUpload_CreateFile(t *testing.T) {
 			Return(filesServiceTwo, nil)
 
 		// WHEN
-		file, err := useCase.CreateFile("mp4", 10000)
+		file, err := useCase.CreateFile("mp4", 10000, "user_id")
 
 		// THEN
 		assert.Nil(t, err)
@@ -118,7 +117,7 @@ func TestVideoUpload_SendChunk(t *testing.T) {
 		filesServiceTwo.EXPECT().SendChunk([]byte("test")).Return(errors.New("Test!"))
 
 		// WHEN
-		file, _ := useCase.CreateFile("mp4", 10000)
+		file, _ := useCase.CreateFile("mp4", 10000, "user_id")
 
 		// THEN
 		err := file.SendChunk([]byte("test"))
@@ -167,7 +166,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 		filesServiceTwo.EXPECT().Remove().Return(nil)
 
 		// WHEN
-		file, _ := useCase.CreateFile("mp4", 25)
+		file, _ := useCase.CreateFile("mp4", 25, "user_id")
 		file.SendChunk(chunk)
 		file.SendChunk(chunk)
 
@@ -193,7 +192,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 		filesServiceTwo.EXPECT().Close().Return(errors.New("test"))
 
 		// WHEN
-		file, _ := useCase.CreateFile("mp4", 25)
+		file, _ := useCase.CreateFile("mp4", 25, "user_id")
 		file.SendChunk(chunk)
 		file.SendChunk(chunk)
 
@@ -224,7 +223,7 @@ func TestVideoUpload_Execute(t *testing.T) {
 		videosRepository.EXPECT().Create(gomock.Any()).Return(errors.New("Test!"))
 
 		// WHEN
-		file, _ := useCase.CreateFile("mp4", 25)
+		file, _ := useCase.CreateFile("mp4", 25, "user_id")
 		file.SendChunk(chunk)
 		file.SendChunk(chunk)
 		file.SendChunk(chunk)

@@ -44,7 +44,11 @@ func (s *FilesServer) VideoUpload(stream pb.FileUploadService_VideoUploadServer)
 		return err
 	}
 
-	upload, err := s.videoUploadUseCase.CreateFile(req.GetInfo().GetType(), req.GetInfo().GetSize())
+	upload, err := s.videoUploadUseCase.CreateFile(
+		req.GetInfo().GetType(),
+		req.GetInfo().GetSize(),
+		req.GetInfo().GetUserId(),
+	)
 	if err != nil {
 		return errs.NewGrpcError(err)
 	}

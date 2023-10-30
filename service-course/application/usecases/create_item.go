@@ -23,21 +23,18 @@ func NewCreateItem(coursesRepo ports.CourseRepository, videosRepo ports.VideosRe
 	return &CreateItem{coursesRepo, videosRepo}
 }
 
-func (ci *CreateItem) Execute(Data CreateItemInput) error {
+func (ci *CreateItem) Execute(Data CreateItemInput) (*entities.Course, error) {
 	course, _ := ci.coursesRepo.FindBySectionId(Data.SectionId)
 	if course == nil {
-		return errs.NewNotFoundError("Course")
+		return nil, errs.NewNotFoundError("Course")
 	}
 	if course.InstructorID() != Data.UserId {
-		return errs.NewPermissionDeniedError("create item")
+		return nil, errs.NewPermissionDeniedError("create item")
 	}
 
 	video, _ := ci.videosRepo.Find(Data.VideoId)
-	if video == nil {
-		return errs.NewNotFoundError("Video")
-	}
-	if video.UserId() != Data.UserId {
-		return errs.NewPermissionDeniedError("create item")
+	if video == nil || video.UserId() != Data.UserId {
+		return nil, errs.NewNotFoundError("Video")
 	}
 
 	section := course.FindSection(Data.SectionId)
@@ -53,7 +50,7 @@ func (ci *CreateItem) Execute(Data CreateItemInput) error {
 	section.AddItem(item)
 
 	if err := ci.coursesRepo.Update(course); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return course, nil
 }

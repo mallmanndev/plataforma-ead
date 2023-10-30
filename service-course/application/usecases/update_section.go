@@ -1,8 +1,6 @@
 package usecases
 
 import (
-	"log"
-
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
@@ -44,6 +42,5 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 		return nil, errs.NewUpdateSectionUseCaseError("Could not update section", err)
 	}
 
-	log.Println(course)
 	return course, nil
 }

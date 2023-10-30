@@ -21,7 +21,7 @@ func TestCreateItem(t *testing.T) {
 	t.Run("when_section_is_not_found", func(t *testing.T) {
 		mockCourseRepository.EXPECT().FindBySectionId("6dd59058-7014-4bb8-9fb0-2647f82bd028").Return(nil, nil)
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		_, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "6dd59058-7014-4bb8-9fb0-2647f82bd028",
 			UserId:      "15483ad1-65f7-4027-b092-f9a6a792ac64",
 			Title:       "Test",
@@ -38,7 +38,7 @@ func TestCreateItem(t *testing.T) {
 		course := fixtures.NewCourseFixture()
 		mockCourseRepository.EXPECT().FindBySectionId("6dd59058-7014-4bb8-9fb0-2647f82bd028").Return(course, nil)
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		_, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "6dd59058-7014-4bb8-9fb0-2647f82bd028",
 			UserId:      "15483ad1-65f7-4027-b092-f9a6a792ac64",
 			Title:       "Test",
@@ -56,7 +56,7 @@ func TestCreateItem(t *testing.T) {
 		mockCourseRepository.EXPECT().FindBySectionId("section_id_1").Return(course, nil)
 		mockVideosRepository.EXPECT().Find("video_id").Return(nil, nil)
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		_, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "section_id_1",
 			UserId:      "user_id",
 			Title:       "Test",
@@ -75,7 +75,7 @@ func TestCreateItem(t *testing.T) {
 		mockCourseRepository.EXPECT().FindBySectionId("section_id_1").Return(course, nil)
 		mockVideosRepository.EXPECT().Find("video_id").Return(video, nil)
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		_, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "section_id_1",
 			UserId:      "user_id",
 			Title:       "Test",
@@ -84,7 +84,7 @@ func TestCreateItem(t *testing.T) {
 		})
 
 		if assert.NotNil(t, err) {
-			assert.ErrorContains(t, err, "Permission denied to create item.")
+			assert.ErrorContains(t, err, "Video not found.")
 		}
 	})
 
@@ -95,7 +95,7 @@ func TestCreateItem(t *testing.T) {
 		mockVideosRepository.EXPECT().Find("video_id").Return(video, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(errors.New("Test."))
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		_, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "section_id_1",
 			UserId:      "user_id",
 			Title:       "Test",
@@ -115,7 +115,7 @@ func TestCreateItem(t *testing.T) {
 		mockVideosRepository.EXPECT().Find("video_id").Return(video, nil)
 		mockCourseRepository.EXPECT().Update(course).Return(nil)
 
-		err := useCase.Execute(usecases.CreateItemInput{
+		course, err := useCase.Execute(usecases.CreateItemInput{
 			SectionId:   "section_id_1",
 			UserId:      "user_id",
 			Title:       "Test",
@@ -124,6 +124,6 @@ func TestCreateItem(t *testing.T) {
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, len(course.Sections()[0].Itens()), 1)
+		assert.Equal(t, len(course.Sections()[0].Itens()), 2)
 	})
 }

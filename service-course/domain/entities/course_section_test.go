@@ -1,9 +1,11 @@
 package entities_test
 
 import (
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
-	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewCourseSection(t *testing.T) {
@@ -27,20 +29,16 @@ func TestNewCourseSection(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := entities.NewCourseSection(tt.args.Name, tt.args.Description, tt.args.CourseId)
-			if err.Error() != tt.wantErr {
-				t.Errorf("NewCourseSection() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			assert.ErrorContains(t, err, tt.wantErr)
 		})
 	}
 
 	t.Run("Should return session when is valid", func(t *testing.T) {
-		got, err := entities.NewCourseSection("First Section", "", uuid.NewString())
-		if err != nil {
-			t.Error("Error must be nil!")
-		}
-		if got == nil {
-			t.Error("Section must be not nil")
-		}
+		// WHEN
+		section, err := entities.NewCourseSection("First Section", "", uuid.NewString())
+
+		// THEN
+		assert.Nil(t, err)
+		assert.NotNil(t, section)
 	})
 }

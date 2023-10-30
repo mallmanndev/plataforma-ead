@@ -10,7 +10,6 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +20,7 @@ func CourseServerSetup(t *testing.T) (
 	*entities.Course,
 	ports.CourseRepository,
 ) {
-	db, disconnect := utils.GetDb("test")
+	db, disconnect := testutils.DatabaseConnection()
 	coursesRepo := repositories.NewCourseRepositories(db)
 	ctx, client, closer := testutils.CoursesServer(db)
 	closeAll := func() {

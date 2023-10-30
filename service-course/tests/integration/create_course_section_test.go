@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
-	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures/courses"
+	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,7 +32,7 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 	}
 
 	var teardown = func(t *testing.T) {
-		db.Collection("courses").DeleteOne(context.Background(), bson.M{"_id": "3d515009-56eb-4ed0-aea5-182bd783085e"})
+		db.Collection("courses").DeleteMany(context.Background(), bson.M{})
 	}
 
 	type ExpectedErrors struct {
@@ -57,7 +57,7 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 		},
 		"when_permission_is_denied": {
 			request: &pb.CreateCourseSectionRequest{
-				CourseId:    "3d515009-56eb-4ed0-aea5-182bd783085e",
+				CourseId:    "course_id",
 				UserId:      uuid.NewString(),
 				Name:        "Go lang course",
 				Description: "This is a go lang course",
@@ -86,8 +86,8 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 		defer teardown(t)
 
 		request := &pb.CreateCourseSectionRequest{
-			CourseId:    "3d515009-56eb-4ed0-aea5-182bd783085e",
-			UserId:      "9111bffd-73d9-49d8-b32c-48353674dc06",
+			CourseId:    "course_id",
+			UserId:      "user_id_1",
 			Name:        "Go lang course",
 			Description: "This is a go lang course",
 		}
@@ -100,7 +100,7 @@ func TestCreateCourseSectionWhenReturnErrors(t *testing.T) {
 			assert.Equal(t, created.Sections[2].Description, "This is a go lang course")
 		}
 
-		dbCourse, _ := coursesRepo.FindById("3d515009-56eb-4ed0-aea5-182bd783085e")
+		dbCourse, _ := coursesRepo.FindById("course_id")
 		if assert.NotNil(t, dbCourse) {
 			section := dbCourse.Sections()[2]
 			assert.Len(t, dbCourse.Sections(), 3)

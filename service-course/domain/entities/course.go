@@ -97,6 +97,17 @@ func (c *Course) FindSection(Id string) *CourseSection {
 	return nil
 }
 
+func (c *Course) FindItem(Id string) (*CourseItem, *CourseSection) {
+	for _, section := range c.sections {
+		for _, item := range section.itens {
+			if item.id == Id {
+				return item, section
+			}
+		}
+	}
+	return nil, nil
+}
+
 func (c *Course) ChangeOrder(SectionId string, NewOrder int) error {
 	if NewOrder < 1 || NewOrder > len(c.sections) {
 		return errs.NewInvalidAttributeError("Course", "order", "must be valid")

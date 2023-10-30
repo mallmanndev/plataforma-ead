@@ -33,10 +33,10 @@ func NewVideoUpload(
 	}
 }
 
-func (v *VideoUpload) CreateFile(Type string, Size int64) (*VideoUpload, error) {
+func (v *VideoUpload) CreateFile(Type string, Size int64, UserId string) (*VideoUpload, error) {
 	videoId := v.uuidService.Generate()
 	videoUrl := fmt.Sprintf("/videos/tmp/%s.%s", videoId, Type)
-	video, err := entities.NewVideo(v.timer, videoId, videoUrl, Type, Size)
+	video, err := entities.NewVideo(v.timer, videoId, videoUrl, Type, Size, UserId)
 	if err != nil {
 		return nil, err
 	}

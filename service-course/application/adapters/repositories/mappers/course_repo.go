@@ -31,7 +31,7 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 		for _, item := range section.Itens {
 			itemEntity := entities.NewCourseItemComplete(
 				item.Id,
-				item.Name,
+				item.Title,
 				item.Description,
 				section.Id,
 				item.Type,

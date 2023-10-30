@@ -23,17 +23,25 @@ type CourseServer struct {
 	createSectionUseCase *usecases.CreateSectionUseCase
 	updateSectionUseCase *usecases.UpdateSectionUseCase
 	deleteSectionUseCase *usecases.DeleteSectionUseCase
+	createItemUseCase    *usecases.CreateItem
+	updateItemUseCase    *usecases.UpdateItem
+	deleteItemUseCase    *usecases.DeleteItem
 }
 
 func NewCourseServer(db *mongo.Database) *CourseServer {
 	peopleRepository := repositories.NewPeopleRepository(db)
 	coursesRepo := repositories.NewCourseRepositories(db)
+	videosRepo := repositories.NewVideosRepository(db)
 	createCourseUseCase := usecases.NewCreateCourseUseCase(peopleRepository, coursesRepo)
 	updateCourseUseCase := usecases.NewUpdateCourseUseCase(peopleRepository, coursesRepo)
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
 	updateSectionUseCase := usecases.NewUpdateSectionUseCase(coursesRepo)
 	deleteSectionUseCase := usecases.NewDeleteSectionUseCase(coursesRepo)
+	createItemUseCase := usecases.NewCreateItem(coursesRepo, videosRepo)
+	updateItemUseCase := usecases.NewUpdateItem(coursesRepo)
+	deleteItemUseCase := usecases.NewDeleteItem(coursesRepo)
+
 	return &CourseServer{
 		coursesRepo:          coursesRepo,
 		createCourseUseCase:  createCourseUseCase,
@@ -42,6 +50,9 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 		createSectionUseCase: createSectionUseCase,
 		updateSectionUseCase: updateSectionUseCase,
 		deleteSectionUseCase: deleteSectionUseCase,
+		createItemUseCase:    createItemUseCase,
+		updateItemUseCase:    updateItemUseCase,
+		deleteItemUseCase:    deleteItemUseCase,
 	}
 }
 
@@ -164,4 +175,45 @@ func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.G
 	response := &pb.GetCoursesResponse{Courses: v}
 
 	return response, nil
+}
+
+func (cs *CourseServer) CreateItem(_ context.Context, req *pb.CreateItemRequest) (*pb.Course, error) {
+	course, err := cs.createItemUseCase.Execute(usecases.CreateItemInput{
+		SectionId:   req.SectionId,
+		UserId:      req.UserId,
+		Title:       req.Title,
+		Description: req.Description,
+		VideoId:     req.VideoId,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return mappers.CourseEnitiyToGrpc(course), nil
+}
+
+func (cs *CourseServer) UpdateItem(_ context.Context, req *pb.UpdateItemRequest) (*pb.Course, error) {
+	course, err := cs.updateItemUseCase.Execute(usecases.UpdateItemInput{
+		Id:          req.Id,
+		UserId:      req.UserId,
+		Title:       req.Title,
+		Description: req.Description,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return mappers.CourseEnitiyToGrpc(course), nil
+}
+
+func (cs *CourseServer) DeleteItem(_ context.Context, req *pb.DeleteItemRequest) (*pb.Course, error) {
+	course, err := cs.deleteItemUseCase.Execute(usecases.DeleteItemInput{
+		Id:     req.Id,
+		UserId: req.UserId,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return mappers.CourseEnitiyToGrpc(course), nil
 }

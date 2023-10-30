@@ -13,6 +13,7 @@ type CourseItem struct {
 	sectionId   string
 	itemType    string
 	videoId     string
+	order       int16
 	createdAt   time.Time
 	updatedAt   time.Time
 }
@@ -57,34 +58,47 @@ func NewCourseItemComplete(
 	}
 }
 
-func (c CourseItem) Id() string {
+func (c *CourseItem) Update(Title string, Description string) {
+	c.title = Title
+	c.description = Description
+}
+
+func (c *CourseItem) SetOrder(order int16) {
+	c.order = order
+}
+
+func (c *CourseItem) Id() string {
 	return c.id
 }
 
-func (c CourseItem) Title() string {
+func (c *CourseItem) Title() string {
 	return c.title
 }
 
-func (c CourseItem) Description() string {
+func (c *CourseItem) Description() string {
 	return c.description
 }
 
-func (c CourseItem) SectionId() string {
+func (c *CourseItem) SectionId() string {
 	return c.sectionId
 }
 
-func (c CourseItem) Type() string {
+func (c *CourseItem) Type() string {
 	return c.itemType
 }
 
-func (c CourseItem) VideoId() string {
+func (c *CourseItem) VideoId() string {
 	return c.videoId
 }
 
-func (c CourseItem) CreatedAt() time.Time {
+func (c *CourseItem) CreatedAt() time.Time {
 	return c.createdAt
 }
 
-func (c CourseItem) UpdatedAt() time.Time {
+func (c *CourseItem) UpdatedAt() time.Time {
 	return c.updatedAt
+}
+
+func (c *CourseItem) Order() int16 {
+	return c.order
 }

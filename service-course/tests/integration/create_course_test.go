@@ -1,20 +1,23 @@
 package integration_test
 
 import (
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func TestCreateCourse(t *testing.T) {
-	db, disconnect := utils.GetDb("test")
-	defer disconnect()
-	ctx, client, closer := testutils.CoursesServer(db)
-	defer closer()
+	db, closeDB := testutils.DatabaseConnection()
+	ctx, client, closeGrpc := testutils.CoursesServer(db)
+
+	defer func() {
+		closeDB()
+		closeGrpc()
+	}()
 
 	t.Run("Should return error when instructor is not provided", func(t *testing.T) {
 		request := &pb.CreateCourseRequest{

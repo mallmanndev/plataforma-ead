@@ -81,12 +81,29 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 	var sections []models.CourseSectionModel
 
 	for _, section := range Course.Sections() {
+		var itens []models.CourseItemModel
+
+		for _, item := range section.Itens() {
+			newItem := models.CourseItemModel{
+				Id:          item.Id(),
+				Title:       item.Title(),
+				Description: item.Description(),
+				Type:        item.Type(),
+				VideoId:     item.VideoId(),
+				Order:       item.Order(),
+				CreatedAt:   item.CreatedAt(),
+				UpdatedAt:   item.UpdatedAt(),
+			}
+			itens = append(itens, newItem)
+		}
+
 		newSection := models.CourseSectionModel{
 			Id:          section.Id(),
 			Name:        section.Name(),
 			Description: section.Description(),
 			CreatedAt:   section.CreatedAt(),
 			UpdatedAt:   section.UpdatedAt(),
+			Itens:       itens,
 		}
 		sections = append(sections, newSection)
 	}

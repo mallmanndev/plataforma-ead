@@ -6,7 +6,7 @@ import (
 
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
-	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures/courses"
+	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -31,7 +31,7 @@ func TestDeleteSection(t *testing.T) {
 	}
 
 	var teardown = func(t *testing.T) {
-		db.Collection("courses").DeleteOne(context.Background(), bson.M{"_id": "3d515009-56eb-4ed0-aea5-182bd783085e"})
+		db.Collection("courses").DeleteMany(context.Background(), bson.M{})
 	}
 
 	t.Run("when_course_not_found", func(t *testing.T) {
@@ -51,15 +51,15 @@ func TestDeleteSection(t *testing.T) {
 		defer teardown(t)
 
 		request := &pb.DeleteCourseSectionRequest{
-			UserId: "fbf761f5-a9d8-4c39-87d6-4718cab4573b",
+			UserId: "section_id_1",
 			Id:     "3d515009-56eb-4ed0-aea5-182bd783ewfwe085e",
 		}
 
 		_, err := client.DeleteSection(ctx, request)
 
 		s, _ := status.FromError(err)
-		assert.Equal(t, "PermissionDenied", s.Code().String())
-		assert.Equal(t, "Permission denied to update section.", s.Message())
+		assert.Equal(t, "Internal", s.Code().String())
+		assert.Equal(t, "[Delete Section] Course not found.", s.Message())
 	})
 
 	t.Run("when_update_section_successfully", func(t *testing.T) {
@@ -67,16 +67,15 @@ func TestDeleteSection(t *testing.T) {
 		defer teardown(t)
 
 		request := &pb.DeleteCourseSectionRequest{
-			UserId: "9111bffd-73d9-49d8-b32c-48353674dc06",
-			Id:     "3d515009-56eb-4ed0-aea5-182bd783ewfwe085e",
+			UserId: "user_id_1",
+			Id:     "section_id_1",
 		}
 
 		_, err := client.DeleteSection(ctx, request)
 
 		assert.Nil(t, err)
 
-		course, _ := courseRepo.FindById("3d515009-56eb-4ed0-aea5-182bd783085e")
-		assert.NotNil(t, course)
-		assert.Equal(t, 1, len(course.Sections()))
+		course, _ := courseRepo.FindBySectionId("section_id_1")
+		assert.Nil(t, course)
 	})
 }

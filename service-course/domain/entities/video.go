@@ -29,7 +29,7 @@ type Video struct {
 	resolutions []VideoResolution
 }
 
-func NewVideo(Timer apptimer.Timer, Id string, TmpUrl string, Type string, Size int64) (*Video, error) {
+func NewVideo(Timer apptimer.Timer, Id string, TmpUrl string, Type string, Size int64, UserId string) (*Video, error) {
 	video := &Video{
 		timer:     Timer,
 		id:        Id,
@@ -38,6 +38,7 @@ func NewVideo(Timer apptimer.Timer, Id string, TmpUrl string, Type string, Size 
 		status:    "pending",
 		size:      Size,
 		createdAt: Timer.Now(),
+		userId:    UserId,
 	}
 	if err := video.Validate(); err != nil {
 		return nil, err
@@ -74,6 +75,13 @@ func NewCompleteVideo(
 }
 
 func (v *Video) Validate() error {
+	if v.userId == "" {
+		return errs.NewInvalidAttributeError(
+			"Video",
+			"userId",
+			"must be not empty",
+		)
+	}
 	if v.videoType != "mp4" {
 		return errs.NewInvalidAttributeError(
 			"Video",

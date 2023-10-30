@@ -6,7 +6,7 @@ import (
 
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
-	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures/courses"
+	fixtures "github.com/matheusvmallmann/plataforma-ead/service-course/tests/fixtures"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -31,7 +31,7 @@ func TestUpdateCourseSection(t *testing.T) {
 	}
 
 	var teardown = func(t *testing.T) {
-		db.Collection("courses").DeleteOne(context.Background(), bson.M{"_id": "3d515009-56eb-4ed0-aea5-182bd783085e"})
+		db.Collection("courses").DeleteOne(context.Background(), bson.M{})
 	}
 
 	t.Run("when_course_not_found", func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestUpdateCourseSection(t *testing.T) {
 		defer teardown(t)
 
 		request := &pb.UpdateCourseSectionRequest{
-			Id:          "3d515009-56eb-4ed0-aea5-182bd783085e",
+			Id:          "section_id_1",
 			UserId:      "fbf761f5-a9d8-4c39-87d6-4718cab4573b",
 			Name:        "Go Lang Course",
 			Description: "This is a Go lang course",
@@ -71,8 +71,8 @@ func TestUpdateCourseSection(t *testing.T) {
 		defer teardown(t)
 
 		request := &pb.UpdateCourseSectionRequest{
-			Id:          "3d515009-56eb-4ed0-aea5-182bd783085e",
-			UserId:      "9111bffd-73d9-49d8-b32c-48353674dc06",
+			Id:          "section_id_1",
+			UserId:      "user_id_1",
 			Name:        "Go",
 			Description: "This is a Go lang course",
 		}
@@ -84,13 +84,13 @@ func TestUpdateCourseSection(t *testing.T) {
 		assert.Equal(t, "[Course Section] Invalid 'name': must be longer than 5.", s.Message())
 	})
 
-	t.Run("when_update_section_successfully", func(t *testing.T) {
+	t.Run("should_update_section_successfully", func(t *testing.T) {
 		setup(t)
 		defer teardown(t)
 
 		request := &pb.UpdateCourseSectionRequest{
-			Id:          "3d515009-56eb-4ed0-aea5-182bd783085e",
-			UserId:      "9111bffd-73d9-49d8-b32c-48353674dc06",
+			Id:          "section_id_1",
+			UserId:      "user_id_1",
 			Name:        "Go Lang Course altered",
 			Description: "This is a Go lang course altered",
 		}
@@ -103,7 +103,7 @@ func TestUpdateCourseSection(t *testing.T) {
 			assert.Equal(t, "This is a Go lang course altered", res.Sections[0].Description)
 		}
 
-		course, _ := courseRepo.FindById("3d515009-56eb-4ed0-aea5-182bd783085e")
+		course, _ := courseRepo.FindById("course_id")
 		if assert.NotNil(t, course) {
 			assert.Equal(t, "Go Lang Course altered", course.Sections()[0].Name())
 			assert.Equal(t, "This is a Go lang course altered", course.Sections()[0].Description())

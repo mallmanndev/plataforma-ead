@@ -8,22 +8,39 @@ import (
 )
 
 var CursoCompleto = bson.M{
-	"_id":          "3d515009-56eb-4ed0-aea5-182bd783085e",
+	"_id":          "course_id",
 	"name":         "Teste",
 	"description":  "Teste teste teste dsfdsfd dsfsdfdf",
-	"instructorId": "9111bffd-73d9-49d8-b32c-48353674dc06",
+	"instructorId": "user_id_1",
 	"visible":      false,
 	"sections": []bson.M{
 		{
-			"_id":         "3d515009-56eb-4ed0-aea5-182bd783085e",
+			"_id":         "section_id_1",
 			"name":        "Seção 1 do curso",
 			"description": "Descrição da seção",
-			"itens":       nil,
+			"order":       1,
+			"itens": []bson.M{
+				{
+					"_id":         "item_id_1",
+					"title":       "Item 1",
+					"description": "Item 1 description",
+					"videoId":     "video_id_1",
+					"order":       1,
+				},
+				{
+					"_id":         "item_id_2",
+					"title":       "Item 2",
+					"description": "Item 2 description",
+					"videoId":     "video_id_2",
+					"order":       2,
+				},
+			},
 		},
 		{
-			"_id":         "3d515009-56eb-4ed0-aea5-182bd783ewfwe085e",
+			"_id":         "section_id_2",
 			"name":        "Seção 2 do curso",
 			"description": "Descrição da seção",
+			"order":       2,
 			"itens":       nil,
 		},
 	},
@@ -74,6 +91,19 @@ func NewCourseFixture() *entities.Course {
 			UpdatedAt:   time.Now(),
 		},
 	)
+
+	item1 := entities.NewCourseItemComplete(
+		"item_id_1",
+		"Item 1",
+		"Item 1 description",
+		"section_id_1",
+		"video",
+		"",
+		time.Now(),
+		time.Now(),
+	)
+
+	section1.AddItem(item1)
 
 	course.AddSection(section1)
 	course.AddSection(section2)

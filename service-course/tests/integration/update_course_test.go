@@ -2,20 +2,20 @@ package integration_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
-	"github.com/matheusvmallmann/plataforma-ead/service-course/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"testing"
-	"time"
 )
 
 func TestUpdateCourse(t *testing.T) {
-	db, disconnect := utils.GetDb("test")
+	db, disconnect := testutils.DatabaseConnection()
 	coursesRepo := repositories.NewCourseRepositories(db)
 	ctx, client, closer := testutils.CoursesServer(db)
 	defer (func() {

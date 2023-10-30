@@ -106,5 +106,17 @@ func (cs *CourseSection) UpdatedAt() time.Time {
 }
 
 func (cs *CourseSection) AddItem(item *CourseItem) {
+	newOrder := len(cs.itens) + 1
+	item.SetOrder(int16(newOrder))
 	cs.itens = append(cs.itens, item)
+}
+
+func (cs *CourseSection) RemoveItem(Id string) {
+	newItens := make([]*CourseItem, 0, len(cs.itens)-1)
+	for _, item := range cs.itens {
+		if item.id != Id {
+			newItens = append(newItens, item)
+		}
+	}
+	cs.itens = newItens
 }
