@@ -9,26 +9,26 @@ import (
 )
 
 type Course struct {
-	id           string
-	name         string
-	description  string
-	image        *value_objects.Image
-	instructorID string
-	sections     []*CourseSection
-	visible      bool
-	createdAt    time.Time
-	updatedAt    time.Time
+	id          string
+	name        string
+	description string
+	image       *value_objects.Image
+	userId      string
+	sections    []*CourseSection
+	visible     bool
+	createdAt   time.Time
+	updatedAt   time.Time
 }
 
-func NewCourse(Name string, Description string, Image *value_objects.Image, InstructorId string) (*Course, error) {
+func NewCourse(Name string, Description string, Image *value_objects.Image, userId string) (*Course, error) {
 	course := &Course{
-		id:           uuid.NewString(),
-		name:         Name,
-		description:  Description,
-		image:        Image,
-		instructorID: InstructorId,
-		visible:      false,
-		createdAt:    time.Now(),
+		id:          uuid.NewString(),
+		name:        Name,
+		description: Description,
+		image:       Image,
+		userId:      userId,
+		visible:     false,
+		createdAt:   time.Now(),
 	}
 	if err := course.Validate(); err != nil {
 		return nil, err
@@ -38,10 +38,10 @@ func NewCourse(Name string, Description string, Image *value_objects.Image, Inst
 
 func NewCourseComplete(
 	Id string, Name string, Description string, Image *value_objects.Image,
-	InstructorId string, Visible bool, CreatedAt time.Time, UpdatedAt time.Time,
+	userId string, Visible bool, CreatedAt time.Time, UpdatedAt time.Time,
 ) *Course {
 	return &Course{
-		id: Id, name: Name, description: Description, image: Image, instructorID: InstructorId,
+		id: Id, name: Name, description: Description, image: Image, userId: userId,
 		visible: Visible, createdAt: CreatedAt, updatedAt: UpdatedAt,
 	}
 }
@@ -162,8 +162,8 @@ func (c *Course) Image() *value_objects.Image {
 	return c.image
 }
 
-func (c *Course) InstructorID() string {
-	return c.instructorID
+func (c *Course) UserId() string {
+	return c.userId
 }
 
 func (c *Course) Sections() []*CourseSection {

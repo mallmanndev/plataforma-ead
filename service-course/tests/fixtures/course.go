@@ -8,11 +8,11 @@ import (
 )
 
 var CursoCompleto = bson.M{
-	"_id":          "course_id",
-	"name":         "Teste",
-	"description":  "Teste teste teste dsfdsfd dsfsdfdf",
-	"instructorId": "user_id_1",
-	"visible":      false,
+	"_id":         "course_id",
+	"name":        "Teste",
+	"description": "Teste teste teste dsfdsfd dsfsdfdf",
+	"userId":      "user_id_1",
+	"visible":     false,
 	"sections": []bson.M{
 		{
 			"_id":         "section_id_1",

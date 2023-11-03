@@ -28,7 +28,7 @@ func (ci *CreateItem) Execute(Data CreateItemInput) (*entities.Course, error) {
 	if course == nil {
 		return nil, errs.NewNotFoundError("Course")
 	}
-	if course.InstructorID() != Data.UserId {
+	if course.UserId() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("create item")
 	}
 

@@ -65,12 +65,12 @@ func (cr *CoursesRepositories) FindByItemId(Id string) (*entities.Course, error)
 
 func (cr *CoursesRepositories) Create(Course *entities.Course) error {
 	_, err := cr.collection.InsertOne(context.Background(), models.CourseModel{
-		Id:           Course.Id(),
-		Name:         Course.Name(),
-		Description:  Course.Description(),
-		InstructorId: Course.InstructorID(),
-		Sections:     []models.CourseSectionModel{},
-		CreatedAt:    Course.CreatedAt(),
+		Id:          Course.Id(),
+		Name:        Course.Name(),
+		Description: Course.Description(),
+		UserId:      Course.UserId(),
+		Sections:    []models.CourseSectionModel{},
+		CreatedAt:   Course.CreatedAt(),
 	})
 	return err
 }
@@ -127,8 +127,8 @@ func (cr *CoursesRepositories) Delete(Id string) error {
 
 func (cr *CoursesRepositories) Get(Filters ports.GetCourseFilters) ([]*entities.Course, error) {
 	filter := bson.M{}
-	if Filters.InstructorId != "" {
-		filter["instructorId"] = Filters.InstructorId
+	if Filters.UserId != "" {
+		filter["userId"] = Filters.UserId
 	}
 	if Filters.Id != "" {
 		filter["_id"] = Filters.Id

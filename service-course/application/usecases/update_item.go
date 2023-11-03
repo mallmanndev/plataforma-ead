@@ -23,7 +23,7 @@ func NewUpdateItem(CoursesRepo ports.CourseRepository) *UpdateItem {
 
 func (ui *UpdateItem) Execute(Data UpdateItemInput) (*entities.Course, error) {
 	course, _ := ui.coursesRepo.FindByItemId(Data.Id)
-	if course == nil || course.InstructorID() != Data.UserId {
+	if course == nil || course.UserId() != Data.UserId {
 		return nil, errs.NewNotFoundError("Item")
 	}
 

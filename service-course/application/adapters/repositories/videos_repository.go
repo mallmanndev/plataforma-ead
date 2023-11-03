@@ -46,9 +46,14 @@ func (vr *VideosRepository) Create(video *entities.Video) error {
 func (vr *VideosRepository) Find(Id string) (*entities.Video, error) {
 	collection := vr.db.Collection("videos")
 	var video models.VideoModel
-	if err := collection.FindOne(context.Background(), bson.M{"_id": Id}).Decode(&video); err != nil {
+	err := collection.FindOne(context.Background(), bson.M{"_id": Id}).Decode(&video)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	}
+	if err != nil {
 		return nil, err
 	}
+
 	return mappers.VideoModelToVideoEntity(video), nil
 }
 

@@ -1,11 +1,12 @@
 package integration_test
 
 import (
+	"testing"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/setups"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
-	"testing"
 )
 
 func TestDeleteCourse(t *testing.T) {
@@ -62,7 +63,7 @@ func TestDeleteCourse(t *testing.T) {
 
 		request := &pb.DeleteCourseRequest{
 			CourseId: course.Id(),
-			UserId:   course.InstructorID(),
+			UserId:   course.UserId(),
 		}
 
 		del, err := client.Delete(ctx, request)

@@ -11,7 +11,7 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 		Model.Name,
 		Model.Description,
 		nil,
-		Model.InstructorId,
+		Model.UserId,
 		Model.Visible,
 		Model.CreatedAt,
 		Model.UpdatedAt,

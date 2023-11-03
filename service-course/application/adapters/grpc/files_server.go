@@ -89,8 +89,10 @@ func (s *FilesServer) GetVideo(_ context.Context, req *pb.GetVideoRequest) (*pb.
 
 	video, err := s.videosRepository.Find(req.GetId())
 	if err != nil {
-		log.Fatal(err)
 		return nil, errs.NewGrpcError(err)
+	}
+	if video == nil {
+		return nil, nil
 	}
 
 	var resolutions []*pb.VideoResolution

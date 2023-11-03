@@ -97,7 +97,7 @@ message DeleteCourseSectionRequest {
 
 message GetCoursesRequest {
   string id = 1;
-  string instructor_id = 2;
+  string user_id = 2;
   bool visible = 3;
 }
 

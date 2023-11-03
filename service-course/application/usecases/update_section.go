@@ -28,7 +28,7 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 	if course == nil {
 		return nil, errs.NewUpdateSectionUseCaseError("Course not found", nil)
 	}
-	if course.InstructorID() != Data.UserId {
+	if course.UserId() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("update section")
 	}
 

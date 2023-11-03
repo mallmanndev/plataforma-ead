@@ -3,9 +3,9 @@ package ports
 import "github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 
 type GetCourseFilters struct {
-	Id           string
-	InstructorId string
-	Visible      bool
+	Id      string
+	UserId  string
+	Visible bool
 }
 
 type CourseRepository interface {

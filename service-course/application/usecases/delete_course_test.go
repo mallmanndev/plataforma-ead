@@ -2,11 +2,12 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
-	"testing"
 )
 
 func TestDeleteCourseUseCase(t *testing.T) {
@@ -66,7 +67,7 @@ func TestDeleteCourseUseCase(t *testing.T) {
 		mockCourseRepository.EXPECT().Delete(course.Id()).Return(errors.New("Test!"))
 		data := usecases.DeleteCourseUseCaseDataDTO{
 			Id:     course.Id(),
-			UserId: course.InstructorID(),
+			UserId: course.UserId(),
 		}
 		err := useCase.Execute(data)
 		if err == nil {
@@ -89,7 +90,7 @@ func TestDeleteCourseUseCase(t *testing.T) {
 		mockCourseRepository.EXPECT().Delete(course.Id()).Return(nil)
 		data := usecases.DeleteCourseUseCaseDataDTO{
 			Id:     course.Id(),
-			UserId: course.InstructorID(),
+			UserId: course.UserId(),
 		}
 		err := useCase.Execute(data)
 		if err != nil {

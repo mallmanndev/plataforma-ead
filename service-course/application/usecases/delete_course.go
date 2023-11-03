@@ -23,13 +23,13 @@ func (dc *DeleteCourseUseCase) Execute(Data DeleteCourseUseCaseDataDTO) error {
 	if findCourse == nil {
 		return errs.NewNotFoundError("Course")
 	}
-	if findCourse.InstructorID() != Data.UserId {
+	if findCourse.UserId() != Data.UserId {
 		return errs.NewPermissionDeniedError("delete course")
 	}
 
 	if err := dc.courseRepository.Delete(Data.Id); err != nil {
 		return errs.NewDeleteCourseUseCaseError("Could not delete course", err)
 	}
-	
+
 	return nil
 }

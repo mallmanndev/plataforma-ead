@@ -21,7 +21,7 @@ func NewDeleteItem(CoursesRepo ports.CourseRepository) *DeleteItem {
 
 func (ui *DeleteItem) Execute(Data DeleteItemInput) (*entities.Course, error) {
 	course, _ := ui.coursesRepo.FindByItemId(Data.Id)
-	if course == nil || course.InstructorID() != Data.UserId {
+	if course == nil || course.UserId() != Data.UserId {
 		return nil, errs.NewNotFoundError("Item")
 	}
 

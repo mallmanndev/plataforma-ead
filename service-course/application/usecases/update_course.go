@@ -40,7 +40,7 @@ func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.C
 		return nil, errs.NewNotFoundError("Course")
 	}
 
-	if course.InstructorID() != Data.Instructor.Id {
+	if course.UserId() != Data.Instructor.Id {
 		return nil, errs.NewPermissionDeniedError("update course")
 	}
 

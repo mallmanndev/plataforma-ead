@@ -23,12 +23,12 @@ type CourseSectionModel struct {
 }
 
 type CourseModel struct {
-	Id           string               `bson:"_id"`
-	Name         string               `bson:"name"`
-	Description  string               `bson:"description"`
-	InstructorId string               `bson:"instructorId"`
-	Visible      bool                 `bson:"visible"`
-	Sections     []CourseSectionModel `bson:"sections"`
-	CreatedAt    time.Time            `bson:"createdAt"`
-	UpdatedAt    time.Time            `bson:"updatedAt"`
+	Id          string               `bson:"_id"`
+	Name        string               `bson:"name"`
+	Description string               `bson:"description"`
+	UserId      string               `bson:"userId"`
+	Visible     bool                 `bson:"visible"`
+	Sections    []CourseSectionModel `bson:"sections"`
+	CreatedAt   time.Time            `bson:"createdAt"`
+	UpdatedAt   time.Time            `bson:"updatedAt"`
 }

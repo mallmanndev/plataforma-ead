@@ -33,7 +33,7 @@ func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course
 	if course == nil {
 		return nil, errs.NewNotFoundError("Course")
 	}
-	if course.InstructorID() != Data.UserId {
+	if course.UserId() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("create section")
 	}
 

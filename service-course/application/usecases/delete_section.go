@@ -23,7 +23,7 @@ func (ds *DeleteSectionUseCase) Execute(Data DeleteSectionDTO) error {
 	if course == nil {
 		return errs.NewDeleteSectionUseCaseError("Course not found", nil)
 	}
-	if course.InstructorID() != Data.UserId {
+	if course.UserId() != Data.UserId {
 		return errs.NewPermissionDeniedError("update section")
 	}
 

@@ -80,7 +80,7 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
 		data := usecases.UpdateSectionDTO{
 			SectionId:   section.Id(),
-			UserId:      course.InstructorID(),
+			UserId:      course.UserId(),
 			Name:        "Fir",
 			Description: "A test section",
 		}
@@ -102,7 +102,7 @@ func TestUpdateSectionUseCase(t *testing.T) {
 
 		data := usecases.UpdateSectionDTO{
 			SectionId:   section.Id(),
-			UserId:      course.InstructorID(),
+			UserId:      course.UserId(),
 			Name:        "First Section",
 			Description: "A test section",
 		}
@@ -129,7 +129,7 @@ func TestUpdateSectionUseCase(t *testing.T) {
 
 		data := usecases.UpdateSectionDTO{
 			SectionId:   section.Id(),
-			UserId:      course.InstructorID(),
+			UserId:      course.UserId(),
 			Name:        "First Section",
 			Description: "A test section",
 		}

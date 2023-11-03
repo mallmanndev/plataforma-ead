@@ -159,12 +159,15 @@ func (cs *CourseServer) DeleteSection(_ context.Context, req *pb.DeleteCourseSec
 
 func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.GetCoursesResponse, error) {
 	courses, err := cs.coursesRepo.Get(ports.GetCourseFilters{
-		Id:           req.Id,
-		InstructorId: req.InstructorId,
-		Visible:      req.Visible,
+		Id:      req.Id,
+		UserId:  req.UserId,
+		Visible: req.Visible,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errs.NewGrpcError(err)
+	}
+	if courses == nil {
+		return &pb.GetCoursesResponse{Courses: nil}, nil
 	}
 
 	v := []*pb.Course{}
