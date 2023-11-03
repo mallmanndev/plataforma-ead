@@ -12,6 +12,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: validatedData.error }, { status: 400 });
   }
 
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const service = new CoursesServiceGrpc();
   const { error, response } = await service.Create({
     ...data,
@@ -38,8 +42,8 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const service = new CoursesServiceGrpc();
   const { error, response } = await service.Get({
-    id: searchParams.get("id"),
-    instructor_id: searchParams.get("instructor_id"),
+    id: searchParams.get("id") as string,
+    user_id: searchParams.get("user_id") as string,
     visible: searchParams.get("visible") === "1",
   });
   if (error) {

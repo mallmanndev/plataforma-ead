@@ -3,11 +3,16 @@ syntax = "proto3";
 option go_package = "./pb";
 
 service CoursesService {
+  rpc Get(GetCoursesRequest) returns (GetCoursesResponse) {};
   rpc Create(CreateCourseRequest) returns (Course) {};
   rpc Update(UpdateCourseRequest) returns (Course) {};
   rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {};
-  rpc CreateCourseSection(CreateCourseSectionRequest) returns (Course) {};
-  rpc Get(GetCoursesRequest) returns (GetCoursesResponse) {};
+  rpc CreateSection(CreateCourseSectionRequest) returns (Course) {};
+  rpc UpdateSection(UpdateCourseSectionRequest) returns (Course) {}
+  rpc DeleteSection(DeleteCourseSectionRequest) returns (DeleteCourseResponse) {}
+  rpc CreateItem(CreateItemRequest) returns (Course) {}
+  rpc UpdateItem(UpdateItemRequest) returns (Course) {}
+  rpc DeleteItem(DeleteItemRequest) returns (Course) {}
 }
 
 message People {
@@ -78,12 +83,44 @@ message CreateCourseSectionRequest {
   string description = 4;
 }
 
+message UpdateCourseSectionRequest {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  string description = 4;
+}
+
+message DeleteCourseSectionRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
 message GetCoursesRequest {
   string id = 1;
-  string instructor_id = 2;
+  string user_id = 2;
   bool visible = 3;
 }
 
 message GetCoursesResponse {
   repeated Course courses = 1;
+}
+
+message CreateItemRequest {
+  string section_id = 1;
+  string user_id = 2;
+  string title = 3;
+  string description = 4;
+  string video_id = 5;
+}
+
+message UpdateItemRequest {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  string description = 4;
+}
+
+message DeleteItemRequest {
+  string id = 1;
+  string user_id = 2;
 }

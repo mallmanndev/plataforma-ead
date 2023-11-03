@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { filesGrpcClient } from "@/configs/grpc-client";
+import validateToken from "@/lib/validate-token";
 
 export async function POST(request: Request) {
   const data = await request.formData();
+  const user = validateToken();
   const file = data.get("file") as unknown as File;
+
+  if(!user){
+    return NextResponse.json({error: "Unauthorized"}, {status: 401})
+  }
 
   if (!file) {
     return NextResponse.json({
@@ -20,7 +26,7 @@ export async function POST(request: Request) {
       resolve({ response: stats, error: null });
     });
 
-    call.write({ info: { type: "mp4", size: file.size } });
+    call.write({ info: { type: "mp4", user_id: user.id, size: file.size } });
 
     const wStream = new WritableStream({
       write: (chunk) => call.write({ chunk: chunk }),

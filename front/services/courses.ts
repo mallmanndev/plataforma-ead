@@ -1,5 +1,13 @@
 import { coursesClient } from "@/configs/grpc-client";
 import { TResponse } from "./response";
+import {
+  TCreateCourseItemData,
+  TCreateSectionData,
+  TDeleteCourseItemData,
+  TDeleteSectionData,
+  TUpdateCourseItemData,
+  TUpdateSectionData,
+} from "@/contracts/course";
 
 type TInstructor = {
   id: string;
@@ -27,9 +35,9 @@ type TCourse = {
 };
 
 type TGetCourseFilters = {
-  id: string | null;
-  instructor_id: string | null;
-  visible: boolean | null;
+  id: string;
+  user_id: string;
+  visible: boolean;
 };
 
 type TDeleteCourseInput = {
@@ -96,6 +104,84 @@ class CoursesServiceGrpc {
           return resolve({ response: response });
         }
       );
+    });
+  }
+
+  public async CreateSection(
+    data: TCreateSectionData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.CreateSection(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async UpdateSection(
+    data: TUpdateSectionData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.UpdateSection(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async DeleteSection(
+    data: TDeleteSectionData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.DeleteSection(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async CreateItem(
+    data: TCreateCourseItemData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.CreateItem(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async UpdateItem(
+    data: TUpdateCourseItemData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.UpdateItem(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async DeleteItem(
+    data: TDeleteCourseItemData
+  ): Promise<TResponse<TCourse>> {
+    return new Promise((resolve, _) => {
+      this.service.DeleteItem(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
     });
   }
 }
