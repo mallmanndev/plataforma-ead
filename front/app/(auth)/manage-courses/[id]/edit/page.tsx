@@ -30,6 +30,7 @@ export default async function MyCourses({
 
       <div className="mt-12 flex-1">
         <UpdateCourseForm
+          id={params.id}
           initialData={{ name: course.name, description: course.description }}
         />
       </div>

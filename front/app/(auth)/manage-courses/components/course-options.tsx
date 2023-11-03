@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
 import useDeleteCourse from "@/hooks/delete-course";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Rows, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -58,9 +58,14 @@ export default function CourseOptions({ id, onDelete }: TCourseOptionsProps) {
         <DropdownMenuGroup>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => {
-              push(`/update-course/${id}`);
-            }}
+            onClick={() => push(`/manage-courses/${id}`)}
+          >
+            <Rows className="mr-2 h-4 w-4" />
+            <span>Seções</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => push(`/manage-courses/${id}/edit`)}
           >
             <Pencil className="mr-2 h-4 w-4" />
             <span>Editar</span>
@@ -68,9 +73,7 @@ export default function CourseOptions({ id, onDelete }: TCourseOptionsProps) {
           <DropdownMenuItem
             className="cursor-pointer"
             disabled={loading}
-            onClick={() => {
-              remove(id);
-            }}
+            onClick={() => remove(id)}
           >
             <Trash className="mr-2 h-4 w-4" />
             <span>Excluir</span>

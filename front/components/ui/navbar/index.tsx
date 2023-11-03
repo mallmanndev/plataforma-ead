@@ -21,7 +21,7 @@ export default function NavBar({user}: { user: User }) {
                     </Link>
 
                     <Link
-                        href="/my-courses"
+                        href="/manage-courses"
                         className="text-sm font-medium transition-colors hover:text-primary"
                     >
                         Meus cursos

@@ -4,11 +4,14 @@ import Sections from "./components/sections";
 import { env } from "process";
 
 const getCourse = async (id: string) => {
-  const res = await fetch(`${env.SERVER_HOST}/api/course/${id}`, {
+  const res = await fetch(`${env.SERVER_HOST}/api/courses/${id}`, {
     cache: "no-cache",
   });
 
-  if (!res.ok) throw new Error("Failed to fetch course!");
+  if (!res.ok) {
+    console.log(await res.json());
+    throw new Error("Failed to fetch course!");
+  }
 
   return res.json();
 };
@@ -36,11 +39,11 @@ export async function generateMetadata({
 }
 
 const getItem = (course: any, itemId?: string) => {
-  if (!itemId) return course.sections[0].itens[0].videoId;
+  if (!itemId) return course.sections[0].itens[0];
 
   for (const sections of course.sections) {
     for (const item of sections.itens) {
-      if (item.id === itemId) return item.videoId;
+      if (item.id === itemId) return item;
     }
   }
 
@@ -56,7 +59,6 @@ export default async function CoursePage({
 }) {
   const course = await getCourse(params.id);
   const item = getItem(course, searchParams.item);
-
   const video = await getVideo(item.videoId);
 
   return (
@@ -66,7 +68,7 @@ export default async function CoursePage({
       <div className="flex flex-wrap mt-8">
         <div className="w-full md:w-2/3 lg:w-3/4">
           <VideoPlayer
-            source="http://localhost:3002/api/videos/11851ead-d665-4c54-a481-bc5a44b2e39b/playlist.m3u8"
+            source={`http://localhost:3002/api/videos/${video.id}/playlist.m3u8`}
             qualities={[1080, 720, 480]}
           />
         </div>

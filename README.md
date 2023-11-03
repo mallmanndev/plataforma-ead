@@ -58,10 +58,8 @@ Serviço para o gerenciamento e disponibilização de cursos.
 - Streaming de videos
 - Gerenciamento de progresso de curso
 
-// ffmpeg -i video-editado.mp4 -c:v libx264 -vf scale=640:480 -f segment -segment_time 10 -segment_list test_480/segment-list.m3u8 -c copy -re
-set_timestamps 1 test_480/segmento%d.mp4
 
-Redimensiona o video mantendo a qualidade
+### Redimensiona o video mantendo a qualidade
 
 ffmpeg \
     -i input.mp4 \
@@ -72,32 +70,3 @@ ffmpeg \
     -hls_list_size 0 \
     -hls_segment_filename "resolucao-720/segment%d.ts" \
     -f hls resolucao-720/index.m3u8
-
-ffmpeg \
--i input.mp4 \
--vf scale=640:480 \
--preset slow \
--crf 18 \
--hls_time 10 \
--hls_list_size 0 \
--hls_segment_filename "resolucao-480/segment%d.ts" \
--f hls resolucao-480/index.m3u8
-
-Somente gerar segmentos:
-ffmpeg \
-    -i input.mp4 \
-    -hls_time 10 \
-    -hls_list_size 0 \
-    -hls_segment_filename "resolucao-1080/segment%d.ts" \
-    -f hls resolucao-1080/index.m3u8
-
-curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
-  sudo apt-key add -
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
-  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-sudo apt-get update
-
-# Install nvidia-docker2 and reload the Docker daemon configuration
-sudo apt-get install -y nvidia-docker2
-sudo pkill -SIGHUP dockerd

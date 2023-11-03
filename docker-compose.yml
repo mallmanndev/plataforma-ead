@@ -78,6 +78,7 @@ services:
       - service-core-backend
     volumes:
       - ./front:/app
+      - ./videos:/videos
       - /app/node_modules
       - /app/.next
 

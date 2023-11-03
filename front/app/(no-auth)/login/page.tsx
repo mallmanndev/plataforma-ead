@@ -5,6 +5,10 @@ import LoginRegisterLayout from "@/components/layouts/LoginRegisterLayout";
 import {cn} from "@/lib/utils";
 import {buttonVariants} from "@/components/ui/button";
 
+export const metadata = {
+    title: "Login"
+}
+
 export default function Login() {
     return (
         <>

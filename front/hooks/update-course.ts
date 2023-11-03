@@ -10,7 +10,7 @@ type TUseUpdateCourse = {
   loading: boolean;
   error: string | null;
   course: TCourse;
-  update(data: any): void;
+  update(data: TCourse): void;
 };
 
 export default function useUpdateCourse(): TUseUpdateCourse {
@@ -18,13 +18,17 @@ export default function useUpdateCourse(): TUseUpdateCourse {
   const [error, setError] = useState<string | null>(null);
   const [course, setCourse] = useState<any>(null);
 
-  const update = () => {
+  const update = (data: TCourse) => {
     (async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses/${data.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         const course = await response.json();
@@ -33,6 +37,7 @@ export default function useUpdateCourse(): TUseUpdateCourse {
         const errorData = await response.json();
         setError(errorData.message);
       }
+      setLoading(false);
     })();
   };
 

@@ -2,7 +2,7 @@
 
 import CourseForm from "@/components/forms/course-form";
 import useCreateCourse from "@/hooks/create-course";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function CreateCourseForm() {
@@ -10,7 +10,7 @@ export default function CreateCourseForm() {
   const { loading, error, course, createCourse } = useCreateCourse();
 
   useEffect(() => {
-    if (course) push("/my-courses");
+    if (course) push("/manage-courses");
   }, [course]);
 
   const initialData = {

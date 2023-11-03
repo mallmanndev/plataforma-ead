@@ -18,6 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createCourseSchema } from "@/contracts/course";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useToast } from "../ui/use-toast";
+import { useEffect } from "react";
 
 type Params = {
   name: string;
@@ -39,10 +41,20 @@ export default function CourseForm({
   buttonText,
   onSubmit,
 }: CourseForm) {
+  const {toast} = useToast()
   const form = useForm<Params>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: defaultValues,
   });
+
+  useEffect(() => {
+    if (error)
+      toast({
+        variant: "destructive",
+        title: "Não foi possível excluir o curso",
+        description: error,
+      });
+  }, [error]);
 
   return (
     <div>

@@ -18,7 +18,7 @@ export default function Sections({ sections }: { sections: any[] }) {
   return (
     <>
       {sections.map((section: any) => (
-        <Accordion type="single" collapsible>
+        <Accordion key={section.id} type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>{section.name}</AccordionTrigger>
             <AccordionContent>
