@@ -29,9 +29,11 @@ type CoursesServiceClient interface {
 	CreateSection(ctx context.Context, in *CreateCourseSectionRequest, opts ...grpc.CallOption) (*Course, error)
 	UpdateSection(ctx context.Context, in *UpdateCourseSectionRequest, opts ...grpc.CallOption) (*Course, error)
 	DeleteSection(ctx context.Context, in *DeleteCourseSectionRequest, opts ...grpc.CallOption) (*DeleteCourseResponse, error)
+	GetSection(ctx context.Context, in *GetSectionRequest, opts ...grpc.CallOption) (*CourseSection, error)
 	CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*Course, error)
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*Course, error)
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*Course, error)
+	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*CourseItem, error)
 }
 
 type coursesServiceClient struct {
@@ -105,6 +107,15 @@ func (c *coursesServiceClient) DeleteSection(ctx context.Context, in *DeleteCour
 	return out, nil
 }
 
+func (c *coursesServiceClient) GetSection(ctx context.Context, in *GetSectionRequest, opts ...grpc.CallOption) (*CourseSection, error) {
+	out := new(CourseSection)
+	err := c.cc.Invoke(ctx, "/CoursesService/GetSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coursesServiceClient) CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*Course, error) {
 	out := new(Course)
 	err := c.cc.Invoke(ctx, "/CoursesService/CreateItem", in, out, opts...)
@@ -132,6 +143,15 @@ func (c *coursesServiceClient) DeleteItem(ctx context.Context, in *DeleteItemReq
 	return out, nil
 }
 
+func (c *coursesServiceClient) GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*CourseItem, error) {
+	out := new(CourseItem)
+	err := c.cc.Invoke(ctx, "/CoursesService/GetItem", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoursesServiceServer is the server API for CoursesService service.
 // All implementations must embed UnimplementedCoursesServiceServer
 // for forward compatibility
@@ -143,9 +163,11 @@ type CoursesServiceServer interface {
 	CreateSection(context.Context, *CreateCourseSectionRequest) (*Course, error)
 	UpdateSection(context.Context, *UpdateCourseSectionRequest) (*Course, error)
 	DeleteSection(context.Context, *DeleteCourseSectionRequest) (*DeleteCourseResponse, error)
+	GetSection(context.Context, *GetSectionRequest) (*CourseSection, error)
 	CreateItem(context.Context, *CreateItemRequest) (*Course, error)
 	UpdateItem(context.Context, *UpdateItemRequest) (*Course, error)
 	DeleteItem(context.Context, *DeleteItemRequest) (*Course, error)
+	GetItem(context.Context, *GetItemRequest) (*CourseItem, error)
 	mustEmbedUnimplementedCoursesServiceServer()
 }
 
@@ -174,6 +196,9 @@ func (UnimplementedCoursesServiceServer) UpdateSection(context.Context, *UpdateC
 func (UnimplementedCoursesServiceServer) DeleteSection(context.Context, *DeleteCourseSectionRequest) (*DeleteCourseResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSection not implemented")
 }
+func (UnimplementedCoursesServiceServer) GetSection(context.Context, *GetSectionRequest) (*CourseSection, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSection not implemented")
+}
 func (UnimplementedCoursesServiceServer) CreateItem(context.Context, *CreateItemRequest) (*Course, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateItem not implemented")
 }
@@ -182,6 +207,9 @@ func (UnimplementedCoursesServiceServer) UpdateItem(context.Context, *UpdateItem
 }
 func (UnimplementedCoursesServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*Course, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
+}
+func (UnimplementedCoursesServiceServer) GetItem(context.Context, *GetItemRequest) (*CourseItem, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetItem not implemented")
 }
 func (UnimplementedCoursesServiceServer) mustEmbedUnimplementedCoursesServiceServer() {}
 
@@ -322,6 +350,24 @@ func _CoursesService_DeleteSection_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoursesService_GetSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoursesServiceServer).GetSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CoursesService/GetSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoursesServiceServer).GetSection(ctx, req.(*GetSectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CoursesService_CreateItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateItemRequest)
 	if err := dec(in); err != nil {
@@ -376,6 +422,24 @@ func _CoursesService_DeleteItem_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoursesService_GetItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoursesServiceServer).GetItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CoursesService/GetItem",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoursesServiceServer).GetItem(ctx, req.(*GetItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoursesService_ServiceDesc is the grpc.ServiceDesc for CoursesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -412,6 +476,10 @@ var CoursesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CoursesService_DeleteSection_Handler,
 		},
 		{
+			MethodName: "GetSection",
+			Handler:    _CoursesService_GetSection_Handler,
+		},
+		{
 			MethodName: "CreateItem",
 			Handler:    _CoursesService_CreateItem_Handler,
 		},
@@ -422,6 +490,10 @@ var CoursesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteItem",
 			Handler:    _CoursesService_DeleteItem_Handler,
+		},
+		{
+			MethodName: "GetItem",
+			Handler:    _CoursesService_GetItem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

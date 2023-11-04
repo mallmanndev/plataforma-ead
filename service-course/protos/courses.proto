@@ -3,16 +3,18 @@ syntax = "proto3";
 option go_package = "./pb";
 
 service CoursesService {
-  rpc Get(GetCoursesRequest) returns (GetCoursesResponse) {};
-  rpc Create(CreateCourseRequest) returns (Course) {};
-  rpc Update(UpdateCourseRequest) returns (Course) {};
-  rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {};
-  rpc CreateSection(CreateCourseSectionRequest) returns (Course) {};
+  rpc Get(GetCoursesRequest) returns (GetCoursesResponse) {}
+  rpc Create(CreateCourseRequest) returns (Course) {}
+  rpc Update(UpdateCourseRequest) returns (Course) {}
+  rpc Delete(DeleteCourseRequest) returns (DeleteCourseResponse) {}
+  rpc CreateSection(CreateCourseSectionRequest) returns (Course) {}
   rpc UpdateSection(UpdateCourseSectionRequest) returns (Course) {}
   rpc DeleteSection(DeleteCourseSectionRequest) returns (DeleteCourseResponse) {}
+  rpc GetSection(GetSectionRequest) returns (CourseSection) {}
   rpc CreateItem(CreateItemRequest) returns (Course) {}
   rpc UpdateItem(UpdateItemRequest) returns (Course) {}
   rpc DeleteItem(DeleteItemRequest) returns (Course) {}
+  rpc GetItem(GetItemRequest) returns (CourseItem) {}
 }
 
 message People {
@@ -123,4 +125,12 @@ message UpdateItemRequest {
 message DeleteItemRequest {
   string id = 1;
   string user_id = 2;
+}
+
+message GetSectionRequest {
+  string id = 1;
+}
+
+message GetItemRequest {
+  string id = 1;
 }

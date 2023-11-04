@@ -114,6 +114,29 @@ func (cs *CourseServer) Delete(_ context.Context, req *pb.DeleteCourseRequest) (
 	return res, nil
 }
 
+func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.GetCoursesResponse, error) {
+	courses, err := cs.coursesRepo.Get(ports.GetCourseFilters{
+		Id:      req.Id,
+		UserId:  req.UserId,
+		Visible: req.Visible,
+	})
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+	if courses == nil {
+		return &pb.GetCoursesResponse{Courses: nil}, nil
+	}
+
+	v := []*pb.Course{}
+	for _, value := range courses {
+		v = append(v, mappers.CourseEnitiyToGrpc(value))
+	}
+
+	response := &pb.GetCoursesResponse{Courses: v}
+
+	return response, nil
+}
+
 func (cs *CourseServer) CreateSection(_ context.Context, req *pb.CreateCourseSectionRequest) (*pb.Course, error) {
 	course, err := cs.createSectionUseCase.Execute(usecases.CreateSectionDTO{
 		CourseId:    req.CourseId,
@@ -157,27 +180,18 @@ func (cs *CourseServer) DeleteSection(_ context.Context, req *pb.DeleteCourseSec
 	return res, nil
 }
 
-func (cs *CourseServer) Get(_ context.Context, req *pb.GetCoursesRequest) (*pb.GetCoursesResponse, error) {
-	courses, err := cs.coursesRepo.Get(ports.GetCourseFilters{
-		Id:      req.Id,
-		UserId:  req.UserId,
-		Visible: req.Visible,
-	})
+func (cs *CourseServer) GetSection(_ context.Context, req *pb.GetSectionRequest) (*pb.CourseSection, error) {
+	course, err := cs.coursesRepo.FindBySectionId(req.GetId())
 	if err != nil {
 		return nil, errs.NewGrpcError(err)
 	}
-	if courses == nil {
-		return &pb.GetCoursesResponse{Courses: nil}, nil
+	if course == nil {
+		return nil, status.Error(codes.NotFound, "Item not found.")
 	}
 
-	v := []*pb.Course{}
-	for _, value := range courses {
-		v = append(v, mappers.CourseEnitiyToGrpc(value))
-	}
+	section := course.FindSection(req.GetId())
 
-	response := &pb.GetCoursesResponse{Courses: v}
-
-	return response, nil
+	return mappers.SectionEntityToGrpc(section), nil
 }
 
 func (cs *CourseServer) CreateItem(_ context.Context, req *pb.CreateItemRequest) (*pb.Course, error) {
@@ -219,4 +233,18 @@ func (cs *CourseServer) DeleteItem(_ context.Context, req *pb.DeleteItemRequest)
 	}
 
 	return mappers.CourseEnitiyToGrpc(course), nil
+}
+
+func (cs *CourseServer) GetItem(_ context.Context, req *pb.GetItemRequest) (*pb.CourseItem, error) {
+	course, err := cs.coursesRepo.FindByItemId(req.GetId())
+	if err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+	if course == nil {
+		return nil, status.Error(codes.NotFound, "Item not found.")
+	}
+
+	item, _ := course.FindItem(req.GetId())
+
+	return mappers.ItemEntityToGrpc(item), nil
 }

@@ -8,6 +8,7 @@ import {
   TUpdateCourseItemData,
   TUpdateSectionData,
 } from "@/contracts/course";
+import { Item, Section } from "@/types/course";
 
 type TInstructor = {
   id: string;
@@ -146,6 +147,17 @@ class CoursesServiceGrpc {
     });
   }
 
+  public async GetSection(data: { id: string }): Promise<TResponse<Section>> {
+    return new Promise((resolve, _) => {
+      this.service.GetSection(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
   public async CreateItem(
     data: TCreateCourseItemData
   ): Promise<TResponse<TCourse>> {
@@ -177,6 +189,17 @@ class CoursesServiceGrpc {
   ): Promise<TResponse<TCourse>> {
     return new Promise((resolve, _) => {
       this.service.DeleteItem(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async GetItem(data: { id: string }): Promise<TResponse<Item>> {
+    return new Promise((resolve, _) => {
+      this.service.GetItem(data, (err: any, response: any) => {
         if (err) {
           return resolve({ error: { code: err.code, message: err.details } });
         }
