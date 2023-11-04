@@ -11,8 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import useDeleteSection from "@/hooks/delete-section";
-import { MonitorPlay, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import useDeleteItem from "@/hooks/delete-item";
+import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,22 +21,22 @@ type TSectionOptionsProps = {
   onDelete: () => void;
 };
 
-export default function SectionOptions({ id, onDelete }: TSectionOptionsProps) {
+export default function ItensOptions({ id, onDelete }: TSectionOptionsProps) {
   const { push } = useRouter();
-  const { loading, error, success, remove } = useDeleteSection();
+  const { loading, error, success, remove } = useDeleteItem();
 
   useEffect(() => {
     if (error)
       toast({
         variant: "destructive",
-        title: "Não foi possível excluir a seção",
+        title: "Não foi possível excluir o item.",
         description: error,
       });
   }, [error]);
 
   useEffect(() => {
     if (success) {
-      toast({ title: "Seção deletado com sucesso" });
+      toast({ title: "Item deletado com sucesso" });
       onDelete();
     }
   }, [success]);
@@ -58,14 +58,7 @@ export default function SectionOptions({ id, onDelete }: TSectionOptionsProps) {
         <DropdownMenuGroup>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => push(`/manage-itens/${id}`)}
-          >
-            <MonitorPlay className="mr-2 h-4 w-4" />
-            <span>Conteúdo</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => push(`/update-section/${id}`)}
+            onClick={() => push(`/update-item/${id}`)}
           >
             <Pencil className="mr-2 h-4 w-4" />
             <span>Editar</span>

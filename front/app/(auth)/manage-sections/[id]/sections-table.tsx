@@ -56,7 +56,6 @@ export default function SectionsTable({ courseId }: { courseId: string }) {
           <TableHead>Descrição</TableHead>
           <TableHead>Videos</TableHead>
           <TableHead className="w-[150px]">Criado em</TableHead>
-          <TableHead className="w-[150px]">Visibilidade</TableHead>
           <TableHead className="w-[50px]"></TableHead>
         </TableRow>
       </TableHeader>
@@ -67,20 +66,6 @@ export default function SectionsTable({ courseId }: { courseId: string }) {
             <TableCell>{section.description}</TableCell>
             <TableCell>{section.itens.length}</TableCell>
             <TableCell>{formatDate(section.createdAt)}</TableCell>
-            <TableCell className="text-right">
-              <Select>
-                <SelectTrigger className="h-8">
-                  <SelectValue placeholder="Visibilidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Visibilidade</SelectLabel>
-                    <SelectItem value="public">Público</SelectItem>
-                    <SelectItem value="private">Privado</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </TableCell>
             <TableCell>
               <SectionOptions id={section.id} onDelete={refetch} />
             </TableCell>

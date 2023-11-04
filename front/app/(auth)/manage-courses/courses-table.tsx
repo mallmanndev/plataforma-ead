@@ -24,6 +24,7 @@ import { EmptyCourses } from "./components/empty-courses";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import CourseOptions from "./components/course-options";
+import { Course } from "@/types/course";
 
 const videos = (course: Course) =>
   course.sections.reduce((acc, cur) => {

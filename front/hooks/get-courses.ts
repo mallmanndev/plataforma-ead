@@ -1,5 +1,6 @@
 "use client";
 
+import { Course } from "@/types/course";
 import { useEffect, useState } from "react";
 
 type TUseGetCoursesFilter = {

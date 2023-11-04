@@ -1,26 +1,26 @@
-import { TUpdateSectionData } from "@/contracts/course";
+import { TCreateCourseItemData, TCreateSectionData } from "@/contracts/course";
 import { Section } from "@/types/course";
 import { useState } from "react";
 
-type TUseUpdateSection = {
+type TUseCreateItem = {
   loading: boolean;
   error: string | null;
   course: Section;
-  update(data: Omit<TUpdateSectionData, "user_id">): void;
+  create(data: Omit<TCreateCourseItemData, "user_id">): void;
 };
 
-const useUpdateSection = (): TUseUpdateSection => {
+export default function useCreateItem(): TUseCreateItem {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [course, setCourse] = useState<any>(null);
 
-  const update = (data: Omit<TUpdateSectionData, "user_id">) => {
+  const create = (data: Omit<TCreateCourseItemData, "user_id">) => {
     (async () => {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections/${data.id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens`,
         {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         }
@@ -37,7 +37,5 @@ const useUpdateSection = (): TUseUpdateSection => {
     })();
   };
 
-  return { loading, error, course, update };
-};
-
-export default useUpdateSection;
+  return { loading, error, course, create };
+}

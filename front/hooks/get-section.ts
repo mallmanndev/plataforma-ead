@@ -1,19 +1,19 @@
 "use client";
 
-import { Course } from "@/types/course";
+import { Section } from "@/types/course";
 import { useEffect, useState } from "react";
 
-type TUseGetCourses = {
+type TUseGetSection = {
   loading: boolean;
   error?: string;
-  course?: Course;
+  section?: Section;
   refetch: () => void;
 };
 
-const useGetCourse = (id: string): TUseGetCourses => {
+export default function useGetSection(id: string): TUseGetSection {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>();
-  const [course, setCourse] = useState<Course>();
+  const [section, setSection] = useState<Section>();
 
   useEffect(() => {
     refetch();
@@ -23,20 +23,17 @@ const useGetCourse = (id: string): TUseGetCourses => {
     setLoading(true);
 
     const fetchData = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses/${id}`
+      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections/${id}`
     );
     if (!fetchData.ok) {
       setError("Não foi possível buscar o curso.");
       return setLoading(false);
     }
 
-    const courses = await fetchData.json();
-
-    setCourse(courses);
+    const section = await fetchData.json();
+    setSection(section);
     setLoading(false);
   };
 
-  return { error, course, loading, refetch };
-};
-
-export default useGetCourse;
+  return { error, section, loading, refetch };
+}

@@ -6,7 +6,16 @@ import useUpdateSection from "@/hooks/update-section";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function UpdateSectionForm({ id }: { id: string }) {
+export default function UpdateSectionForm({
+  id,
+  initialData,
+}: {
+  id: string;
+  initialData: {
+    name: string;
+    description: string;
+  };
+}) {
   const { push } = useRouter();
   const { loading, error, course, update } = useUpdateSection();
 
@@ -26,11 +35,6 @@ export default function UpdateSectionForm({ id }: { id: string }) {
       });
     }
   }, [error]);
-
-  const initialData = {
-    name: "",
-    description: "",
-  };
 
   return (
     <SectionForm
