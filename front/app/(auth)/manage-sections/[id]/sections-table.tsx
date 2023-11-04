@@ -22,21 +22,10 @@ import formatDate from "@/utils/formatDate";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import useGetCourse from "@/hooks/get-course";
-import EmptySections from "./components/empty-sections";
+import EmptySections from "../components/empty-sections";
+import SectionOptions from "../components/section-options";
 
-const videos = (course: Course) =>
-  course.sections.reduce((acc, cur) => {
-    if (cur.itens) acc += cur.itens.length;
-    return acc;
-  }, 0);
-
-export default function SectionsTable({
-  userId,
-  courseId,
-}: {
-  userId: string;
-  courseId: string;
-}) {
+export default function SectionsTable({ courseId }: { courseId: string }) {
   const { toast } = useToast();
   const { loading, course, error, refetch } = useGetCourse(courseId);
 
@@ -51,7 +40,7 @@ export default function SectionsTable({
   }, [error]);
 
   if (loading) {
-    return <p>Carregando cursos...</p>;
+    return <p>Carregando seções...</p>;
   }
 
   if (!course || course.sections.length < 1) {
@@ -65,7 +54,6 @@ export default function SectionsTable({
         <TableRow>
           <TableHead>Nome</TableHead>
           <TableHead>Descrição</TableHead>
-          <TableHead>Seções</TableHead>
           <TableHead>Videos</TableHead>
           <TableHead className="w-[150px]">Criado em</TableHead>
           <TableHead className="w-[150px]">Visibilidade</TableHead>
@@ -73,13 +61,12 @@ export default function SectionsTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {course.sections.map((course: any) => (
-          <TableRow key={course.id}>
-            <TableCell className="font-medium">{course.name}</TableCell>
-            <TableCell>{course.description}</TableCell>
-            <TableCell>{course.sections.length}</TableCell>
-            <TableCell>{videos(course)}</TableCell>
-            <TableCell>{formatDate(course.createdAt)}</TableCell>
+        {course.sections.map((section: any) => (
+          <TableRow key={section.id}>
+            <TableCell className="font-medium">{section.name}</TableCell>
+            <TableCell>{section.description}</TableCell>
+            <TableCell>{section.itens.length}</TableCell>
+            <TableCell>{formatDate(section.createdAt)}</TableCell>
             <TableCell className="text-right">
               <Select>
                 <SelectTrigger className="h-8">
@@ -95,7 +82,7 @@ export default function SectionsTable({
               </Select>
             </TableCell>
             <TableCell>
-              {/*<CourseOptions id={course.id} onDelete={refetch} />*/}
+              <SectionOptions id={section.id} onDelete={refetch} />
             </TableCell>
           </TableRow>
         ))}

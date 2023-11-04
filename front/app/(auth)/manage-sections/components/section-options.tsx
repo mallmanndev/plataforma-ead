@@ -11,32 +11,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
-import useDeleteCourse from "@/hooks/delete-course";
-import { MoreHorizontal, Pencil, Rows, Trash } from "lucide-react";
+import useDeleteSection from "@/hooks/delete-section";
+import { MonitorPlay, MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-type TCourseOptionsProps = {
+type TSectionOptionsProps = {
   id: string;
   onDelete: () => void;
 };
 
-export default function CourseOptions({ id, onDelete }: TCourseOptionsProps) {
+export default function SectionOptions({ id, onDelete }: TSectionOptionsProps) {
   const { push } = useRouter();
-  const { loading, error, success, remove } = useDeleteCourse();
+  const { loading, error, success, remove } = useDeleteSection();
 
   useEffect(() => {
     if (error)
       toast({
         variant: "destructive",
-        title: "Não foi possível excluir o curso",
+        title: "Não foi possível excluir a seção",
         description: error,
       });
   }, [error]);
 
   useEffect(() => {
     if (success) {
-      toast({ title: "Curso deletado com sucesso" });
+      toast({ title: "Seção deletado com sucesso" });
       onDelete();
     }
   }, [success]);
@@ -60,12 +60,12 @@ export default function CourseOptions({ id, onDelete }: TCourseOptionsProps) {
             className="cursor-pointer"
             onClick={() => push(`/manage-sections/${id}`)}
           >
-            <Rows className="mr-2 h-4 w-4" />
-            <span>Seções</span>
+            <MonitorPlay className="mr-2 h-4 w-4" />
+            <span>Conteúdo</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => push(`/edit-course/${id}`)}
+            onClick={() => push(`/update-section/${id}`)}
           >
             <Pencil className="mr-2 h-4 w-4" />
             <span>Editar</span>

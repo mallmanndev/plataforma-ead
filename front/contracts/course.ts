@@ -24,8 +24,8 @@ export type TCreateCourseSectionData = z.infer<
 export const createSectionSchema = z.object({
   course_id: z.string(),
   user_id: z.string(),
-  name: z.string(),
-  description: z.string(),
+  name: z.string().min(4),
+  description: z.string().min(10),
 });
 export type TCreateSectionData = z.infer<typeof createSectionSchema>;
 

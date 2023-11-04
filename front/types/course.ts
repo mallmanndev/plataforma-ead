@@ -1,4 +1,4 @@
-type Item = {
+export type Item = {
   id: string;
   title: string;
   description: string;
@@ -7,7 +7,7 @@ type Item = {
   videoId: string;
 };
 
-type Section = {
+export type Section = {
   id: string;
   name: string;
   description: string;
@@ -16,7 +16,7 @@ type Section = {
   itens: Item[];
 };
 
-type Course = {
+export type Course = {
   id: string;
   name: string;
   description: string;

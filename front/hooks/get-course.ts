@@ -1,5 +1,6 @@
 "use client";
 
+import { Course } from "@/types/course";
 import { useEffect, useState } from "react";
 
 type TUseGetCourses = {
@@ -31,7 +32,9 @@ const useGetCourse = (id: string): TUseGetCourses => {
 
     const courses = await fetchData.json();
 
-    setCourse(courses[0]);
+    console.log(courses)
+
+    setCourse(courses);
     setLoading(false);
   };
 
