@@ -36,6 +36,7 @@ func (vr *VideosRepository) Create(video *entities.Video) error {
 		Url:       video.Url(),
 		CreatedAt: video.CreatedAt(),
 		UpdatedAt: video.UpdatedAt(),
+		UserId:    video.UserId(),
 	}
 
 	_, err := collection.InsertOne(context.Background(), insertModel)
