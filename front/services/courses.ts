@@ -8,7 +8,7 @@ import {
   TUpdateCourseItemData,
   TUpdateSectionData,
 } from "@/contracts/course";
-import { Item, Section } from "@/types/course";
+import { Course, Item, Section } from "@/types/course";
 
 type TInstructor = {
   id: string;
@@ -75,17 +75,15 @@ class CoursesServiceGrpc {
     });
   }
 
-  public async Get(
-    filters: TGetCourseFilters
-  ): Promise<TResponse<{ courses: TCourse[] }>> {
+  public async Get(filters: TGetCourseFilters): Promise<TResponse<Course[]>> {
     return new Promise((resolve, _) => {
       this.service.Get(
         filters,
-        (err: any, response: { courses: TCourse[] }) => {
+        (err: any, response: { courses: Course[] }) => {
           if (err) {
             return resolve({ error: { code: err.code, message: err.details } });
           }
-          return resolve({ response: response });
+          return resolve({ response: response.courses });
         }
       );
     });

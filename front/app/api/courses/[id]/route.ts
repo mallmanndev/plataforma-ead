@@ -4,11 +4,11 @@ import validateToken from "@/lib/validate-token";
 import CoursesServiceGrpc from "@/services/courses";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request, params: { params: { id: string } }) {
+export async function GET(_: Request, { params }: { params: { id: string } }) {
   const service = new CoursesServiceGrpc();
   const { error, response } = await service.Get({
-    id: params.params.id || "",
-    visible: false,
+    id: params.id,
+    visible: true,
     user_id: "",
   });
 
@@ -25,7 +25,7 @@ export async function GET(_: Request, params: { params: { id: string } }) {
     );
   }
 
-  return NextResponse.json(response.courses[0]);
+  return NextResponse.json(response[0]);
 }
 
 export async function DELETE(

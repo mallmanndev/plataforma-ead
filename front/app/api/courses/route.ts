@@ -53,5 +53,5 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return NextResponse.json(response?.courses);
+  return NextResponse.json(response);
 }

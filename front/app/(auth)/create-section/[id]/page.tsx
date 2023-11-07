@@ -1,4 +1,3 @@
-import SectionForm from "@/components/forms/section-form";
 import CreateSectionForm from "./create-course-form";
 
 export const metadata = {
