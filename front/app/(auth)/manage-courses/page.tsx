@@ -18,7 +18,7 @@ export default async function MyCourses() {
       <div className="flex items-center justify-between mt-12">
         <h2 className="text-3xl font-bold tracking-tight">Meus cursos</h2>
         <Link
-          href="/manage-courses/create"
+          href="/create-course"
           className={cn(buttonVariants({ variant: "default" }))}
         >
           Criar curso

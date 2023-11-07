@@ -24,14 +24,18 @@ import { AlertCircle } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useEffect } from "react";
 
-type TValues = Omit<TCreateCourseItemData, "user_id" | "section_id">;
+type TCreateData = Omit<TCreateCourseItemData, "user_id" | "section_id">;
+type TUpdateData = Omit<
+  TCreateCourseItemData,
+  "user_id" | "section_id" | "video_id"
+>;
 
 type ItemForm = {
   loading: boolean;
   error: string | null;
-  defaultValues: TValues;
+  defaultValues: TCreateData | TUpdateData;
   buttonText: string;
-  onSubmit: (data: TValues) => void;
+  onSubmit: (data: TCreateData | TUpdateData) => void;
 };
 
 export default function ItemForm({
@@ -42,9 +46,13 @@ export default function ItemForm({
   onSubmit,
 }: ItemForm) {
   const { toast } = useToast();
-  const form = useForm<TValues>({
+  const form = useForm<TCreateData | TUpdateData>({
     resolver: zodResolver(
-      createCourseItemSchema.omit({ user_id: true, section_id: true })
+      createCourseItemSchema.omit({
+        user_id: true,
+        section_id: true,
+        video_id: true,
+      })
     ),
     defaultValues: defaultValues,
   });
@@ -67,9 +75,9 @@ export default function ItemForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome*</FormLabel>
+                <FormLabel>Titulo*</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Nome da seção" {...field} />
+                  <Input type="text" placeholder="Titulo do video" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,7 +91,7 @@ export default function ItemForm({
               <FormItem>
                 <FormLabel>Descrição*</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Descrição da seção" {...field} />
+                  <Textarea placeholder="Descrição do video" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

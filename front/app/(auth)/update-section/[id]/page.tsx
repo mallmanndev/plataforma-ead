@@ -1,6 +1,4 @@
-import { env } from "process";
 import UpdateSectionForm from "./update-section-form";
-import { cookies } from "next/headers";
 import validateToken from "@/lib/validate-token";
 import CoursesServiceGrpc from "@/services/courses";
 import { Section } from "@/types/course";

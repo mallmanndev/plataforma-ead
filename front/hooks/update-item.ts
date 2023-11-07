@@ -1,26 +1,28 @@
-import { TCreateCourseItemData, TCreateSectionData } from "@/contracts/course";
+import { TUpdateCourseItemData } from "@/contracts/course";
 import { Course } from "@/types/course";
 import { useState } from "react";
 
-type TUseCreateItem = {
+type TUpdateData = Omit<TUpdateCourseItemData, "user_id">;
+
+type TUseUpdateItem = {
   loading: boolean;
   error: string;
-  course: Course;
-  create(data: Omit<TCreateCourseItemData, "user_id">): void;
+  course?: Course;
+  update(data: TUpdateData): void;
 };
 
-export default function useCreateItem(): TUseCreateItem {
+export default function useUpdateItem(): TUseUpdateItem {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
-  const [course, setCourse] = useState<any>(null);
+  const [course, setCourse] = useState<Course>();
 
-  const create = (data: Omit<TCreateCourseItemData, "user_id">) => {
+  const update = (data: TUpdateData) => {
     (async () => {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens`,
+        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens/${data.id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         }
@@ -37,5 +39,5 @@ export default function useCreateItem(): TUseCreateItem {
     })();
   };
 
-  return { loading, error, course, create };
+  return { loading, error, course, update };
 }

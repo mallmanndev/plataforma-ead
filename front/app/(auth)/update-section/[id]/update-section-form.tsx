@@ -22,7 +22,7 @@ export default function UpdateSectionForm({
   useEffect(() => {
     if (course) {
       toast({ title: "Seção criada com sucesso." });
-      push(`/manage-sections/${course.id}`);
+      push(`/manage-itens/${course.id}`);
     }
   }, [course]);
 
