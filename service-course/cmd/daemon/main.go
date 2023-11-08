@@ -15,7 +15,7 @@ func main() {
 	defer disconnect()
 	videosRepository := repositories.NewVideosRepository(db)
 	filesService := services.NewFilesService()
-	useCase := usecases.NewProcessVideo(videosRepository, filesService)
+	useCase := usecases.NewProcessVideoTwo(videosRepository, filesService)
 
 	intervalTime := 5
 

@@ -100,6 +100,7 @@ func (vr *VideosRepository) Update(video *entities.Video) error {
 		resolutions = append(resolutions, models.VideoResolution{
 			Resolution: res.Resolution,
 			URL:        res.URL,
+			Status:     res.Status,
 		})
 	}
 

@@ -5,7 +5,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"sync"
 
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/utils"
@@ -13,15 +12,15 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
 )
 
-type ProcessVideo struct {
+type ProcessVideoTwo struct {
 	videosRepository ports.VideosRepository
 	filesService     ports.FilesService
 }
 
-type ProcessVideoInput struct {
+type ProcessVideoTwoInput struct {
 }
 
-type resolutionType struct {
+type resolutionTypeTwo struct {
 	resolution string
 	width      int32
 	height     int32
@@ -29,28 +28,23 @@ type resolutionType struct {
 	bandWidth  int64
 }
 
-type ProcessResolutionChannel struct {
-	URL        string
-	resolution resolutionType
-}
-
-var resolutions = []resolutionType{
+var resolutionsTwo = []resolutionType{
 	{resolution: "1080", width: 1920, height: 1080, folderName: "1080", bandWidth: 5000000},
 	{resolution: "720", width: 1080, height: 720, folderName: "720", bandWidth: 2800000},
 	{resolution: "480", width: 640, height: 480, folderName: "480", bandWidth: 1400000},
 }
 
-func NewProcessVideo(
+func NewProcessVideoTwo(
 	videosRepository ports.VideosRepository,
 	filesService ports.FilesService,
-) *ProcessVideo {
-	return &ProcessVideo{
+) *ProcessVideoTwo {
+	return &ProcessVideoTwo{
 		videosRepository: videosRepository,
 		filesService:     filesService,
 	}
 }
 
-func (p *ProcessVideo) Execute() error {
+func (p *ProcessVideoTwo) Execute() error {
 	videos, err := p.videosRepository.Get(ports.GetFilters{Status: "pending"})
 	if err != nil {
 		log.Println("Error getting videos to process: ", err)
@@ -71,7 +65,7 @@ func (p *ProcessVideo) Execute() error {
 	return nil
 }
 
-func (p *ProcessVideo) processVideo(video *entities.Video) *entities.Video {
+func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 	log.Printf("[%s] Starting process video...", video.Id())
 
 	videoResolution, err := p.filesService.GetResolution(video.TmpUrl())
@@ -83,80 +77,95 @@ func (p *ProcessVideo) processVideo(video *entities.Video) *entities.Video {
 	resolutionPixels := strings.Split(videoResolution, "x")
 	heightResolution := resolutionPixels[1]
 
+	url := fmt.Sprintf("/videos/%s/playlist.m3u8", video.Id())
+	file, err := p.filesService.CreateFile(
+		ports.FileInfo{Url: url, Type: "m3u8"},
+	)
+	if err != nil {
+		log.Printf("Error to process videos: %s", err)
+		return video.SetStatus("error")
+	}
+
+	file.WriteString("#EXTM3U\n#EXT-X-VERSION:3\n")
+
 	resolutions, err := p.filterResolutions(heightResolution)
 	if err != nil {
 		log.Printf("Error to process videos: %s", err)
 		return video.SetStatus("error")
 	}
 
-	threads := len(resolutions)
-	var wg sync.WaitGroup
-	resultChannel := make(chan ProcessResolutionChannel, threads)
+	sorteredResolutions := utils.SortSlice[resolutionType](resolutions, func(i, j int) bool {
+		return resolutions[i].height < resolutions[j].height
+	})
 
-	for _, resolution := range resolutions {
-		wg.Add(1)
-		go p.processResolution(&wg, video, resolution, resultChannel)
-	}
-
-	wg.Wait()
-	close(resultChannel)
-
-	var resolutionsURL []string
-	var successResolutions []resolutionType
-	for resolution := range resultChannel {
-		resolutionsURL = append(resolutionsURL, resolution.URL)
-		successResolutions = append(successResolutions, resolution.resolution)
-	}
-
-	if len(resolutionsURL) < 1 {
-		return video.SetStatus("error")
-	}
-
-	url, err := p.createQualityFile(video, successResolutions)
-
-	if err != nil {
-		log.Printf("Error to create quality file: %s", err)
-		return video.SetStatus("error")
-	}
-
-	for index, res := range successResolutions {
-		resolution := entities.VideoResolution{
-			URL:        resolutionsURL[index],
-			Resolution: res.resolution,
+	success := false
+	for _, resolution := range sorteredResolutions {
+		url, err := p.processResolution(video, resolution)
+		if err != nil {
+			video.AddResolution(
+				entities.VideoResolution{
+					URL:        url,
+					Resolution: resolution.resolution,
+					Status:     "error",
+				},
+			)
+			if err := p.videosRepository.Update(video); err != nil {
+				log.Println("Error to update video: ", err)
+			}
+			continue
 		}
-		video.AddResolution(resolution)
+
+		res := fmt.Sprintf("%dx%d", resolution.width, resolution.height)
+		line := fmt.Sprintf(
+			"#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n",
+			resolution.bandWidth,
+			res,
+			resolution.folderName,
+		)
+		file.WriteString(line)
+
+		video.SetStatus("success").AddResolution(
+			entities.VideoResolution{
+				URL:        url,
+				Resolution: resolution.resolution,
+				Status:     "success",
+			},
+		)
+
+		if err := p.videosRepository.Update(video); err != nil {
+			log.Println("Error to update video: ", err)
+			continue
+		}
+		success = true
+	}
+
+	file.Close()
+	if !success {
+		return video.SetStatus("error")
 	}
 
 	p.filesService.Delete(video.TmpUrl())
-
 	return video.SetUrl(url).SetStatus("success")
 }
 
-func (p *ProcessVideo) processResolution(
-	wg *sync.WaitGroup,
+func (p *ProcessVideoTwo) processResolution(
 	video *entities.Video,
 	videoResolution resolutionType,
-	resultChannel chan ProcessResolutionChannel,
-) error {
-	defer wg.Done()
+) (string, error) {
 	resolution := fmt.Sprintf("%d:%d", videoResolution.width, videoResolution.height)
 	log.Printf("[%s-%s] Starting process resolution...", video.Id(), resolution)
 	folderPath := fmt.Sprintf("/videos/%s/%s", video.Id(), videoResolution.folderName)
 
 	if err := p.filesService.ProcessVideo(video.TmpUrl(), folderPath, resolution); err != nil {
 		log.Printf("[%s-%s] Error to process video: %s", video.Id(), resolution, err)
-		return err
+		return "", err
 	}
 
-	resultChannel <- ProcessResolutionChannel{
-		URL:        folderPath,
-		resolution: videoResolution,
-	}
 	log.Printf("[%s-%s] Video processed successfully.", video.Id(), resolution)
-	return nil
+	return folderPath, nil
 }
 
-func (p *ProcessVideo) filterResolutions(fileResolution string) ([]resolutionType, error) {
+func (p *ProcessVideoTwo) filterResolutions(fileResolution string) ([]resolutionType, error) {
 	fileResolutionInt, _ := strconv.Atoi(fileResolution)
 	filterResolution := []resolutionType{}
 	hasResolution := false
@@ -180,34 +189,8 @@ func (p *ProcessVideo) filterResolutions(fileResolution string) ([]resolutionTyp
 	return filterResolution, nil
 }
 
-func (p *ProcessVideo) createQualityFile(video *entities.Video, resolutions []resolutionType) (string, error) {
-	sorteredResolutions := utils.SortSlice[resolutionType](resolutions, func(i, j int) bool {
-		return resolutions[i].height < resolutions[j].height
-	})
+/*
+func (p *ProcessVideoTwo) createQualityFile(video *entities.Video, resolutions []resolutionType) (string, error) {
 
-	fileText := "#EXTM3U\n#EXT-X-VERSION:3\n"
-
-	for _, res := range sorteredResolutions {
-		resolution := fmt.Sprintf("%dx%d", res.width, res.height)
-		line := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%s\n%s/index.m3u8\n", res.bandWidth, resolution, res.folderName)
-		fileText += line
-	}
-
-	videoUrl := fmt.Sprintf("/videos/%s/playlist.m3u8", video.Id())
-
-	file, err := p.filesService.CreateFile(ports.FileInfo{
-		Url:  videoUrl,
-		Type: "m3u8",
-	})
-	if err != nil {
-		return "", err
-	}
-
-	if err := file.WriteString(fileText); err != nil {
-		return "", err
-	}
-
-	file.Close()
-
-	return videoUrl, nil
 }
+*/

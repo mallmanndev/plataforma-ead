@@ -12,6 +12,7 @@ import (
 type VideoResolution struct {
 	Resolution string
 	URL        string
+	Status     string
 }
 
 type Video struct {

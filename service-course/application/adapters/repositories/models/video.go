@@ -5,6 +5,7 @@ import "time"
 type VideoResolution struct {
 	Resolution string `bson:"resolution"`
 	URL        string `bson:"url"`
+	Status     string `bson:"status"`
 }
 
 type VideoModel struct {

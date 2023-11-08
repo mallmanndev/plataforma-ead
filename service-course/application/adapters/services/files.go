@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
@@ -20,6 +21,8 @@ func NewFilesService() ports.FilesService {
 }
 
 func (r *FilesService) CreateFile(File ports.FileInfo) (ports.FilesService, error) {
+	os.MkdirAll(filepath.Dir(File.Url), 0770)
+
 	file, err := os.Create(File.Url)
 	if err != nil {
 		return nil, err
