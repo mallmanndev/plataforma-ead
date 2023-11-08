@@ -17,12 +17,7 @@ export default function ItemTableRow({
   item: Item;
   refetch: () => void;
 }) {
-  const {
-    error,
-    video,
-    loading,
-    refetch: refetchVideo,
-  } = useGetVideo(item.videoId);
+  const { error, video, refetch: refetchVideo } = useGetVideo(item.videoId);
 
   useEffect(() => {
     if (error) {
@@ -44,7 +39,10 @@ export default function ItemTableRow({
   return (
     <TableRow key={item.id}>
       <TableCell className="font-medium">{item.title}</TableCell>
-      <TableCell>{item.description}</TableCell>
+      <TableCell>
+        {item.description.slice(0, 150)}
+        {item.description.length > 150 && "..."}
+      </TableCell>
       <TableCell>
         {video?.status === "pending" && (
           <div className="flex items-center">
@@ -59,8 +57,10 @@ export default function ItemTableRow({
           </div>
         )}
         {video?.status === "success" && (
-          <Button variant="outline" className="py-0 h-8">
-            Video <ArrowUpRight className="h-4 w-4" />
+          <Button variant="outline" className="py-0 h-8" asChild>
+            <a href={`/courses/itens/${item.id}`}>
+              Video <ArrowUpRight className="h-4 w-4" />
+            </a>
           </Button>
         )}
       </TableCell>

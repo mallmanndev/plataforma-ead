@@ -12,8 +12,7 @@ type TVideoPlayer = {
 
 export default function VideoPlayer({ source, qualities }: TVideoPlayer) {
   const videoRef = useRef<any>(null);
-  const hlsRef = React.useRef<Hls | null>(null);
-
+  const hlsRef = useRef<Hls | null>(null);
   const [quality, setQuality] = useState(-1);
 
   qualities.push(5000);
@@ -76,5 +75,5 @@ export default function VideoPlayer({ source, qualities }: TVideoPlayer) {
     if (hlsRef.current) hlsRef.current.currentLevel = quality;
   }, [quality]);
 
-  return <video ref={videoRef} controls />;
+  return <video width={"100%"} ref={videoRef} controls />;
 }

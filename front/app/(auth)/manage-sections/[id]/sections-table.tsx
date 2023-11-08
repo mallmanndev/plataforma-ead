@@ -54,7 +54,10 @@ export default function SectionsTable({ courseId }: { courseId: string }) {
         {course.sections.map((section: any) => (
           <TableRow key={section.id}>
             <TableCell className="font-medium">{section.name}</TableCell>
-            <TableCell>{section.description}</TableCell>
+            <TableCell>
+              {section.description.slice(0, 150)}
+              {section.description.length > 150 && "..."}
+            </TableCell>
             <TableCell>{section.itens.length}</TableCell>
             <TableCell>{formatDate(section.createdAt)}</TableCell>
             <TableCell>

@@ -1,19 +1,6 @@
 import { filesGrpcClient } from "@/configs/grpc-client";
 import { TResponse } from "./response";
-
-type TVideo = {
-  resolutions: {
-    resolution: string;
-    url: string;
-  }[];
-  id: string;
-  type: string;
-  status: string;
-  size: number;
-  createdAt: Date;
-  updatedAt: Date;
-  url: string;
-};
+import { Video } from "@/types/video";
 
 export default class FilesServiceGrpc {
   private service: any;
@@ -22,7 +9,7 @@ export default class FilesServiceGrpc {
     this.service = filesGrpcClient;
   }
 
-  public async GetVideo(id: string): Promise<TResponse<{ courses: TVideo }>> {
+  public async GetVideo(id: string): Promise<TResponse<Video>> {
     return new Promise((resolve) => {
       this.service.GetVideo({ id }, (err: any, response: any) => {
         if (err) {
