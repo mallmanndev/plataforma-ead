@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+
 	"github.com/matheusvmallmann/plataforma-ead/service-core/domain/ports"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/service-core/domain/value-objects"
 

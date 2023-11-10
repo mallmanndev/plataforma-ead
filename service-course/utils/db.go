@@ -2,17 +2,26 @@ package utils
 
 import (
 	"context"
+	"log"
+	"os"
+	"time"
+
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
-func GetDb(env string) (*mongo.Database, func()) {
+func GetDb() (*mongo.Database, func()) {
+	if err := godotenv.Load(".env"); err != nil {
+		panic(err)
+	}
+
 	timeout := 10 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://root:example@service-course-db:27017"))
+	log.Print(os.Getenv("MONGODB_URI"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
 	if err != nil {
 		panic(err)
 	}
@@ -22,11 +31,8 @@ func GetDb(env string) (*mongo.Database, func()) {
 			panic(err)
 		}
 	}
-	
+
 	dbName := "service-courses"
-	if env == "test" {
-		dbName = "service-courses-test"
-	}
 	db := client.Database(dbName)
 
 	return db, disconnect

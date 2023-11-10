@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	db, disconnect := utils.GetDb("dev")
+	db, disconnect := utils.GetDb()
 	defer disconnect()
 	videosRepository := repositories.NewVideosRepository(db)
 	filesService := services.NewFilesService()

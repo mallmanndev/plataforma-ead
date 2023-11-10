@@ -28,7 +28,7 @@ type resolutionTypeTwo struct {
 	bandWidth  int64
 }
 
-var resolutionsTwo = []resolutionType{
+var resolutionsTwo = []resolutionTypeTwo{
 	{resolution: "1080", width: 1920, height: 1080, folderName: "1080", bandWidth: 5000000},
 	{resolution: "720", width: 1080, height: 720, folderName: "720", bandWidth: 2800000},
 	{resolution: "480", width: 640, height: 480, folderName: "480", bandWidth: 1400000},
@@ -78,6 +78,7 @@ func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 	heightResolution := resolutionPixels[1]
 
 	url := fmt.Sprintf("/videos/%s/playlist.m3u8", video.Id())
+	video.SetUrl(url)
 	file, err := p.filesService.CreateFile(
 		ports.FileInfo{Url: url, Type: "m3u8"},
 	)
@@ -94,7 +95,7 @@ func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 		return video.SetStatus("error")
 	}
 
-	sorteredResolutions := utils.SortSlice[resolutionType](resolutions, func(i, j int) bool {
+	sorteredResolutions := utils.SortSlice[resolutionTypeTwo](resolutionsTwo, func(i, j int) bool {
 		return resolutions[i].height < resolutions[j].height
 	})
 
@@ -124,7 +125,8 @@ func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 		)
 		file.WriteString(line)
 
-		video.SetStatus("success").AddResolution(
+		video.SetStatus("success")
+		video.AddResolution(
 			entities.VideoResolution{
 				URL:        url,
 				Resolution: resolution.resolution,
@@ -145,12 +147,12 @@ func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 	}
 
 	p.filesService.Delete(video.TmpUrl())
-	return video.SetUrl(url).SetStatus("success")
+	return video
 }
 
 func (p *ProcessVideoTwo) processResolution(
 	video *entities.Video,
-	videoResolution resolutionType,
+	videoResolution resolutionTypeTwo,
 ) (string, error) {
 	resolution := fmt.Sprintf("%d:%d", videoResolution.width, videoResolution.height)
 	log.Printf("[%s-%s] Starting process resolution...", video.Id(), resolution)
@@ -165,12 +167,12 @@ func (p *ProcessVideoTwo) processResolution(
 	return folderPath, nil
 }
 
-func (p *ProcessVideoTwo) filterResolutions(fileResolution string) ([]resolutionType, error) {
+func (p *ProcessVideoTwo) filterResolutions(fileResolution string) ([]resolutionTypeTwo, error) {
 	fileResolutionInt, _ := strconv.Atoi(fileResolution)
-	filterResolution := []resolutionType{}
+	filterResolution := []resolutionTypeTwo{}
 	hasResolution := false
 
-	for _, resolution := range resolutions {
+	for _, resolution := range resolutionsTwo {
 		resolutionInt, _ := strconv.Atoi(resolution.resolution)
 		if resolutionInt == fileResolutionInt {
 			hasResolution = true
@@ -188,9 +190,3 @@ func (p *ProcessVideoTwo) filterResolutions(fileResolution string) ([]resolution
 
 	return filterResolution, nil
 }
-
-/*
-func (p *ProcessVideoTwo) createQualityFile(video *entities.Video, resolutions []resolutionType) (string, error) {
-
-}
-*/

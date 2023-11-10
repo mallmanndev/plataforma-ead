@@ -21,7 +21,7 @@ func main() {
 		log.Fatalf("Error to listen server in port %s", strconv.Itoa(port))
 	}
 
-	db, disconnect := utils.GetDb("dev")
+	db, disconnect := utils.GetDb()
 	defer disconnect()
 
 	// REGISTER ROUTES HERE
