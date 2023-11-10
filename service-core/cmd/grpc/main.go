@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	grpcadapter "github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/grpc"
-	"github.com/matheusvmallmann/plataforma-ead/service-core/utils"
 	"log"
 	"net"
 	"strconv"
+
+	grpcadapter "github.com/matheusvmallmann/plataforma-ead/service-core/aplication/adapters/grpc"
+	"github.com/matheusvmallmann/plataforma-ead/service-core/utils"
 
 	"github.com/matheusvmallmann/plataforma-ead/service-core/pb"
 	"google.golang.org/grpc"
@@ -23,7 +24,7 @@ func main() {
 
 	// REGISTER ROUTES HERE
 	grpcServer := grpc.NewServer()
-	db := utils.GetDb("prod")
+	db := utils.GetDb()
 	pb.RegisterUsersServiceServer(grpcServer, grpcadapter.NewUsersServer(db))
 
 	if err := grpcServer.Serve(lis); err != nil {

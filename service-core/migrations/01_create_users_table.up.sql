@@ -19,6 +19,8 @@ CREATE TABLE users (
     deleted_at TIMESTAMP
 );
 
-INSERT INTO user_types (id, name, description)
-VALUES ('admin', 'Admin', 'A Administrator user'),
-       ('student', 'Student', 'A student user');
+INSERT INTO
+    user_types (id, name, description)
+VALUES
+    ('admin', 'Admin', 'A Administrator user'),
+    ('student', 'Student', 'A student user');
