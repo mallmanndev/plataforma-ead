@@ -45,7 +45,7 @@ export default async function Home() {
 
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {courses?.map((course) => (
-          <Card>
+          <Card key={course.id}>
             <CardHeader>
               <CardTitle>{course.name}</CardTitle>
               <CardDescription>{course.description}</CardDescription>

@@ -44,7 +44,10 @@ export default async function CoursePage({
 
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {section.itens.map((item, key) => (
-          <Card>
+          <Card
+            key={item.id}
+            className="h-[280px] flex flex-col place-content-between"
+          >
             <CardHeader>
               <div className="flex justify-between">
                 <div className="ml-2">

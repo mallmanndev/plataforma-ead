@@ -52,23 +52,6 @@ export default function Login() {
               Cadastre-se
             </Link>
           </div>
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            Ao continuar, você está de acordo com nossos{" "}
-            <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Termos de uso
-            </Link>{" "}
-            e{" "}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Política de privacidade
-            </Link>
-            .
-          </p>
         </div>
       </LoginRegisterLayout>
     </>

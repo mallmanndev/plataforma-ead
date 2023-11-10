@@ -44,8 +44,8 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     <div>
       <div className="mt-8">
         <VideoPlayer
-          source={`http://localhost:3002/api/${video.url}`}
-          qualities={[1080, 720, 480]}
+          source={`${process.env.NEXT_PUBLIC_SERVER_HOST}/api/${video.url}`}
+          qualities={video.resolutions.map((item) => parseInt(item.resolution))}
         />
       </div>
       <h1 className="text-3xl font-bold tracking-tight mt-6">{item.title}</h1>

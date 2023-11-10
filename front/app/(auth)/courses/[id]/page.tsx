@@ -1,6 +1,8 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -16,7 +18,6 @@ const getCourse = async (id: string): Promise<Course> => {
   });
 
   if (!res.ok) {
-    console.log(await res.json());
     throw new Error("Failed to fetch course!");
   }
 
@@ -48,17 +49,26 @@ export default async function CoursePage({
 
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {course.sections.map((item, key) => (
-          <Card>
+          <Card
+            key={item.id}
+            className="h-[280px] flex flex-col place-content-between"
+          >
             <CardHeader>
               <div className="flex justify-between">
                 <div className="ml-2">
                   <CardTitle>{item.name}</CardTitle>
-                  <CardDescription className="text-justify">{item.description}</CardDescription>
+                  <CardDescription className="text-justify">
+                    {item.description}
+                  </CardDescription>
                 </div>
                 <span className="text-6xl font-bold">{key + 1}</span>
               </div>
             </CardHeader>
-            <CardFooter>
+            <CardFooter className="flex flex-col">
+              <div className="w-full mb-3">
+                <Badge variant="outline">{`${item.itens.length} Videos`}</Badge>
+              </div>
+
               <Button className="w-full" asChild>
                 <a href={`/courses/sections/${item.id}`}>ACESSAR</a>
               </Button>
