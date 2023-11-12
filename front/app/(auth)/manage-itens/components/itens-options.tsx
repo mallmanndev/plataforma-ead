@@ -39,7 +39,7 @@ export default function ItensOptions({ id, onDelete }: TSectionOptionsProps) {
       toast({ title: "Item deletado com sucesso" });
       onDelete();
     }
-  }, [success]);
+  }, [onDelete, success]);
 
   return (
     <DropdownMenu>

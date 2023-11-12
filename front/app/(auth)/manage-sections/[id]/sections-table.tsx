@@ -28,7 +28,7 @@ export default function SectionsTable({ courseId }: { courseId: string }) {
         description: error,
       });
     }
-  }, [error]);
+  }, [toast, error]);
 
   if (loading) {
     return <p>Carregando seções...</p>;

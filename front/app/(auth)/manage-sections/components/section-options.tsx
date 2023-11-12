@@ -39,7 +39,7 @@ export default function SectionOptions({ id, onDelete }: TSectionOptionsProps) {
       toast({ title: "Seção deletado com sucesso" });
       onDelete();
     }
-  }, [success]);
+  }, [onDelete, success]);
 
   return (
     <DropdownMenu>

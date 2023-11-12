@@ -11,7 +11,7 @@ export default function CreateCourseForm() {
 
   useEffect(() => {
     if (course) push("/manage-courses");
-  }, [course]);
+  }, [push, course]);
 
   const initialData = {
     name: "",

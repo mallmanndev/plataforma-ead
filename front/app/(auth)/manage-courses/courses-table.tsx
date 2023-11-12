@@ -46,7 +46,7 @@ export default function CoursesTable({ userId }: { userId: string }) {
         description: error,
       });
     }
-  }, [error]);
+  }, [toast, error]);
 
   if (loading) {
     return <p>Carregando cursos...</p>;

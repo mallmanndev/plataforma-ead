@@ -39,7 +39,7 @@ export default function CourseOptions({ id, onDelete }: TCourseOptionsProps) {
       toast({ title: "Curso deletado com sucesso" });
       onDelete();
     }
-  }, [success]);
+  }, [onDelete, success]);
 
   return (
     <DropdownMenu>

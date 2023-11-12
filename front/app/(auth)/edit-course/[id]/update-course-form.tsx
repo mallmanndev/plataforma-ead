@@ -27,7 +27,7 @@ export default function UpdateCourseForm({
       toast({ title: "Curso alterado com sucesso" });
       push("/my-courses");
     }
-  }, [course]);
+  }, [push, toast, course]);
 
   const handleSubmit = (data: any) => {
     update({ id, ...data });

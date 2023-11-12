@@ -41,7 +41,7 @@ export function LoginForm() {
 
   useEffect(() => {
     if (user) push("/home");
-  }, [user]);
+  }, [push, user]);
 
   return (
     <Form {...form}>

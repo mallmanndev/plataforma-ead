@@ -10,36 +10,36 @@ type TVideoPlayer = {
   qualities: number[];
 };
 
+const quality_indexes: any = {
+  1080: 2,
+  720: 1,
+  480: 0,
+  5000: -1,
+};
+
+const controls = [
+  "play-large",
+  "restart",
+  "rewind",
+  "play",
+  "fast-forward",
+  "progress",
+  "current-time",
+  "duration",
+  "mute",
+  "volume",
+  "settings",
+  "pip",
+  "airplay",
+  "fullscreen",
+];
+
 export default function VideoPlayer({ source, qualities }: TVideoPlayer) {
   const videoRef = useRef<any>(null);
   const hlsRef = useRef<Hls | null>(null);
   const [quality, setQuality] = useState(-1);
 
   qualities.push(5000);
-
-  const quality_indexes: any = {
-    1080: 2,
-    720: 1,
-    480: 0,
-    5000: -1,
-  };
-
-  const controls = [
-    "play-large",
-    "restart",
-    "rewind",
-    "play",
-    "fast-forward",
-    "progress",
-    "current-time",
-    "duration",
-    "mute",
-    "volume",
-    "settings",
-    "pip",
-    "airplay",
-    "fullscreen",
-  ];
 
   useEffect(() => {
     if (!Hls.isSupported()) {
@@ -69,7 +69,7 @@ export default function VideoPlayer({ source, qualities }: TVideoPlayer) {
     return () => {
       hlsRef.current?.destroy();
     };
-  }, []);
+  }, [qualities, source]);
 
   useEffect(() => {
     if (hlsRef.current) hlsRef.current.currentLevel = quality;

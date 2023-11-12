@@ -18,7 +18,7 @@ export default function CreateItemForm({ sectionId }: { sectionId: string }) {
       toast({ title: "Item criado com sucesso." });
       push(`/manage-itens/${sectionId}`);
     }
-  }, [course]);
+  }, [push, course, sectionId]);
 
   useEffect(() => {
     if (error) {

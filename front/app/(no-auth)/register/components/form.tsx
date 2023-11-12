@@ -49,7 +49,7 @@ export function RegisterForm() {
 
   useEffect(() => {
     if (user) push("/login");
-  }, [user]);
+  }, [push, user]);
 
   return (
     <Form {...form}>

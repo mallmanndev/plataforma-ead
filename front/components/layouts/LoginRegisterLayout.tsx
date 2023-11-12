@@ -1,7 +1,4 @@
 import React from "react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 
 type TLoginRegisterLayout = {
   children: React.ReactNode;
@@ -36,8 +33,8 @@ export default function LoginRegisterLayout({
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                "O verdadeiro objetivo da educação é despertar a paixão pelo
-                aprendizado e cultivar mentes curiosas."
+                {`"O verdadeiro objetivo da educação é despertar a paixão pelo
+                aprendizado e cultivar mentes curiosas."`}
               </p>
               <footer className="text-sm">Albert Einstein</footer>
             </blockquote>

@@ -13,9 +13,9 @@ export default function CreateSectionForm({ courseId }: { courseId: string }) {
   useEffect(() => {
     if (course) {
       toast({ title: "Seção criada com sucesso." });
-      push(`/manage-sections/${courseId}`);
+      push(`/manage-sections/${course.id}`);
     }
-  }, [course]);
+  }, [push, course]);
 
   useEffect(() => {
     if (error) {

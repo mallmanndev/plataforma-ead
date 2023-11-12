@@ -45,13 +45,14 @@ export default function SectionForm({
   });
 
   useEffect(() => {
-    if (error)
+    if (error) {
       toast({
         variant: "destructive",
         title: "Não foi possível excluir o curso",
         description: error,
       });
-  }, [error]);
+    }
+  }, [toast, error]);
 
   return (
     <div>

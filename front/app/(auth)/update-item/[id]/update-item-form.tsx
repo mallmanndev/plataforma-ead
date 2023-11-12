@@ -5,7 +5,7 @@ import { toast } from "@/components/ui/use-toast";
 import useUpdateItem from "@/hooks/update-item";
 import { Course } from "@/types/course";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function UpdateItemForm({
   id,
@@ -20,7 +20,7 @@ export default function UpdateItemForm({
   const { push } = useRouter();
   const { loading, error, course, update } = useUpdateItem();
 
-  const getSectionId = (course: Course, itemId: string): string => {
+  const getSectionId = useCallback((course: Course, itemId: string): string => {
     for (const section of course.sections) {
       for (const item of section.itens) {
         if (item.id === itemId) {
@@ -29,7 +29,7 @@ export default function UpdateItemForm({
       }
     }
     return "";
-  };
+  }, []);
 
   useEffect(() => {
     if (course) {
@@ -37,7 +37,7 @@ export default function UpdateItemForm({
       const sectionId = getSectionId(course, id);
       push(`/manage-itens/${sectionId}`);
     }
-  }, [course]);
+  }, [push, getSectionId, course, id]);
 
   useEffect(() => {
     if (error) {

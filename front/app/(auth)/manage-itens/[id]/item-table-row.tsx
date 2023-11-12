@@ -34,7 +34,7 @@ export default function ItemTableRow({
       const timer = setInterval(refetchVideo, FIVE_SECONDS_IN_MS);
       return () => clearTimeout(timer);
     }
-  }, [video?.status]);
+  }, [refetchVideo, video]);
 
   return (
     <TableRow key={item.id}>

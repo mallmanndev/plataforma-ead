@@ -41,20 +41,21 @@ export default function CourseForm({
   buttonText,
   onSubmit,
 }: CourseForm) {
-  const {toast} = useToast()
+  const { toast } = useToast();
   const form = useForm<Params>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: defaultValues,
   });
 
   useEffect(() => {
-    if (error)
+    if (error) {
       toast({
         variant: "destructive",
         title: "Não foi possível excluir o curso",
         description: error,
       });
-  }, [error]);
+    }
+  }, [toast, error]);
 
   return (
     <div>

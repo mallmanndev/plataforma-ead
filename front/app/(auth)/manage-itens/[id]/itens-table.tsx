@@ -26,7 +26,7 @@ export default function ItensTable({ sectionId }: { sectionId: string }) {
         description: error,
       });
     }
-  }, [error]);
+  }, [toast, error]);
 
   if (loading) {
     return <p>Carregando itens...</p>;
