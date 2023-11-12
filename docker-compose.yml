@@ -37,6 +37,8 @@ services:
     build: ./service-core
     ports:
       - "3000:3000"
+    environment:
+      - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
     depends_on:
       - service-core-db
       - service-core-migrate
@@ -63,6 +65,9 @@ services:
     build: ./service-course
     ports:
       - "3001:3000"
+    environment:
+      - MONGODB_URI=mongodb://root:example@service-course-db:27017
+      - RUN_DAEMON=true
     networks:
       - service-core-backend
     volumes:
