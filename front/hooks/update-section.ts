@@ -17,14 +17,11 @@ const useUpdateSection = (): TUseUpdateSection => {
   const update = (data: Omit<TUpdateSectionData, "user_id">) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections/${data.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/sections/${data.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const course = await response.json();

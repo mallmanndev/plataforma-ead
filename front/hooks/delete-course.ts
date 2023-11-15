@@ -14,13 +14,10 @@ export default function useDeleteCourse(): TUseDeleteCourse {
 
   const remove = async (id: string) => {
     setLoading(true);
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses/${id}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const res = await fetch(`/api/courses/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (res.ok) {
       setSuccess(true);

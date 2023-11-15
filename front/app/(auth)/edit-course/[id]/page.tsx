@@ -1,8 +1,7 @@
 import UpdateCourseForm from "./update-course-form";
-import { env } from "process";
 
 const getCourse = async (id: string) => {
-  const res = await fetch(`${env.SERVER_HOST}/api/courses/${id}`, {
+  const res = await fetch(`${process.env.SERVER_HOST}/api/courses/${id}`, {
     cache: "no-cache",
   });
 

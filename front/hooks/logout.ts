@@ -15,13 +15,10 @@ const useLogout = (): TUseLogout => {
   const logout = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/logout`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await fetch(`/api/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (response.ok) {
         setFinish(true);

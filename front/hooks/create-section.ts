@@ -17,14 +17,11 @@ const useCreateSection = (): TUseCreateSection => {
   const createSection = (data: Omit<TCreateSectionData, "user_id">) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const course = await response.json();

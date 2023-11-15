@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import env from "@/configs/env";
 import User from "@/entities/user";
 import { cookies } from "next/headers";
 
@@ -11,7 +10,10 @@ const validateToken = (): User | null => {
       return null;
     }
 
-    return jwt.verify(token.value, env.JWT_SECRET) as User;
+    return jwt.verify(
+      token.value,
+      process.env.JWT_SECRET as string
+    ) as unknown as User;
   } catch (error) {
     return null;
   }

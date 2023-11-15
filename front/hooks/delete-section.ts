@@ -14,13 +14,10 @@ export default function useDeleteSection(): TUseDeleteSection {
 
   const remove = async (id: string) => {
     setLoading(true);
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections/${id}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const res = await fetch(`/api/sections/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (res.ok) {
       setSuccess(true);

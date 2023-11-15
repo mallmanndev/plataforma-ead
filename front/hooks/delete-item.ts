@@ -14,13 +14,10 @@ export default function useDeleteItem(): TUseDeleteItem {
 
   const remove = async (id: string) => {
     setLoading(true);
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens/${id}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const res = await fetch(`/api/itens/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (res.ok) {
       setSuccess(true);

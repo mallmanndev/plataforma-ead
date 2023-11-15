@@ -22,9 +22,7 @@ export default function useGetSection(id: string): TUseGetSection {
   const refetch = async () => {
     setLoading(true);
 
-    const fetchData = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/sections/${id}`
-    );
+    const fetchData = await fetch(`/api/sections/${id}`);
     if (!fetchData.ok) {
       setError("Não foi possível buscar o curso.");
       return setLoading(false);

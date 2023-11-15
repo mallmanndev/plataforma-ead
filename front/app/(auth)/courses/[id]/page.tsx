@@ -13,7 +13,7 @@ import { Metadata } from "next";
 import { env } from "process";
 
 const getCourse = async (id: string): Promise<Course> => {
-  const res = await fetch(`${env.SERVER_HOST}/api/courses/${id}`, {
+  const res = await fetch(`${process.env.SERVER_HOST}/api/courses/${id}`, {
     cache: "no-cache",
   });
 

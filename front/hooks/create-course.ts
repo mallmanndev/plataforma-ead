@@ -21,7 +21,7 @@ const useCreateCourse = (): TUseCreateCourse => {
 
   const createCourse = (data: TCreateCourseData) => {
     (async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses`, {
+      const response = await fetch(`/api/courses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

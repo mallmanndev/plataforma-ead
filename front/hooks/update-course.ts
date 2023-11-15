@@ -21,14 +21,11 @@ export default function useUpdateCourse(): TUseUpdateCourse {
   const update = (data: TCourse) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses/${data.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/courses/${data.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const course = await response.json();

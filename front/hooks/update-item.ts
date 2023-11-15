@@ -19,14 +19,11 @@ export default function useUpdateItem(): TUseUpdateItem {
   const update = (data: TUpdateData) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens/${data.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/itens/${data.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const course = await response.json();

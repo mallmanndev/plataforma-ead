@@ -22,9 +22,7 @@ const useGetCourse = (id: string): TUseGetCourses => {
   const refetch = async () => {
     setLoading(true);
 
-    const fetchData = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses/${id}`
-    );
+    const fetchData = await fetch(`/api/courses/${id}`);
     if (!fetchData.ok) {
       setError("Não foi possível buscar o curso.");
       return setLoading(false);

@@ -17,14 +17,11 @@ export default function useCreateItem(): TUseCreateItem {
   const create = (data: Omit<TCreateCourseItemData, "user_id">) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/itens`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`/api/itens`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
         const course = await response.json();

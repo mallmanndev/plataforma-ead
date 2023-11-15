@@ -26,9 +26,7 @@ const useGetCourses = (filters: TUseGetCoursesFilter): TUseGetCourses => {
   const refetch = async () => {
     setLoading(true);
 
-    const fetchData = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_HOST}/api/courses?user_id=${filters.user_id}`
-    );
+    const fetchData = await fetch(`/api/courses?user_id=${filters.user_id}`);
     if (!fetchData.ok) {
       setError("Não foi possível buscar os cursos.");
       return setLoading(false);
