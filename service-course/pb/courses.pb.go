@@ -1249,6 +1249,108 @@ func (x *GetItemRequest) GetId() string {
 	return ""
 }
 
+type ChangeVisibilityRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id     string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *ChangeVisibilityRequest) Reset() {
+	*x = ChangeVisibilityRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_course_protos_courses_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangeVisibilityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeVisibilityRequest) ProtoMessage() {}
+
+func (x *ChangeVisibilityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_course_protos_courses_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeVisibilityRequest.ProtoReflect.Descriptor instead.
+func (*ChangeVisibilityRequest) Descriptor() ([]byte, []int) {
+	return file_service_course_protos_courses_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ChangeVisibilityRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ChangeVisibilityRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type ChangeVisibilityResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ok bool `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+}
+
+func (x *ChangeVisibilityResponse) Reset() {
+	*x = ChangeVisibilityResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_course_protos_courses_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangeVisibilityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeVisibilityResponse) ProtoMessage() {}
+
+func (x *ChangeVisibilityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_course_protos_courses_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeVisibilityResponse.ProtoReflect.Descriptor instead.
+func (*ChangeVisibilityResponse) Descriptor() ([]byte, []int) {
+	return file_service_course_protos_courses_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ChangeVisibilityResponse) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
 var File_service_course_protos_courses_proto protoreflect.FileDescriptor
 
 var file_service_course_protos_courses_proto_rawDesc = []byte{
@@ -1379,8 +1481,15 @@ var file_service_course_protos_courses_proto_rawDesc = []byte{
 	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02,
 	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x20, 0x0a, 0x0e,
 	0x47, 0x65, 0x74, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e,
-	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x32, 0xf0,
-	0x04, 0x0a, 0x0e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x42,
+	0x0a, 0x17, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69,
+	0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65,
+	0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72,
+	0x49, 0x64, 0x22, 0x2a, 0x0a, 0x18, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x56, 0x69, 0x73, 0x69,
+	0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x6f, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x6f, 0x6b, 0x32, 0xfe,
+	0x05, 0x0a, 0x0e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x12, 0x30, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x12, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x6f,
 	0x75, 0x72, 0x73, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x47,
 	0x65, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
@@ -1419,8 +1528,16 @@ var file_service_course_protos_courses_proto_rawDesc = []byte{
 	0x75, 0x72, 0x73, 0x65, 0x22, 0x00, 0x12, 0x29, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x49, 0x74, 0x65,
 	0x6d, 0x12, 0x0f, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x1a, 0x0b, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x49, 0x74, 0x65, 0x6d, 0x22,
-	0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x00, 0x12, 0x44, 0x0a, 0x0b, 0x4d, 0x61, 0x6b, 0x65, 0x56, 0x69, 0x73, 0x69, 0x62, 0x6c, 0x65,
+	0x12, 0x18, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c,
+	0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x43, 0x68, 0x61,
+	0x6e, 0x67, 0x65, 0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x46, 0x0a, 0x0d, 0x4d, 0x61, 0x6b, 0x65, 0x49,
+	0x6e, 0x76, 0x69, 0x73, 0x69, 0x62, 0x6c, 0x65, 0x12, 0x18, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67,
+	0x65, 0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x19, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x56, 0x69, 0x73, 0x69, 0x62,
+	0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42,
+	0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1435,7 +1552,7 @@ func file_service_course_protos_courses_proto_rawDescGZIP() []byte {
 	return file_service_course_protos_courses_proto_rawDescData
 }
 
-var file_service_course_protos_courses_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_service_course_protos_courses_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_service_course_protos_courses_proto_goTypes = []interface{}{
 	(*People)(nil),                     // 0: People
 	(*CourseItem)(nil),                 // 1: CourseItem
@@ -1456,6 +1573,8 @@ var file_service_course_protos_courses_proto_goTypes = []interface{}{
 	(*DeleteItemRequest)(nil),          // 16: DeleteItemRequest
 	(*GetSectionRequest)(nil),          // 17: GetSectionRequest
 	(*GetItemRequest)(nil),             // 18: GetItemRequest
+	(*ChangeVisibilityRequest)(nil),    // 19: ChangeVisibilityRequest
+	(*ChangeVisibilityResponse)(nil),   // 20: ChangeVisibilityResponse
 }
 var file_service_course_protos_courses_proto_depIdxs = []int32{
 	1,  // 0: CourseSection.itens:type_name -> CourseItem
@@ -1476,20 +1595,24 @@ var file_service_course_protos_courses_proto_depIdxs = []int32{
 	15, // 15: CoursesService.UpdateItem:input_type -> UpdateItemRequest
 	16, // 16: CoursesService.DeleteItem:input_type -> DeleteItemRequest
 	18, // 17: CoursesService.GetItem:input_type -> GetItemRequest
-	13, // 18: CoursesService.Get:output_type -> GetCoursesResponse
-	3,  // 19: CoursesService.Create:output_type -> Course
-	3,  // 20: CoursesService.Update:output_type -> Course
-	8,  // 21: CoursesService.Delete:output_type -> DeleteCourseResponse
-	3,  // 22: CoursesService.CreateSection:output_type -> Course
-	3,  // 23: CoursesService.UpdateSection:output_type -> Course
-	8,  // 24: CoursesService.DeleteSection:output_type -> DeleteCourseResponse
-	2,  // 25: CoursesService.GetSection:output_type -> CourseSection
-	3,  // 26: CoursesService.CreateItem:output_type -> Course
-	3,  // 27: CoursesService.UpdateItem:output_type -> Course
-	3,  // 28: CoursesService.DeleteItem:output_type -> Course
-	1,  // 29: CoursesService.GetItem:output_type -> CourseItem
-	18, // [18:30] is the sub-list for method output_type
-	6,  // [6:18] is the sub-list for method input_type
+	19, // 18: CoursesService.MakeVisible:input_type -> ChangeVisibilityRequest
+	19, // 19: CoursesService.MakeInvisible:input_type -> ChangeVisibilityRequest
+	13, // 20: CoursesService.Get:output_type -> GetCoursesResponse
+	3,  // 21: CoursesService.Create:output_type -> Course
+	3,  // 22: CoursesService.Update:output_type -> Course
+	8,  // 23: CoursesService.Delete:output_type -> DeleteCourseResponse
+	3,  // 24: CoursesService.CreateSection:output_type -> Course
+	3,  // 25: CoursesService.UpdateSection:output_type -> Course
+	8,  // 26: CoursesService.DeleteSection:output_type -> DeleteCourseResponse
+	2,  // 27: CoursesService.GetSection:output_type -> CourseSection
+	3,  // 28: CoursesService.CreateItem:output_type -> Course
+	3,  // 29: CoursesService.UpdateItem:output_type -> Course
+	3,  // 30: CoursesService.DeleteItem:output_type -> Course
+	1,  // 31: CoursesService.GetItem:output_type -> CourseItem
+	20, // 32: CoursesService.MakeVisible:output_type -> ChangeVisibilityResponse
+	20, // 33: CoursesService.MakeInvisible:output_type -> ChangeVisibilityResponse
+	20, // [20:34] is the sub-list for method output_type
+	6,  // [6:20] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -1729,6 +1852,30 @@ func file_service_course_protos_courses_proto_init() {
 				return nil
 			}
 		}
+		file_service_course_protos_courses_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeVisibilityRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_service_course_protos_courses_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChangeVisibilityResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1736,7 +1883,7 @@ func file_service_course_protos_courses_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_course_protos_courses_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

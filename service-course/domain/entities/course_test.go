@@ -175,3 +175,36 @@ func TestReorderSections(t *testing.T) {
 		assert.Equal(t, int16(4), sections[3].Order())
 	})
 }
+
+func TestCourseEntity_MakeVisible(t *testing.T) {
+	t.Run("when_course_not_have_sections", func(t *testing.T) {
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+
+		err := course.MakeVisible()
+
+		assert.ErrorContains(t, err, "[Course] cannot be visible without sections")
+	})
+
+	t.Run("when_course_not_have_itens", func(t *testing.T) {
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
+		course.AddSection(section)
+
+		err := course.MakeVisible()
+
+		assert.ErrorContains(t, err, "Course", "[Course] cannot be visible without itens")
+	})
+
+	t.Run("should_set_visibility_to_true", func(t *testing.T) {
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
+		item := entities.NewCourseItem("Item one", "this is a item one", section.Id(), "video", "123")
+		section.AddItem(item)
+		course.AddSection(section)
+
+		err := course.MakeVisible()
+
+		assert.Nil(t, err)
+		assert.True(t, course.IsVisible())
+	})
+}

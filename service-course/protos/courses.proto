@@ -15,6 +15,8 @@ service CoursesService {
   rpc UpdateItem(UpdateItemRequest) returns (Course) {}
   rpc DeleteItem(DeleteItemRequest) returns (Course) {}
   rpc GetItem(GetItemRequest) returns (CourseItem) {}
+  rpc MakeVisible(ChangeVisibilityRequest) returns (ChangeVisibilityResponse) {}
+  rpc MakeInvisible(ChangeVisibilityRequest) returns (ChangeVisibilityResponse) {}
 }
 
 message People {
@@ -133,4 +135,13 @@ message GetSectionRequest {
 
 message GetItemRequest {
   string id = 1;
+}
+
+message ChangeVisibilityRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message ChangeVisibilityResponse {
+  bool ok = 1;
 }

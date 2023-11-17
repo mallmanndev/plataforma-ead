@@ -113,6 +113,7 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 			"name":        Course.Name(),
 			"description": Course.Description(),
 			"sections":    sections,
+			"visible":     Course.IsVisible(),
 			"updatedAt":   Course.UpdatedAt(),
 		},
 	}

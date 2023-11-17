@@ -34,6 +34,8 @@ type CoursesServiceClient interface {
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*Course, error)
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*Course, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*CourseItem, error)
+	MakeVisible(ctx context.Context, in *ChangeVisibilityRequest, opts ...grpc.CallOption) (*ChangeVisibilityResponse, error)
+	MakeInvisible(ctx context.Context, in *ChangeVisibilityRequest, opts ...grpc.CallOption) (*ChangeVisibilityResponse, error)
 }
 
 type coursesServiceClient struct {
@@ -152,6 +154,24 @@ func (c *coursesServiceClient) GetItem(ctx context.Context, in *GetItemRequest, 
 	return out, nil
 }
 
+func (c *coursesServiceClient) MakeVisible(ctx context.Context, in *ChangeVisibilityRequest, opts ...grpc.CallOption) (*ChangeVisibilityResponse, error) {
+	out := new(ChangeVisibilityResponse)
+	err := c.cc.Invoke(ctx, "/CoursesService/MakeVisible", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coursesServiceClient) MakeInvisible(ctx context.Context, in *ChangeVisibilityRequest, opts ...grpc.CallOption) (*ChangeVisibilityResponse, error) {
+	out := new(ChangeVisibilityResponse)
+	err := c.cc.Invoke(ctx, "/CoursesService/MakeInvisible", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoursesServiceServer is the server API for CoursesService service.
 // All implementations must embed UnimplementedCoursesServiceServer
 // for forward compatibility
@@ -168,6 +188,8 @@ type CoursesServiceServer interface {
 	UpdateItem(context.Context, *UpdateItemRequest) (*Course, error)
 	DeleteItem(context.Context, *DeleteItemRequest) (*Course, error)
 	GetItem(context.Context, *GetItemRequest) (*CourseItem, error)
+	MakeVisible(context.Context, *ChangeVisibilityRequest) (*ChangeVisibilityResponse, error)
+	MakeInvisible(context.Context, *ChangeVisibilityRequest) (*ChangeVisibilityResponse, error)
 	mustEmbedUnimplementedCoursesServiceServer()
 }
 
@@ -210,6 +232,12 @@ func (UnimplementedCoursesServiceServer) DeleteItem(context.Context, *DeleteItem
 }
 func (UnimplementedCoursesServiceServer) GetItem(context.Context, *GetItemRequest) (*CourseItem, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetItem not implemented")
+}
+func (UnimplementedCoursesServiceServer) MakeVisible(context.Context, *ChangeVisibilityRequest) (*ChangeVisibilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeVisible not implemented")
+}
+func (UnimplementedCoursesServiceServer) MakeInvisible(context.Context, *ChangeVisibilityRequest) (*ChangeVisibilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeInvisible not implemented")
 }
 func (UnimplementedCoursesServiceServer) mustEmbedUnimplementedCoursesServiceServer() {}
 
@@ -440,6 +468,42 @@ func _CoursesService_GetItem_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoursesService_MakeVisible_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeVisibilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoursesServiceServer).MakeVisible(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CoursesService/MakeVisible",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoursesServiceServer).MakeVisible(ctx, req.(*ChangeVisibilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoursesService_MakeInvisible_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeVisibilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoursesServiceServer).MakeInvisible(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CoursesService/MakeInvisible",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoursesServiceServer).MakeInvisible(ctx, req.(*ChangeVisibilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoursesService_ServiceDesc is the grpc.ServiceDesc for CoursesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -494,6 +558,14 @@ var CoursesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetItem",
 			Handler:    _CoursesService_GetItem_Handler,
+		},
+		{
+			MethodName: "MakeVisible",
+			Handler:    _CoursesService_MakeVisible_Handler,
+		},
+		{
+			MethodName: "MakeInvisible",
+			Handler:    _CoursesService_MakeInvisible_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

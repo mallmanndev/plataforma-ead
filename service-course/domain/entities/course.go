@@ -146,6 +146,25 @@ func (c *Course) ChangeOrder(SectionId string, NewOrder int) error {
 	return nil
 }
 
+func (c *Course) MakeVisible() error {
+	if c.sections == nil || len(c.sections) == 0 {
+		return errs.NewDomainError("Course", "cannot be visible without sections")
+	}
+
+	for _, section := range c.sections {
+		if section.itens == nil || len(section.itens) == 0 {
+			return errs.NewDomainError("Course", "cannot be visible without itens")
+		}
+	}
+
+	c.visible = true
+	return nil
+}
+
+func (c *Course) MakeInvisible() {
+	c.visible = false
+}
+
 func (c *Course) Id() string {
 	return c.id
 }

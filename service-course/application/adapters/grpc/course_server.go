@@ -26,6 +26,8 @@ type CourseServer struct {
 	createItemUseCase    *usecases.CreateItem
 	updateItemUseCase    *usecases.UpdateItem
 	deleteItemUseCase    *usecases.DeleteItem
+	makeCourseVisible    *usecases.MakeCourseVisible
+	makeCourseInvisible  *usecases.MakeCourseInvisible
 }
 
 func NewCourseServer(db *mongo.Database) *CourseServer {
@@ -41,6 +43,8 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 	createItemUseCase := usecases.NewCreateItem(coursesRepo, videosRepo)
 	updateItemUseCase := usecases.NewUpdateItem(coursesRepo)
 	deleteItemUseCase := usecases.NewDeleteItem(coursesRepo)
+	makeCourseVisible := usecases.NewMakeCourseVisible(coursesRepo)
+	makeCourseInvisible := usecases.NewMakeCourseInvisible(coursesRepo)
 
 	return &CourseServer{
 		coursesRepo:          coursesRepo,
@@ -53,6 +57,8 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 		createItemUseCase:    createItemUseCase,
 		updateItemUseCase:    updateItemUseCase,
 		deleteItemUseCase:    deleteItemUseCase,
+		makeCourseVisible:    makeCourseVisible,
+		makeCourseInvisible:  makeCourseInvisible,
 	}
 }
 
@@ -247,4 +253,20 @@ func (cs *CourseServer) GetItem(_ context.Context, req *pb.GetItemRequest) (*pb.
 	item, _ := course.FindItem(req.GetId())
 
 	return mappers.ItemEntityToGrpc(item), nil
+}
+
+func (cs *CourseServer) MakeVisible(_ context.Context, req *pb.ChangeVisibilityRequest) (*pb.ChangeVisibilityResponse, error) {
+	if err := cs.makeCourseVisible.Execute(req.GetId(), req.GetUserId()); err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return &pb.ChangeVisibilityResponse{Ok: true}, nil
+}
+
+func (cs *CourseServer) MakeInvisible(_ context.Context, req *pb.ChangeVisibilityRequest) (*pb.ChangeVisibilityResponse, error) {
+	if err := cs.makeCourseInvisible.Execute(req.GetId(), req.GetUserId()); err != nil {
+		return nil, errs.NewGrpcError(err)
+	}
+
+	return &pb.ChangeVisibilityResponse{Ok: true}, nil
 }
