@@ -1,15 +1,6 @@
 "use client";
 
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCaption,
@@ -25,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import CourseOptions from "./components/course-options";
 import { Course } from "@/types/course";
+import VisibilitySelect from "./components/visibility-select";
 
 const videos = (course: Course) =>
   course.sections.reduce((acc, cur) => {
@@ -79,18 +71,7 @@ export default function CoursesTable({ userId }: { userId: string }) {
             <TableCell>{videos(course)}</TableCell>
             <TableCell>{formatDate(course.createdAt)}</TableCell>
             <TableCell className="text-right">
-              <Select>
-                <SelectTrigger className="h-8">
-                  <SelectValue placeholder="Visibilidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Visibilidade</SelectLabel>
-                    <SelectItem value="public">Público</SelectItem>
-                    <SelectItem value="private">Privado</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <VisibilitySelect id={course.id} isVisible={course.visible} />
             </TableCell>
             <TableCell>
               <CourseOptions id={course.id} onDelete={refetch} />

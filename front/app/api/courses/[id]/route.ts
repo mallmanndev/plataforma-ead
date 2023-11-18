@@ -2,13 +2,18 @@ import { updateCourseSchema } from "@/contracts/course";
 import grpcStatusToHttp from "@/lib/grpc-status-to-http";
 import validateToken from "@/lib/validate-token";
 import CoursesServiceGrpc from "@/services/courses";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const searchParams = req.nextUrl.searchParams;
+  const visible = searchParams.get("visible");
   const service = new CoursesServiceGrpc();
   const { error, response } = await service.Get({
     id: params.id,
-    visible: true,
+    visible: visible == "1",
     user_id: "",
   });
 
@@ -18,11 +23,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       { status: grpcStatusToHttp(error.code) }
     );
   }
-  if (!response) {
-    return NextResponse.json(
-      { message: "Não foi possível logar!" },
-      { status: 400 }
-    );
+  if (!response || response.length < 1) {
+    return NextResponse.json({});
   }
 
   return NextResponse.json(response[0]);

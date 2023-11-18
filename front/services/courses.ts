@@ -77,15 +77,12 @@ class CoursesServiceGrpc {
 
   public async Get(filters: TGetCourseFilters): Promise<TResponse<Course[]>> {
     return new Promise((resolve, _) => {
-      this.service.Get(
-        filters,
-        (err: any, response: { courses: Course[] }) => {
-          if (err) {
-            return resolve({ error: { code: err.code, message: err.details } });
-          }
-          return resolve({ response: response.courses });
+      this.service.Get(filters, (err: any, response: { courses: Course[] }) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
         }
-      );
+        return resolve({ response: response.courses });
+      });
     });
   }
 
@@ -198,6 +195,34 @@ class CoursesServiceGrpc {
   public async GetItem(data: { id: string }): Promise<TResponse<Item>> {
     return new Promise((resolve, _) => {
       this.service.GetItem(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async MakeVisible(data: {
+    id: string;
+    user_id: string;
+  }): Promise<TResponse<boolean>> {
+    return new Promise((resolve, _) => {
+      this.service.MakeVisible(data, (err: any, response: any) => {
+        if (err) {
+          return resolve({ error: { code: err.code, message: err.details } });
+        }
+        return resolve({ response: response });
+      });
+    });
+  }
+
+  public async MakeInvisible(data: {
+    id: string;
+    user_id: string;
+  }): Promise<TResponse<boolean>> {
+    return new Promise((resolve, _) => {
+      this.service.MakeInvisible(data, (err: any, response: any) => {
         if (err) {
           return resolve({ error: { code: err.code, message: err.details } });
         }

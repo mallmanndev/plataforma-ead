@@ -18,6 +18,9 @@ func (m MakeCourseVisible) Execute(id string, userId string) error {
 	if err != nil {
 		return err
 	}
+	if course == nil {
+		return errs.NewNotFoundError("course")
+	}
 
 	if course.UserId() != userId {
 		return errs.NewPermissionDeniedError("cahange visibility of this course")

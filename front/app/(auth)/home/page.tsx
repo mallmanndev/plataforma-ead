@@ -43,25 +43,35 @@ export default async function Home() {
     <>
       <h2 className="text-3xl font-bold tracking-tight pt-4">Cursos</h2>
 
-      <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
-        {courses?.map((course) => (
-          <Card key={course.id}>
-            <CardHeader>
-              <CardTitle>{course.name}</CardTitle>
-              <CardDescription>{course.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Badge variant="outline">{`${course.sections.length} Seções`}</Badge>
-              <Badge variant="outline">{`${videos(course)} Videos`}</Badge>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full" asChild>
-                <a href={`/courses/${course.id}`}>ACESSAR</a>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      {courses?.length === 0 && (
+        <div className="flex items-center w-full h-24">
+          <p className="text-lg font-bold text-gray-500">
+            Nenhum curso disponível
+          </p>
+        </div>
+      )}
+
+      {courses && courses.length > 0 && (
+        <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
+          {courses?.map((course) => (
+            <Card key={course.id}>
+              <CardHeader>
+                <CardTitle>{course.name}</CardTitle>
+                <CardDescription>{course.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="outline">{`${course.sections.length} Seções`}</Badge>
+                <Badge variant="outline">{`${videos(course)} Videos`}</Badge>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" asChild>
+                  <a href={`/courses/${course.id}`}>ACESSAR</a>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
     </>
   );
 }
