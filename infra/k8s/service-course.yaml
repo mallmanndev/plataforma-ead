@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-course
+spec:
+  selector:
+    app: service-course
+  ports:
+    - protocol: TCP
+      port: 3000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-curse-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-course
+  template:
+    metadata:
+      labels:
+        app: service-course
+    spec:
+      containers:
+        - name: service-course
+          image: 315655993037.dkr.ecr.us-east-1.amazonaws.com/service-course-prod:latest
+      imagePullSecrets:
+        - name: us-east-1-ecr-registry
