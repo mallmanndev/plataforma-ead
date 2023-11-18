@@ -1,0 +1,98 @@
+version: "3.9"
+
+services:
+  service-core-db-prod:
+    image: postgres:latest
+    container_name: service-core-db
+    environment:
+      POSTGRES_DB: service-core
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - service-core-backend
+    volumes:
+      - ./data/service-core-db:/var/lib/postgresql/data
+
+  service-core-migrate-prod:
+    image: migrate/migrate
+    container_name: service-core-migrate
+    volumes:
+      - ./service-core/migrations:/migrations
+    depends_on:
+      - service-core-db-prod
+    networks:
+      - service-core-backend
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://postgres:postgres@service-core-db:5432/service-core?sslmode=disable",
+        "up",
+      ]
+
+  service-core-prod:
+    container_name: service-core
+    build:
+      context: ./service-core
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - POSTGRES_URI=postgresql://postgres:postgres@service-core-db-prod:5432/service-core?sslmode=disable
+    depends_on:
+      - service-core-db-prod
+      - service-core-migrate-prod
+    networks:
+      - service-core-backend
+
+  service-course-db-prod:
+    image: mongo:latest
+    container_name: service-course-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - service-core-backend
+    volumes:
+      - ./data/service-course-db:/data/db
+
+  service-course-prod:
+    container_name: service-course
+    build:
+      context: ./service-course
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3001:3000"
+    environment:
+      - MONGODB_URI=mongodb://root:example@service-course-db-prod:27017
+      - RUN_DAEMON=false
+    networks:
+      - service-core-backend
+    volumes:
+      - ./videos:/videos
+
+  front-prod:
+    container_name: front
+    build:
+      context: ./front
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3002:3000"
+    environment:
+      - SERVICE_CORE_URL=http://service-core-prod:3000
+      - SERVICE_COURSE_URL=http://service-course-prod:3000
+      - JWT_SECRET=teste
+      - SERVER_HOST=http://localhost:3000
+      - NEXT_PUBLIC_SERVER_HOST=http://localhost:3002
+    networks:
+      - service-core-backend
+    volumes:
+      - ./videos:/videos
+
+networks:
+  service-core-backend:
+    driver: "bridge"
