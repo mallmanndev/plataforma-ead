@@ -18,7 +18,7 @@ services:
     image: migrate/migrate
     container_name: service-core-migrate
     volumes:
-      - ./service-core/migrations:/migrations
+      - ./service-course/migrations:/migrations
     depends_on:
       - service-core-db
     networks:
@@ -31,21 +31,6 @@ services:
         "postgres://postgres:postgres@service-core-db:5432/service-core?sslmode=disable",
         "up",
       ]
-
-  service-core:
-    container_name: service-core
-    build: ./service-core
-    ports:
-      - "3000:3000"
-    environment:
-      - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
-    depends_on:
-      - service-core-db
-      - service-core-migrate
-    networks:
-      - service-core-backend
-    volumes:
-      - ./service-core:/app
 
   service-course-db:
     image: mongo:latest
@@ -67,6 +52,7 @@ services:
       - "3001:3000"
     environment:
       - MONGODB_URI=mongodb://root:example@service-course-db:27017
+      - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
       - RUN_DAEMON=false
     networks:
       - service-core-backend
@@ -81,7 +67,7 @@ services:
       - "3002:3000"
     environment:
       - SERVICE_CORE_URL=http://service-core:3000
-      - SERVICE_COURSE_URL=http://service-course:3000
+      - SERVICE_COURSE_URL=service-course:3000
       - JWT_SECRET=teste
       - SERVER_HOST=http://localhost:3000
       - NEXT_PUBLIC_SERVER_HOST=http://localhost:3002
