@@ -1,0 +1,38 @@
+basePath: /v1
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: https://www.example.com/support
+  description: Descrição da sua API
+  termsOfService: https://example.com/terms/
+  title: Plataforma EAD
+  version: "1.0"
+paths:
+  /users:
+    get:
+      description: Obtém uma lista de usuários
+      parameters:
+      - description: Nome de usuário
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: Senha
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      summary: Lista de usuários
+      tags:
+      - Auth
+swagger: "2.0"

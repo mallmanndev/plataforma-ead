@@ -26,8 +26,8 @@ down:
 psql:
 	docker exec -it service-core-db psql -U postgres service-core
 
-.PHONY: servcourse-bash
-servcourse-bash:
+.PHONY: backend-bash
+backend-bash:
 	docker exec -it service-course /bin/bash
 
 .PHONY: front-bash
@@ -37,6 +37,10 @@ front-bash:
 .PHONY: servcourse-test
 servcourse-test:
 	docker exec -it service-course go test ./...
+
+.PHONY: backend-swag
+backend-swag:
+	docker exec -it service-course swag init -g ./cmd/rest/main.go
 
 .PHONY: servcourse-coverage
 servcourse-coverage:
