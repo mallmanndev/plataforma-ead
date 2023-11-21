@@ -45,13 +45,12 @@ func main() {
 
 	db, disconnect := utils.GetDb()
 	defer disconnect()
-	usersDb := utils.GetUsersDb()
 
 	// REGISTER ROUTES HERE
 	grpcServer := grpc.NewServer()
 	coursesServer := grpc_courses.NewCourseServer(db)
 	fileUploadService := grpc_courses.NewFilesServer(db)
-	usersService := grpc_users.NewUsersServer(usersDb)
+	usersService := grpc_users.NewUsersServer(db)
 	pb.RegisterCoursesServiceServer(grpcServer, coursesServer)
 	pb.RegisterFileUploadServiceServer(grpcServer, fileUploadService)
 	pb.RegisterUsersServiceServer(grpcServer, usersService)

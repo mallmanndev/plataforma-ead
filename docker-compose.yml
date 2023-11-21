@@ -1,37 +1,6 @@
 version: "3.9"
 
 services:
-  service-core-db:
-    image: postgres:latest
-    container_name: service-core-db
-    environment:
-      POSTGRES_DB: service-core
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    networks:
-      - service-core-backend
-    volumes:
-      - ./data/service-core-db:/var/lib/postgresql/data
-
-  service-core-migrate:
-    image: migrate/migrate
-    container_name: service-core-migrate
-    volumes:
-      - ./service-course/migrations:/migrations
-    depends_on:
-      - service-core-db
-    networks:
-      - service-core-backend
-    command:
-      [
-        "-path",
-        "/migrations",
-        "-database",
-        "postgres://postgres:postgres@service-core-db:5432/service-core?sslmode=disable",
-        "up",
-      ]
-
   service-course-db:
     image: mongo:latest
     container_name: service-course-db
@@ -47,17 +16,18 @@ services:
 
   service-course:
     container_name: service-course
-    build: ./service-course
+    build: ./backend
     ports:
       - "3001:3000"
     environment:
       - MONGODB_URI=mongodb://root:example@service-course-db:27017
       - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
       - RUN_DAEMON=false
+      - JWT_SECRET_KEY=teste
     networks:
       - service-core-backend
     volumes:
-      - ./service-course:/app
+      - ./backend:/app
       - ./videos:/videos
 
   front:

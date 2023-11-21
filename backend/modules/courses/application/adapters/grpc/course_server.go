@@ -34,7 +34,7 @@ func NewCourseServer(db *mongo.Database) *CourseServer {
 	peopleRepository := repositories.NewPeopleRepository(db)
 	coursesRepo := repositories.NewCourseRepositories(db)
 	videosRepo := repositories.NewVideosRepository(db)
-	createCourseUseCase := usecases.NewCreateCourseUseCase(peopleRepository, coursesRepo)
+	createCourseUseCase := usecases.NewCreateCourseUseCase(coursesRepo)
 	updateCourseUseCase := usecases.NewUpdateCourseUseCase(peopleRepository, coursesRepo)
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
@@ -71,11 +71,7 @@ func (cs *CourseServer) Create(_ context.Context, req *pb.CreateCourseRequest) (
 		Name:        req.Name,
 		Description: req.Description,
 		DiscordUrl:  req.DiscordUrl,
-		Instructor: usecases.CreateCourseInstructorDTO{
-			Id:   req.Instructor.Id,
-			Name: req.Instructor.Name,
-			Type: req.Instructor.Type,
-		},
+		UserId:      req.Instructor.Id,
 	})
 	if err != nil {
 		return nil, errs.NewGrpcError(err)

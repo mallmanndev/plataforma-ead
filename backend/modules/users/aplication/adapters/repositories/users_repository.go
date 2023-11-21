@@ -1,111 +1,86 @@
 package repositories
 
 import (
-	"database/sql"
-	"fmt"
-	"time"
+	"context"
+	"errors"
 
+	"github.com/matheusvmallmann/plataforma-ead/backend/modules/users/aplication/adapters/repositories/models"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/entities"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/value-objects"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UsersRepository struct {
-	db *sql.DB
+	collection *mongo.Collection
 }
 
-func NewUsersRepository(db *sql.DB) *UsersRepository {
-	return &UsersRepository{db: db}
+func NewUsersRepository(db *mongo.Database) *UsersRepository {
+	collection := db.Collection("users")
+	return &UsersRepository{collection: collection}
 }
 
-func (ur *UsersRepository) Create(user *entities.User) error {
-	fmt.Println("Chegou aqui!")
-	_, err := ur.db.Exec("INSERT INTO users (id, name, email, phone, password, type_id) VALUES ($1, $2, $3, $4, $5, $6);",
-		user.Id, user.Name, user.Email.Email, user.Phone.Phone, user.GetPassword(), user.Type.Id)
-
+func (r *UsersRepository) Create(user *entities.User) error {
+	_, err := r.collection.InsertOne(context.Background(), models.User{
+		ID:        user.Id,
+		Name:      user.Name,
+		Email:     user.Email.Email,
+		Phone:     user.Phone.Phone,
+		Password:  user.GetPassword(),
+		Type:      user.Type.Id,
+		CreatedAt: user.CreatedAt,
+	})
 	return err
 }
 
-func (ur *UsersRepository) Update(user *entities.User) error {
-	_, err := ur.db.Exec("UPDATE users SET name = $1, email = $2, phone = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4;",
-		user.Name, user.Email, user.Phone, user.Id)
-
+func (r *UsersRepository) Update(user *entities.User) error {
+	filter := bson.M{"_id": user.Id}
+	update := bson.M{"$set": models.User{
+		ID:        user.Id,
+		Name:      user.Name,
+		Email:     user.Email.Email,
+		Phone:     user.Phone.Phone,
+		Password:  user.GetPassword(),
+		Type:      user.Type.Id,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}}
+	_, err := r.collection.UpdateOne(context.Background(), filter, update)
 	return err
 }
 
-func (ur *UsersRepository) Delete(id string) error {
-	_, err := ur.db.Exec("UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1;", id)
-
+func (r *UsersRepository) Delete(id string) error {
+	_, err := r.collection.DeleteOne(context.Background(), bson.M{"_id": id})
 	return err
 }
 
-func (ur *UsersRepository) FindByEmail(email *value_objects.EmailAddress) (*entities.User, error) {
-	row := ur.db.QueryRow("SELECT * FROM users WHERE deleted_at IS NULL AND email = $1;",
-		email.Email)
-
-	model := &UserModel{}
-	err := row.Scan(&model.Id, &model.Name, &model.Email,
-		&model.Phone, &model.Password, &model.Type,
-		&model.CreatedAt, &model.UpdatedAt, &model.DeletedAt)
-
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
+func (r *UsersRepository) FindByEmail(email *value_objects.EmailAddress) (*entities.User, error) {
+	filter := bson.M{"email": email.Email}
+	model := &models.User{}
+	err := r.collection.FindOne(context.Background(), filter).Decode(model)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil // user not found
+		}
 		return nil, err
 	}
 
-	return modelToEntity(model), nil
+	user := entities.NewUserFromRepository(model)
+
+	return user, nil
 }
 
-func (ur *UsersRepository) FindById(id string) (*entities.User, error) {
-	row := ur.db.QueryRow("SELECT * FROM users WHERE deleted_at IS NULL AND id = $1;", id)
-
-	if row == nil {
-		return nil, nil
-	}
-
-	model := &UserModel{}
-	err := row.Scan(&model.Id, &model.Name, &model.Password,
-		&model.Phone, &model.Password, &model.Type,
-		&model.CreatedAt, &model.UpdatedAt, &model.DeletedAt)
-
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
+func (r *UsersRepository) FindById(id string) (*entities.User, error) {
+	model := &models.User{}
+	err := r.collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(model)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil // user not found
+		}
 		return nil, err
 	}
 
-	return modelToEntity(model), nil
-}
+	user := entities.NewUserFromRepository(model)
 
-type UserModel struct {
-	Id        string
-	Name      string
-	Email     string
-	Phone     string
-	Password  string
-	Type      string
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-}
-
-func modelToEntity(m *UserModel) *entities.User {
-	userType := &entities.UserType{Id: m.Type}
-	email := &value_objects.EmailAddress{Email: m.Email}
-	phone := &value_objects.Phone{Phone: m.Phone}
-	user := &entities.User{
-		Id:        m.Id,
-		Name:      m.Name,
-		Email:     email,
-		Phone:     phone,
-		Type:      userType,
-		CreatedAt: m.CreatedAt,
-		UpdatedAt: m.UpdatedAt.Time,
-	}
-
-	user.SetPassword(m.Password)
-
-	return user
+	return user, nil
 }

@@ -8,47 +8,25 @@ import (
 )
 
 type CreateCourseUseCase struct {
-	peopleRepository ports.PeopleRepository
 	courseRepository ports.CourseRepository
 }
 
 func NewCreateCourseUseCase(
-	PeopleRepository ports.PeopleRepository,
 	CourseRepository ports.CourseRepository,
 ) *CreateCourseUseCase {
 	return &CreateCourseUseCase{
-		peopleRepository: PeopleRepository,
 		courseRepository: CourseRepository,
 	}
-}
-
-type CreateCourseInstructorDTO struct {
-	Id   string
-	Name string
-	Type string
 }
 
 type CreateCourseUseCaseDTO struct {
 	Name        string
 	Description string
-	Instructor  CreateCourseInstructorDTO
+	UserId      string
 	DiscordUrl  string
 }
 
 func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.Course, error) {
-	people, err := entities.NewPeople(
-		Data.Instructor.Id,
-		Data.Instructor.Name,
-		Data.Instructor.Type,
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := cc.peopleRepository.Upsert(people); err != nil {
-		return nil, errs.NewCreateUserUseCaseError("Could not insert or update people", err)
-	}
 
 	discord, err := cc.getDiscordUrl(Data.DiscordUrl)
 	if err != nil {
@@ -59,7 +37,7 @@ func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.C
 		Data.Name,
 		Data.Description,
 		nil,
-		Data.Instructor.Id,
+		Data.UserId,
 		discord,
 	)
 	if err != nil {

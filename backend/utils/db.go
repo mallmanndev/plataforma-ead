@@ -2,11 +2,9 @@ package utils
 
 import (
 	"context"
-	"database/sql"
 	"os"
 	"time"
 
-	_ "github.com/lib/pq"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -31,14 +29,4 @@ func GetDb() (*mongo.Database, func()) {
 	db := client.Database(dbName)
 
 	return db, disconnect
-}
-
-func GetUsersDb() *sql.DB {
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URI"))
-
-	if err != nil {
-		panic(err)
-	}
-
-	return db
 }

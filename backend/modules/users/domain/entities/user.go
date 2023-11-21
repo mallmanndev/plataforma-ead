@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/matheusvmallmann/plataforma-ead/backend/modules/users/aplication/adapters/repositories/models"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/value-objects"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,6 +20,24 @@ type User struct {
 	password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func NewUserFromRepository(model *models.User) *User {
+	email, _ := value_objects.NewEmailAddress(model.Email)
+	phone, _ := value_objects.NewPhone(model.Phone)
+	userType := NewUserType(model.Type, "")
+
+	return &User{
+		Id:        model.ID,
+		Name:      model.Name,
+		Email:     email,
+		Phone:     phone,
+		Type:      userType,
+		Approved:  model.Approved,
+		password:  model.Password,
+		CreatedAt: model.CreatedAt,
+		UpdatedAt: model.UpdatedAt,
+	}
 }
 
 func NewUser(

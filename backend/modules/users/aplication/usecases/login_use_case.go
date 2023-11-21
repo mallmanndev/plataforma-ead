@@ -2,7 +2,10 @@ package usecases
 
 import (
 	"errors"
+	"os"
+	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/ports"
 	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/users/domain/value-objects"
@@ -40,5 +43,17 @@ func (u *LoginUseCase) Execute(Email string, Password string) (*LoginUseCaseOutp
 		return nil, errors.New("Invalid password!")
 	}
 
-	return &LoginUseCaseOutput{User: user, Token: "tetete"}, nil
+	var sampleSecretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(24 * time.Hour).Unix()
+	claims["id"] = user.Id
+	claims["email"] = user.Email.Email
+
+	tokenString, err := token.SignedString(sampleSecretKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LoginUseCaseOutput{User: user, Token: tokenString}, nil
 }
