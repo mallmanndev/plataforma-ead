@@ -31,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.279.0",
     "next": "latest",
+    "next-auth": "^4.24.5",
     "next-themes": "^0.2.1",
     "plyr": "^3.7.8",
     "react": "latest",

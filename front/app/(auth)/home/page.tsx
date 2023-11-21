@@ -1,3 +1,4 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,26 +9,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CoursesServiceGrpc from "@/services/courses";
 import { Course } from "@/types/course";
+import { getServerSession } from "next-auth/next";
 
 export const metadata = {
   title: "Home",
 };
 
 const getCourses = async () => {
-  const service = new CoursesServiceGrpc();
-  const { error, response } = await service.Get({
-    id: "",
-    user_id: "",
-    visible: true,
+  const session = await getServerSession(nextAuthOptions);
+
+  const req = await fetch(`${process.env.SERVER_HOST}/courses?visible=1`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
   });
 
-  if (error) {
-    throw new Error("Failed to fetch course!");
+  if (!req.ok) {
+    throw new Error("Failed to fetch courses!");
   }
 
-  return response;
+  return req.json();
 };
 
 export default async function Home() {
@@ -53,7 +53,7 @@ export default async function Home() {
 
       {courses && courses.length > 0 && (
         <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
-          {courses?.map((course) => (
+          {courses?.map((course: any) => (
             <Card key={course.id}>
               <CardHeader>
                 <CardTitle>{course.name}</CardTitle>

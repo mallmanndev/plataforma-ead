@@ -8,32 +8,23 @@ import (
 )
 
 type UpdateCourseUseCase struct {
-	peopleRepository ports.PeopleRepository
 	courseRepository ports.CourseRepository
 }
 
 func NewUpdateCourseUseCase(
-	PeopleRepository ports.PeopleRepository,
 	CourseRepository ports.CourseRepository,
 ) *UpdateCourseUseCase {
 	return &UpdateCourseUseCase{
-		PeopleRepository,
 		CourseRepository,
 	}
-}
-
-type UpdateCourseInstructorDTO struct {
-	Id   string
-	Name string
-	Type string
 }
 
 type UpdateCourseUseCaseDTO struct {
 	Id          string
 	Name        string
 	Description string
-	Instructor  UpdateCourseInstructorDTO
 	DiscordUrl  string
+	UserId      string
 }
 
 func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.Course, error) {
@@ -42,17 +33,8 @@ func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.C
 		return nil, errs.NewNotFoundError("Course")
 	}
 
-	if course.UserId() != Data.Instructor.Id {
+	if course.UserId() != Data.UserId {
 		return nil, errs.NewPermissionDeniedError("update course")
-	}
-
-	people, err := entities.NewPeople(Data.Instructor.Id, Data.Instructor.Name, Data.Instructor.Type, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := uc.peopleRepository.Upsert(people); err != nil {
-		return nil, errs.NewUpdateCourseUseCaseError("Could not insert or update people", err)
 	}
 
 	discord, err := uc.getDiscordUrl(Data.DiscordUrl)

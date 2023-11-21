@@ -17,6 +17,8 @@ require (
 	google.golang.org/protobuf v1.31.0
 )
 
+require github.com/gin-contrib/cors v1.4.0 // indirect
+
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect

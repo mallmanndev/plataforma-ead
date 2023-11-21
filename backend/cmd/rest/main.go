@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/matheusvmallmann/plataforma-ead/backend/docs"
 	courses "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses"
@@ -23,6 +24,8 @@ func main() {
 	defer disconnect()
 
 	r := gin.Default()
+
+	r.Use(cors.Default())
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	users.Routes(&r.RouterGroup, db)

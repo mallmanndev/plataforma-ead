@@ -31,11 +31,10 @@ type CourseServer struct {
 }
 
 func NewCourseServer(db *mongo.Database) *CourseServer {
-	peopleRepository := repositories.NewPeopleRepository(db)
 	coursesRepo := repositories.NewCourseRepositories(db)
 	videosRepo := repositories.NewVideosRepository(db)
 	createCourseUseCase := usecases.NewCreateCourseUseCase(coursesRepo)
-	updateCourseUseCase := usecases.NewUpdateCourseUseCase(peopleRepository, coursesRepo)
+	updateCourseUseCase := usecases.NewUpdateCourseUseCase(coursesRepo)
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
 	updateSectionUseCase := usecases.NewUpdateSectionUseCase(coursesRepo)
@@ -86,12 +85,8 @@ func (cs *CourseServer) Update(_ context.Context, req *pb.UpdateCourseRequest) (
 	}
 
 	course, err := cs.updateCourseUseCase.Execute(usecases.UpdateCourseUseCaseDTO{
-		Id: req.CourseId,
-		Instructor: usecases.UpdateCourseInstructorDTO{
-			Id:   req.Instructor.Id,
-			Name: req.Instructor.Name,
-			Type: req.Instructor.Type,
-		},
+		Id:          req.CourseId,
+		UserId:      req.Instructor.Id,
 		Name:        req.Name,
 		Description: req.Description,
 		DiscordUrl:  req.DiscordUrl,

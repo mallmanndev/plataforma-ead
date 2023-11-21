@@ -18,7 +18,7 @@ services:
     container_name: service-course
     build: ./backend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       - MONGODB_URI=mongodb://root:example@service-course-db:27017
       - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
@@ -36,11 +36,11 @@ services:
     ports:
       - "3002:3000"
     environment:
-      - SERVICE_CORE_URL=http://service-core:3000
-      - SERVICE_COURSE_URL=service-course:3000
-      - JWT_SECRET=teste
-      - SERVER_HOST=http://localhost:3000
+      - SERVER_HOST=http://service-course:3000
       - NEXT_PUBLIC_SERVER_HOST=http://localhost:3002
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXTAUTH_URL=http://localhost:3002
+      - NEXTAUTH_SECRET=teste
     networks:
       - service-core-backend
     volumes:

@@ -1,15 +1,17 @@
-import NavBar from "@/components/ui/navbar";
 import { redirect } from "next/navigation";
-import validateToken from "@/lib/validate-token";
+import { getServerSession } from "next-auth";
+import { nextAuthOptions } from "../api/auth/[...nextauth]/route";
+import NavBar from "@/components/ui/navbar";
+import User from "@/entities/user";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const user = validateToken();
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(nextAuthOptions)
 
-  if (!user) return redirect("/login");
+  if (!session) return redirect("/login");
 
   return (
     <>
-      <NavBar user={user} />
+      <NavBar user={session as unknown as User} />
       <div className="container">{children}</div>
     </>
   );

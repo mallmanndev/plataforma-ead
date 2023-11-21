@@ -45,6 +45,13 @@ export function RegisterForm() {
   const { loading, error, user, create } = useCreateUser();
   const form = useForm<TRegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      email: "",
+      password: "",
+      cpassword: "",
+    },
   });
 
   useEffect(() => {
@@ -150,4 +157,7 @@ export function RegisterForm() {
       </form>
     </Form>
   );
+}
+function setTokenCoockie(token: any) {
+  throw new Error("Function not implemented.");
 }

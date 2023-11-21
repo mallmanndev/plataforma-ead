@@ -10,19 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import React, { useEffect } from "react";
+import React from "react";
 import User from "@/entities/user";
 import getNameInitials from "@/lib/name-initials";
-import useLogout from "@/hooks/logout";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function NavUser({ user }: { user: User }) {
-  const { push } = useRouter();
-  const { logout, finished } = useLogout();
-
-  useEffect(() => {
-    if (finished) push("/login");
-  }, [push, finished]);
+  const logout = () => {
+    signOut();
+  };
 
   return (
     <DropdownMenu>
