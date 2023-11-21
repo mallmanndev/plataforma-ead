@@ -8,6 +8,7 @@ import (
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/stretchr/testify/assert"
@@ -28,12 +29,14 @@ func CourseServerSetup(t *testing.T) (
 		closer()
 	}
 
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	instructorId := "cc01cb11-7f45-4563-a6ea-bd159b6e705a"
 	course, _ := entities.NewCourse(
 		"Go lang course",
 		"This is a go lang course",
 		nil,
 		instructorId,
+		discordUrl,
 	)
 
 	err1 := db.Collection("people").Drop(context.Background())

@@ -24,9 +24,11 @@ func TestCourseEntity(t *testing.T) {
 			"[Course] Invalid 'description': must be longer than 20."},
 	}
 
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
+
 	for _, test := range testCenarios {
 		t.Run(fmt.Sprintf("Should return exception when course is invalid (%s)", test.expectedErr), func(t *testing.T) {
-			_, err := entities.NewCourse(test.name, test.description, test.image, test.instructorId)
+			_, err := entities.NewCourse(test.name, test.description, test.image, test.instructorId, discordUrl)
 			if err == nil {
 				t.Error("Error must be not nil!")
 			}
@@ -41,7 +43,9 @@ func TestCourseEntity(t *testing.T) {
 			"Go Course",
 			"This is a Go Lang Course!",
 			nil,
-			uuid.NewString())
+			uuid.NewString(),
+			discordUrl,
+		)
 		if err != nil {
 			t.Errorf("Error must be nil, received(%s)!", err.Error())
 		}
@@ -55,8 +59,9 @@ func TestCourseEntity(t *testing.T) {
 }
 
 func TestCourseEntitySections(t *testing.T) {
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	t.Run("Should return nil when not found section", func(t *testing.T) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 
 		course.AddSection(section)
@@ -67,7 +72,7 @@ func TestCourseEntitySections(t *testing.T) {
 	})
 
 	t.Run("Should return nil when not found section", func(t *testing.T) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 
 		course.AddSection(section)
@@ -79,7 +84,9 @@ func TestCourseEntitySections(t *testing.T) {
 }
 
 func TestRemoveSection(t *testing.T) {
-	course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
+
+	course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 	section1, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 	section2, _ := entities.NewCourseSection("Section two", "this is a section two", course.Id())
 	course.AddSection(section1)
@@ -100,9 +107,10 @@ func TestRemoveSection(t *testing.T) {
 
 func TestReorderSections(t *testing.T) {
 	// Arrange
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 
 	var generateCourse = func() (*entities.Course, []*entities.CourseSection) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 		section1, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 		section1.SetOrder(1)
 		course.AddSection(section1)
@@ -177,8 +185,10 @@ func TestReorderSections(t *testing.T) {
 }
 
 func TestCourseEntity_MakeVisible(t *testing.T) {
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
+
 	t.Run("when_course_not_have_sections", func(t *testing.T) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 
 		err := course.MakeVisible()
 
@@ -186,7 +196,7 @@ func TestCourseEntity_MakeVisible(t *testing.T) {
 	})
 
 	t.Run("when_course_not_have_itens", func(t *testing.T) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 		course.AddSection(section)
 
@@ -196,7 +206,7 @@ func TestCourseEntity_MakeVisible(t *testing.T) {
 	})
 
 	t.Run("should_set_visibility_to_true", func(t *testing.T) {
-		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString())
+		course, _ := entities.NewCourse("Go lang course", "This is a Golang course", nil, uuid.NewString(), discordUrl)
 		section, _ := entities.NewCourseSection("Section one", "this is a section one", course.Id())
 		item := entities.NewCourseItem("Item one", "this is a item one", section.Id(), "video", "123")
 		section.AddItem(item)

@@ -16,11 +16,18 @@ type Course struct {
 	userId      string
 	sections    []*CourseSection
 	visible     bool
+	discordUrl  *value_objects.Url
 	createdAt   time.Time
 	updatedAt   time.Time
 }
 
-func NewCourse(Name string, Description string, Image *value_objects.Image, userId string) (*Course, error) {
+func NewCourse(
+	Name string,
+	Description string,
+	Image *value_objects.Image,
+	userId string,
+	discordUrl *value_objects.Url,
+) (*Course, error) {
 	course := &Course{
 		id:          uuid.NewString(),
 		name:        Name,
@@ -28,6 +35,7 @@ func NewCourse(Name string, Description string, Image *value_objects.Image, user
 		image:       Image,
 		userId:      userId,
 		visible:     false,
+		discordUrl:  discordUrl,
 		createdAt:   time.Now(),
 	}
 	if err := course.Validate(); err != nil {
@@ -63,10 +71,11 @@ func (c *Course) Validate() error {
 	return nil
 }
 
-func (c *Course) Update(Name string, Description string) error {
+func (c *Course) Update(Name string, Description string, discordUrl *value_objects.Url) error {
 	c.name = Name
 	c.description = Description
 	c.updatedAt = time.Now()
+	c.discordUrl = discordUrl
 	return c.Validate()
 }
 

@@ -12,6 +12,8 @@ FROM alpine:latest
 
 WORKDIR /app
 
+RUN apk update && apk add ffmpeg
+
 COPY --from=builder /app/cmd/grpc/main .
 
 EXPOSE 3000

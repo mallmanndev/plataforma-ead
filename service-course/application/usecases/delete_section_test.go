@@ -8,12 +8,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 )
 
 func TestDeleteSectionUseCase(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 	useCase := usecases.NewDeleteSectionUseCase(mockCourseRepository)
 	userId := uuid.NewString()
@@ -23,6 +25,7 @@ func TestDeleteSectionUseCase(t *testing.T) {
 		"This is a Golang course",
 		nil,
 		userId,
+		discordUrl,
 	)
 
 	t.Run("Should return error when course is not found", func(t *testing.T) {

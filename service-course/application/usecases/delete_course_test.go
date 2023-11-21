@@ -7,6 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 )
 
@@ -16,6 +17,7 @@ func TestDeleteCourseUseCase(t *testing.T) {
 
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	useCase := usecases.NewDeleteCourseUseCase(mockCourseRepository)
 
 	t.Run("Should return error when course not found", func(t *testing.T) {
@@ -39,7 +41,9 @@ func TestDeleteCourseUseCase(t *testing.T) {
 			"A Golang course",
 			"A Golang course description",
 			nil,
-			"321")
+			"321",
+			discordUrl,
+		)
 
 		mockCourseRepository.EXPECT().FindById("123").Return(course, nil)
 		data := usecases.DeleteCourseUseCaseDataDTO{
@@ -61,7 +65,9 @@ func TestDeleteCourseUseCase(t *testing.T) {
 			"A Golang course",
 			"A Golang course description",
 			nil,
-			"321")
+			"321",
+			discordUrl,
+		)
 
 		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Delete(course.Id()).Return(errors.New("Test!"))
@@ -84,7 +90,9 @@ func TestDeleteCourseUseCase(t *testing.T) {
 			"A Golang course",
 			"A Golang course description",
 			nil,
-			"321")
+			"321",
+			discordUrl,
+		)
 
 		mockCourseRepository.EXPECT().FindById(course.Id()).Return(course, nil)
 		mockCourseRepository.EXPECT().Delete(course.Id()).Return(nil)

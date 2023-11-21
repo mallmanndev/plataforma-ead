@@ -25,7 +25,7 @@ export default function UpdateCourseForm({
   useEffect(() => {
     if (course) {
       toast({ title: "Curso alterado com sucesso" });
-      push("/my-courses");
+      push("/manage-courses");
     }
   }, [push, toast, course]);
 

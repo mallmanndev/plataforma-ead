@@ -22,7 +22,7 @@ func VideoProcessDaemon(db *mongo.Database) {
 	videosRepo := repositories.NewVideosRepository(db)
 	filesService := services.NewFilesService()
 
-	useCase := usecases.NewProcessVideo(videosRepo, filesService)
+	useCase := usecases.NewProcessVideoTwo(videosRepo, filesService)
 
 	intervalTime := 5
 	log.Printf("Video daemon started. Runing in: %d", intervalTime)

@@ -70,6 +70,7 @@ func (cs *CourseServer) Create(_ context.Context, req *pb.CreateCourseRequest) (
 	course, err := cs.createCourseUseCase.Execute(usecases.CreateCourseUseCaseDTO{
 		Name:        req.Name,
 		Description: req.Description,
+		DiscordUrl:  req.DiscordUrl,
 		Instructor: usecases.CreateCourseInstructorDTO{
 			Id:   req.Instructor.Id,
 			Name: req.Instructor.Name,
@@ -97,6 +98,7 @@ func (cs *CourseServer) Update(_ context.Context, req *pb.UpdateCourseRequest) (
 		},
 		Name:        req.Name,
 		Description: req.Description,
+		DiscordUrl:  req.DiscordUrl,
 	})
 	if err != nil {
 		return nil, errs.NewGrpcError(err)

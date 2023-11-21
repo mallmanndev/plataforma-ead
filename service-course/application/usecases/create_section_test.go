@@ -2,13 +2,15 @@ package usecases_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestCreateSectionUseCase(t *testing.T) {
@@ -18,11 +20,13 @@ func TestCreateSectionUseCase(t *testing.T) {
 	useCase := usecases.NewCreateSectionUseCase(mockCourseRepository)
 	courseId := uuid.NewString()
 	userId := uuid.NewString()
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	course, _ := entities.NewCourse(
 		"A Go Lang course",
 		"This is a Golang course",
 		nil,
 		userId,
+		discordUrl,
 	)
 
 	t.Run("Should return error when section is invalid", func(t *testing.T) {

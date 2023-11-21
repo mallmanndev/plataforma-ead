@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,6 +18,7 @@ func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUs
 	closer := func() {
 		mockCtrl.Finish()
 	}
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 	useCase := usecases.NewUpdateSectionUseCase(mockCourseRepository)
 
@@ -26,6 +28,7 @@ func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUs
 		"This is a Golang course",
 		nil,
 		userId,
+		discordUrl,
 	)
 
 	return mockCourseRepository, useCase, course, closer

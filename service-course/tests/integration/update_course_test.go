@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/application/adapters/repositories"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/pb"
 	testutils "github.com/matheusvmallmann/plataforma-ead/service-course/tests/utils"
 	"github.com/stretchr/testify/assert"
@@ -23,12 +24,15 @@ func TestUpdateCourse(t *testing.T) {
 		closer()
 	})()
 
+	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
 	instructorId := "cc01cb11-7f45-4563-a6ea-bd159b6e705a"
 	course, _ := entities.NewCourse(
 		"Go lang course",
 		"This is a go lang course",
 		nil,
-		instructorId)
+		instructorId,
+		discordUrl,
+	)
 
 	if err := db.Collection("people").Drop(context.Background()); err != nil {
 		t.Error("Error to clear people collection")

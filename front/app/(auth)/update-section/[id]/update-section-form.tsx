@@ -21,8 +21,8 @@ export default function UpdateSectionForm({
 
   useEffect(() => {
     if (course) {
-      toast({ title: "Seção criada com sucesso." });
-      push(`/manage-itens/${course.id}`);
+      toast({ title: "Seção alterada com sucesso." });
+      push(`/manage-sections/${course.id}`);
     }
   }, [push, course]);
 

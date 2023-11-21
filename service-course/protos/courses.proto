@@ -58,6 +58,7 @@ message CreateCourseRequest {
   string name = 1;
   string description = 2;
   People instructor = 3;
+  string discord_url = 4;
 }
 
 message CreateUpdateCourseResponse {
@@ -69,6 +70,7 @@ message UpdateCourseRequest {
   string course_id = 2;
   string name = 3;
   string description = 4;
+  string discord_url = 5;
 }
 
 message DeleteCourseRequest {

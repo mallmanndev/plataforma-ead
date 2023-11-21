@@ -4,6 +4,7 @@ import (
 	errs "github.com/matheusvmallmann/plataforma-ead/service-course/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/service-course/domain/ports"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/service-course/domain/value-objects"
 )
 
 type UpdateCourseUseCase struct {
@@ -32,6 +33,7 @@ type UpdateCourseUseCaseDTO struct {
 	Name        string
 	Description string
 	Instructor  UpdateCourseInstructorDTO
+	DiscordUrl  string
 }
 
 func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.Course, error) {
@@ -53,7 +55,12 @@ func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.C
 		return nil, errs.NewUpdateCourseUseCaseError("Could not insert or update people", err)
 	}
 
-	if err := course.Update(Data.Name, Data.Description); err != nil {
+	discord, err := uc.getDiscordUrl(Data.DiscordUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := course.Update(Data.Name, Data.Description, discord); err != nil {
 		return nil, err
 	}
 
@@ -62,4 +69,17 @@ func (uc *UpdateCourseUseCase) Execute(Data UpdateCourseUseCaseDTO) (*entities.C
 	}
 
 	return course, nil
+}
+
+func (cc *UpdateCourseUseCase) getDiscordUrl(url string) (*value_objects.Url, error) {
+	if url == "" {
+		return nil, nil
+	}
+
+	discord, err := value_objects.NewUrl(url)
+	if err != nil {
+		return nil, err
+	}
+
+	return discord, nil
 }
