@@ -10,14 +10,23 @@ import (
 func Routes(r *gin.RouterGroup, db *mongo.Database) {
 	controller := rest.NewCourseServer(db)
 
-	r.POST("/course", middlewares.VerifyTokenMiddleware, controller.CreateCourse)
+	// COURSES
+	r.POST("/courses", middlewares.VerifyTokenMiddleware, controller.CreateCourse)
 	r.GET("/courses", middlewares.VerifyTokenMiddleware, controller.GetCourses)
 	r.GET("/courses/:id", middlewares.VerifyTokenMiddleware, controller.GetCourse)
 	r.PUT("/courses/:id", middlewares.VerifyTokenMiddleware, controller.UpdateCourse)
 	r.DELETE("/courses/:id", middlewares.VerifyTokenMiddleware, controller.DeleteCourse)
 	r.PATCH("/courses/:id/change-visibility", middlewares.VerifyTokenMiddleware, controller.ChangeCourseVisibility)
+
+	// SECTIONS
 	r.POST("/sections", middlewares.VerifyTokenMiddleware, controller.CreateSection)
 	r.PUT("/sections/:id", middlewares.VerifyTokenMiddleware, controller.UpdateSection)
 	r.DELETE("/sections/:id", middlewares.VerifyTokenMiddleware, controller.DeleteSection)
 	r.GET("/sections/:id", middlewares.VerifyTokenMiddleware, controller.GetSection)
+
+	// ITENS
+	r.POST("/itens", middlewares.VerifyTokenMiddleware, controller.CreateItem)
+	r.PUT("/itens/:id", middlewares.VerifyTokenMiddleware, controller.UpdateItem)
+	r.DELETE("/itens/:id", middlewares.VerifyTokenMiddleware, controller.DeleteItem)
+	r.GET("/itens/:id", middlewares.VerifyTokenMiddleware, controller.GetItem)
 }

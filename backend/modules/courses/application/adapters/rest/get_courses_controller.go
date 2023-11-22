@@ -12,7 +12,7 @@ import (
 
 func (c *CreateCourseController) GetCourses(ctx *gin.Context) {
 	id := ctx.Query("id")
-	userID := ctx.Query("userId")
+	userID := ctx.Query("user_id")
 	visibleStr := ctx.Query("visible")
 	visible, _ := strconv.ParseBool(visibleStr)
 

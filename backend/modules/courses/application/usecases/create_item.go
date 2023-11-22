@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"log"
+
 	errs "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/ports"
@@ -33,6 +35,7 @@ func (ci *CreateItem) Execute(Data CreateItemInput) (*entities.Course, error) {
 	}
 
 	video, _ := ci.videosRepo.Find(Data.VideoId)
+	log.Println(video)
 	if video == nil || video.UserId() != Data.UserId {
 		return nil, errs.NewNotFoundError("Video")
 	}

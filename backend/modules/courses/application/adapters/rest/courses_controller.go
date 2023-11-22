@@ -24,13 +24,14 @@ type CreateCourseController struct {
 
 func NewCourseServer(db *mongo.Database) *CreateCourseController {
 	coursesRepo := repositories.NewCourseRepositories(db)
+	videosRepo := repositories.NewVideosRepository(db)
 	createCourseUseCase := usecases.NewCreateCourseUseCase(coursesRepo)
 	updateCourseUseCase := usecases.NewUpdateCourseUseCase(coursesRepo)
 	deleteCourseUseCase := usecases.NewDeleteCourseUseCase(coursesRepo)
 	createSectionUseCase := usecases.NewCreateSectionUseCase(coursesRepo)
 	updateSectionUseCase := usecases.NewUpdateSectionUseCase(coursesRepo)
 	deleteSectionUseCase := usecases.NewDeleteSectionUseCase(coursesRepo)
-	// createItemUseCase := usecases.NewCreateItem(coursesRepo, videosRepo)
+	createItemUseCase := usecases.NewCreateItem(coursesRepo, videosRepo)
 	updateItemUseCase := usecases.NewUpdateItem(coursesRepo)
 	deleteItemUseCase := usecases.NewDeleteItem(coursesRepo)
 	makeCourseVisible := usecases.NewMakeCourseVisible(coursesRepo)
@@ -44,10 +45,10 @@ func NewCourseServer(db *mongo.Database) *CreateCourseController {
 		createSectionUseCase: createSectionUseCase,
 		updateSectionUseCase: updateSectionUseCase,
 		deleteSectionUseCase: deleteSectionUseCase,
-		// createItemUseCase:    createItemUseCase,
-		updateItemUseCase:   updateItemUseCase,
-		deleteItemUseCase:   deleteItemUseCase,
-		makeCourseVisible:   makeCourseVisible,
-		makeCourseInvisible: makeCourseInvisible,
+		createItemUseCase:    createItemUseCase,
+		updateItemUseCase:    updateItemUseCase,
+		deleteItemUseCase:    deleteItemUseCase,
+		makeCourseVisible:    makeCourseVisible,
+		makeCourseInvisible:  makeCourseInvisible,
 	}
 }
