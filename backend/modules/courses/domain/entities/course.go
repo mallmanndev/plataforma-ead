@@ -47,10 +47,17 @@ func NewCourse(
 func NewCourseComplete(
 	Id string, Name string, Description string, Image *value_objects.Image,
 	userId string, Visible bool, CreatedAt time.Time, UpdatedAt time.Time,
+	DiscordUrl string,
 ) *Course {
+	var discord_url *value_objects.Url
+
+	if DiscordUrl != "" {
+		discord_url, _ = value_objects.NewUrl(DiscordUrl)
+	}
+
 	return &Course{
 		id: Id, name: Name, description: Description, image: Image, userId: userId,
-		visible: Visible, createdAt: CreatedAt, updatedAt: UpdatedAt,
+		visible: Visible, createdAt: CreatedAt, updatedAt: UpdatedAt, discordUrl: discord_url,
 	}
 }
 
@@ -208,4 +215,8 @@ func (c *Course) CreatedAt() time.Time {
 
 func (c *Course) UpdatedAt() time.Time {
 	return c.updatedAt
+}
+
+func (c *Course) DiscordUrl() *value_objects.Url {
+	return c.discordUrl
 }

@@ -64,6 +64,11 @@ func (cr *CoursesRepositories) FindByItemId(Id string) (*entities.Course, error)
 }
 
 func (cr *CoursesRepositories) Create(Course *entities.Course) error {
+	var discordUrl string
+	if Course.DiscordUrl() != nil {
+		discordUrl = Course.DiscordUrl().String()
+	}
+
 	_, err := cr.collection.InsertOne(context.Background(), models.CourseModel{
 		Id:          Course.Id(),
 		Name:        Course.Name(),
@@ -71,12 +76,18 @@ func (cr *CoursesRepositories) Create(Course *entities.Course) error {
 		UserId:      Course.UserId(),
 		Sections:    []models.CourseSectionModel{},
 		CreatedAt:   Course.CreatedAt(),
+		DiscordUrl:  discordUrl,
 	})
 	return err
 }
 
 func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 	filter := bson.M{"_id": Course.Id()}
+
+	var discordUrl string
+	if Course.DiscordUrl() != nil {
+		discordUrl = Course.DiscordUrl().String()
+	}
 
 	var sections []models.CourseSectionModel
 
@@ -115,6 +126,7 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 			"sections":    sections,
 			"visible":     Course.IsVisible(),
 			"updatedAt":   Course.UpdatedAt(),
+			"discordUrl":  discordUrl,
 		},
 	}
 	_, err := cr.collection.UpdateOne(context.Background(), filter, update)

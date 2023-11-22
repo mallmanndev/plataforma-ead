@@ -29,6 +29,7 @@ type CourseModel struct {
 	UserId      string               `bson:"userId"`
 	Visible     bool                 `bson:"visible"`
 	Sections    []CourseSectionModel `bson:"sections"`
+	DiscordUrl  string               `bson:"discordUrl"`
 	CreatedAt   time.Time            `bson:"createdAt"`
 	UpdatedAt   time.Time            `bson:"updatedAt"`
 }

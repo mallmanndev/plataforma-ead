@@ -23,5 +23,6 @@ export type Course = {
   visible: boolean;
   createdAt: string;
   updatedAt: string;
+  discord_url: string;
   sections: Section[];
 };

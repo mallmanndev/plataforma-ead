@@ -13,13 +13,14 @@ import (
 type UpdateCourseData struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	DiscordUrl  string `json:"discord_url"`
 }
 
 func (c *CreateCourseController) UpdateCourse(ctx *gin.Context) {
-	var createCourseForm CreateCourseData
+	var updateCourseData UpdateCourseData
 
 	user := ctx.MustGet("user").(middlewares.User)
-	if err := ctx.ShouldBindJSON(&createCourseForm); err != nil {
+	if err := ctx.ShouldBindJSON(&updateCourseData); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -27,9 +28,10 @@ func (c *CreateCourseController) UpdateCourse(ctx *gin.Context) {
 	course, err := c.updateCourseUseCase.Execute(
 		usecases.UpdateCourseUseCaseDTO{
 			Id:          ctx.Param("id"),
-			Name:        createCourseForm.Name,
-			Description: createCourseForm.Description,
+			Name:        updateCourseData.Name,
+			Description: updateCourseData.Description,
 			UserId:      user.Id,
+			DiscordUrl:  updateCourseData.DiscordUrl,
 		},
 	)
 

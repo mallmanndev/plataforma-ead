@@ -29,4 +29,7 @@ func Routes(r *gin.RouterGroup, db *mongo.Database) {
 	r.PUT("/itens/:id", middlewares.VerifyTokenMiddleware, controller.UpdateItem)
 	r.DELETE("/itens/:id", middlewares.VerifyTokenMiddleware, controller.DeleteItem)
 	r.GET("/itens/:id", middlewares.VerifyTokenMiddleware, controller.GetItem)
+
+	// VIDEOS
+	r.GET("/videos/:id", middlewares.VerifyTokenMiddleware, controller.GetVideo)
 }

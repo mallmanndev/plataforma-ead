@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/adapters/rest/mappers"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/usecases"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/shared/application/middlewares"
 )
@@ -12,6 +13,7 @@ import (
 type CreateCourseData struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	DiscordUrl  string `json:"discord_url"`
 }
 
 func (c *CreateCourseController) CreateCourse(ctx *gin.Context) {
@@ -28,6 +30,7 @@ func (c *CreateCourseController) CreateCourse(ctx *gin.Context) {
 			Name:        createCourseForm.Name,
 			Description: createCourseForm.Description,
 			UserId:      user.Id,
+			DiscordUrl:  createCourseForm.DiscordUrl,
 		},
 	)
 
@@ -37,15 +40,6 @@ func (c *CreateCourseController) CreateCourse(ctx *gin.Context) {
 		return
 	}
 
-	log.Println(course)
-	ctx.JSON(200, gin.H{
-		"id":          course.Id(),
-		"name":        course.Name(),
-		"description": course.Description(),
-		"visible":     course.IsVisible(),
-		"sections":    course.Sections(),
-		"created_at":  course.CreatedAt(),
-		"updated_at":  course.UpdatedAt(),
-	})
+	ctx.JSON(200, mappers.CourseToGinH(course))
 
 }

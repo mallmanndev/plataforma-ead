@@ -9,6 +9,7 @@ import (
 
 type CreateCourseController struct {
 	coursesRepo          ports.CourseRepository
+	videosRepo           ports.VideosRepository
 	createCourseUseCase  *usecases.CreateCourseUseCase
 	updateCourseUseCase  *usecases.UpdateCourseUseCase
 	deleteCourseUseCase  *usecases.DeleteCourseUseCase
@@ -39,6 +40,7 @@ func NewCourseServer(db *mongo.Database) *CreateCourseController {
 
 	return &CreateCourseController{
 		coursesRepo:          coursesRepo,
+		videosRepo:           videosRepo,
 		createCourseUseCase:  createCourseUseCase,
 		updateCourseUseCase:  updateCourseUseCase,
 		deleteCourseUseCase:  deleteCourseUseCase,

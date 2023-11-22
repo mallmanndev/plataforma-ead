@@ -1,8 +1,8 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Course } from "@/types/course";
 import { Metadata } from "next";
-import { env } from "process";
+import { getServerSession } from "next-auth/next";
 
 const getCourse = async (id: string): Promise<Course> => {
-  const res = await fetch(`${process.env.SERVER_HOST}/api/courses/${id}`, {
-    cache: "no-cache",
+  const session = await getServerSession(nextAuthOptions);
+
+  const res = await fetch(`${process.env.SERVER_HOST}/courses/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
   });
 
   if (!res.ok) {
@@ -46,6 +48,14 @@ export default async function CoursePage({
   return (
     <div>
       <h1 className="text-3xl font-bold tracking-tight mt-6">{course.name}</h1>
+
+      <p className="text-lg text-gray-500">{course.description}</p>
+
+      {course.discord_url && (
+        <Button className="mt-8">
+          <a href={course.discord_url}>ACESSAR A COMUNIDADE</a>
+        </Button>
+      )}
 
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {course.sections.map((item, key) => (

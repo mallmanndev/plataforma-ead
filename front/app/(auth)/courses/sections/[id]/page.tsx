@@ -1,3 +1,4 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,17 +7,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CoursesServiceGrpc from "@/services/courses";
 import { Section } from "@/types/course";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
 
 const getSection = async (id: string): Promise<Section> => {
-  const service = new CoursesServiceGrpc();
-  const { error, response } = await service.GetSection({ id });
+  const session = await getServerSession(nextAuthOptions);
 
-  if (error || !response) throw new Error("Failed to fetch item!");
+  const res = await fetch(`${process.env.SERVER_HOST}/sections/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
+  });
 
-  return response;
+  if (!res.ok) {
+    throw new Error("Failed to fetch sections!");
+  }
+
+  return res.json();
 };
 
 export async function generateMetadata({

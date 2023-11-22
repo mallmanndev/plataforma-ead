@@ -15,6 +15,7 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 		Model.Visible,
 		Model.CreatedAt,
 		Model.UpdatedAt,
+		Model.DiscordUrl,
 	)
 
 	for _, section := range Model.Sections {
