@@ -1,7 +1,7 @@
 "use client";
 
 import { Course } from "@/types/course";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 type TUseGetCoursesFilter = {
@@ -28,7 +28,6 @@ const useGetCourses = (filters: TUseGetCoursesFilter): TUseGetCourses => {
     const session = await getSession();
     setLoading(true);
 
-    console.log(session);
     const fetchData = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/courses?user_id=${filters.user_id}`,
       { headers: { Authorization: `Bearer ${session?.token}` } }

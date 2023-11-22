@@ -1,5 +1,6 @@
 import { TCreateSectionData } from "@/contracts/course";
 import { Section } from "@/types/course";
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TUseCreateSection = {
@@ -17,11 +18,19 @@ const useCreateSection = (): TUseCreateSection => {
   const createSection = (data: Omit<TCreateSectionData, "user_id">) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(`/api/sections`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const session = await getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/sections`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         const course = await response.json();

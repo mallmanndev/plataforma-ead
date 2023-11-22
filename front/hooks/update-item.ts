@@ -1,5 +1,6 @@
 import { TUpdateCourseItemData } from "@/contracts/course";
 import { Course } from "@/types/course";
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TUpdateData = Omit<TUpdateCourseItemData, "user_id">;
@@ -19,11 +20,19 @@ export default function useUpdateItem(): TUseUpdateItem {
   const update = (data: TUpdateData) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(`/api/itens/${data.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const session = await getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/itens/${data.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         const course = await response.json();

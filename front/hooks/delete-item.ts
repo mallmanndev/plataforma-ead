@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TUseDeleteItem = {
@@ -14,9 +15,11 @@ export default function useDeleteItem(): TUseDeleteItem {
 
   const remove = async (id: string) => {
     setLoading(true);
-    const res = await fetch(`/api/itens/${id}`, {
+    const session = await getSession();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/itens/${id}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.token}`, },
     });
 
     if (res.ok) {

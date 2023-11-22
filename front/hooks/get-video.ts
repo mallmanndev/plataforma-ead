@@ -22,7 +22,7 @@ export default function useGetVideo(id: string): TUseGetVideo {
   const refetch = async () => {
     setLoading(true);
 
-    const fetchData = await fetch(`/api/video/${id}`);
+    const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${id}`);
     if (!fetchData.ok) {
       setError("Não foi possível buscar o curso.");
       return setLoading(false);

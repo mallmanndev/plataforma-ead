@@ -1,22 +1,19 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import UpdateSectionForm from "./update-section-form";
-import validateToken from "@/lib/validate-token";
-import CoursesServiceGrpc from "@/services/courses";
-import { Section } from "@/types/course";
+import { getServerSession } from "next-auth";
 
 const getSection = async (id: string) => {
-  const user = validateToken();
-  if (!user) {
+  const session = await getServerSession(nextAuthOptions);
+
+  const res = await fetch(`${process.env.SERVER_HOST}/sections/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
+  });
+
+  if (!res.ok) {
     throw new Error("Failed to fetch section!");
   }
 
-  const service = new CoursesServiceGrpc();
-  const { error, response } = await service.GetSection({ id });
-
-  if (error) {
-    throw new Error("Failed to fetch section!");
-  }
-
-  return response as Section;
+  return res.json();
 };
 
 export const metadata = {

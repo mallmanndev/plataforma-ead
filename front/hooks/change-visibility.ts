@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TUseChangeVisibility = {
@@ -18,11 +19,19 @@ export default function useChangeVisibility(): TUseChangeVisibility {
     setSuccess(false);
 
     (async () => {
-      const response = await fetch(`/api/courses/change-visibility/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visibility }),
-      });
+      const session = await getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/courses/${id}/change-visibility`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify({ visibility }),
+        }
+      );
 
       if (response.ok) {
         setLoading(false);

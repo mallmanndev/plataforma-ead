@@ -1,8 +1,12 @@
+import { getServerSession } from "next-auth";
 import UpdateCourseForm from "./update-course-form";
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const getCourse = async (id: string) => {
-  const res = await fetch(`${process.env.SERVER_HOST}/api/courses/${id}`, {
-    cache: "no-cache",
+  const session = await getServerSession(nextAuthOptions);
+
+  const res = await fetch(`${process.env.SERVER_HOST}/courses/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
   });
 
   if (!res.ok) {

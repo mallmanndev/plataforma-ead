@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TCourse = {
@@ -21,11 +22,19 @@ export default function useUpdateCourse(): TUseUpdateCourse {
   const update = (data: TCourse) => {
     (async () => {
       setLoading(true);
-      const response = await fetch(`/api/courses/${data.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const session = await getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/courses/${data.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         const course = await response.json();
