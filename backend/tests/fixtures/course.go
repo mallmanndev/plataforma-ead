@@ -57,6 +57,7 @@ func NewCourseFixture() *entities.Course {
 		true,
 		time.Now(),
 		time.Now(),
+		"",
 	)
 
 	section1 := entities.NewCompleteSection(

@@ -22,7 +22,7 @@ services:
     environment:
       - MONGODB_URI=mongodb://root:example@service-course-db:27017
       - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
-      - RUN_DAEMON=false
+      - RUN_DAEMON=true
       - JWT_SECRET_KEY=teste
     networks:
       - service-core-backend

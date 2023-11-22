@@ -2,7 +2,9 @@ package rest
 
 import (
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/adapters/repositories"
+	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/adapters/services"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/usecases"
+	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/apptimer"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/ports"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,9 +23,12 @@ type CreateCourseController struct {
 	deleteItemUseCase    *usecases.DeleteItem
 	makeCourseVisible    *usecases.MakeCourseVisible
 	makeCourseInvisible  *usecases.MakeCourseInvisible
+	videoUploadUseCase   *usecases.VideoUpload
 }
 
 func NewCourseServer(db *mongo.Database) *CreateCourseController {
+	filesService := services.NewFilesService()
+	uuidService := services.NewUUIDService()
 	coursesRepo := repositories.NewCourseRepositories(db)
 	videosRepo := repositories.NewVideosRepository(db)
 	createCourseUseCase := usecases.NewCreateCourseUseCase(coursesRepo)
@@ -37,6 +42,12 @@ func NewCourseServer(db *mongo.Database) *CreateCourseController {
 	deleteItemUseCase := usecases.NewDeleteItem(coursesRepo)
 	makeCourseVisible := usecases.NewMakeCourseVisible(coursesRepo)
 	makeCourseInvisible := usecases.NewMakeCourseInvisible(coursesRepo)
+	videoUploadUseCase := usecases.NewVideoUpload(
+		filesService,
+		uuidService,
+		videosRepo,
+		apptimer.NewAppTimer(),
+	)
 
 	return &CreateCourseController{
 		coursesRepo:          coursesRepo,
@@ -52,5 +63,6 @@ func NewCourseServer(db *mongo.Database) *CreateCourseController {
 		deleteItemUseCase:    deleteItemUseCase,
 		makeCourseVisible:    makeCourseVisible,
 		makeCourseInvisible:  makeCourseInvisible,
+		videoUploadUseCase:   videoUploadUseCase,
 	}
 }

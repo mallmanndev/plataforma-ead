@@ -10,6 +10,8 @@ import (
 func Routes(r *gin.RouterGroup, db *mongo.Database) {
 	controller := rest.NewCourseServer(db)
 
+	r.Static("/files/videos", "/videos")
+
 	// COURSES
 	r.POST("/courses", middlewares.VerifyTokenMiddleware, controller.CreateCourse)
 	r.GET("/courses", middlewares.VerifyTokenMiddleware, controller.GetCourses)
@@ -32,4 +34,5 @@ func Routes(r *gin.RouterGroup, db *mongo.Database) {
 
 	// VIDEOS
 	r.GET("/videos/:id", middlewares.VerifyTokenMiddleware, controller.GetVideo)
+	r.POST("/videos", middlewares.VerifyTokenMiddleware, controller.VideoUpload)
 }

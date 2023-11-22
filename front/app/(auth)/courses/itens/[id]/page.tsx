@@ -54,7 +54,7 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     <div>
       <div className="mt-8">
         <VideoPlayer
-          source={`${process.env.NEXT_PUBLIC_SERVER_HOST}/api/${video.url}`}
+          source={`${process.env.NEXT_PUBLIC_API_URL}/files${video.url}`}
           qualities={video.resolutions.map((item) => parseInt(item.resolution))}
         />
       </div>

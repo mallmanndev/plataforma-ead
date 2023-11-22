@@ -32,6 +32,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 			true,
 			time.Now(),
 			time.Now(),
+			"",
 		)
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		_, err := useCase.Execute(
@@ -93,6 +94,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 			true,
 			time.Now(),
 			time.Now(),
+			"",
 		)
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(gomock.Any()).Return(errors.New("Test"))
@@ -130,6 +132,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 			true,
 			time.Now(),
 			time.Now(),
+			"",
 		)
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		_, err := useCase.Execute(
@@ -166,6 +169,7 @@ func TestUpdateCourseUseCase(t *testing.T) {
 			true,
 			time.Now(),
 			time.Now(),
+			"",
 		)
 		mockCourseRepository.EXPECT().FindById(courseId).Return(course, nil)
 		mockCourseRepository.EXPECT().Update(gomock.Any()).Return(nil)
