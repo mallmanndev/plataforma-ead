@@ -48,6 +48,15 @@ export default async function CoursePage({
     <div>
       <h1 className="text-3xl font-bold tracking-tight mt-6">{section.name}</h1>
 
+      <p className="text-lg text-gray-500">{section.description}</p>
+
+      {section.avaliation_url && (
+        <Button className="mt-8">
+          <a href={section.avaliation_url}>ACESSAR A AVALIAÇÃO</a>
+        </Button>
+      )}
+
+
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {section.itens.map((item, key) => (
           <Card

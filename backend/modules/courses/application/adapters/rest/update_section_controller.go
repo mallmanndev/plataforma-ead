@@ -11,8 +11,9 @@ import (
 )
 
 type UpdateSectionData struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	AvaliationUrl string `json:"avaliation_url"`
 }
 
 func (s *CreateCourseController) UpdateSection(ctx *gin.Context) {
@@ -26,10 +27,11 @@ func (s *CreateCourseController) UpdateSection(ctx *gin.Context) {
 
 	course, err := s.updateSectionUseCase.Execute(
 		usecases.UpdateSectionDTO{
-			Name:        updateSectionForm.Name,
-			Description: updateSectionForm.Description,
-			UserId:      user.Id,
-			SectionId:   ctx.Param("id"),
+			Name:          updateSectionForm.Name,
+			Description:   updateSectionForm.Description,
+			UserId:        user.Id,
+			SectionId:     ctx.Param("id"),
+			AvaliationUrl: updateSectionForm.AvaliationUrl,
 		},
 	)
 

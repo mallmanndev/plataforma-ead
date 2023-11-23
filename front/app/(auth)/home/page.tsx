@@ -31,6 +31,7 @@ const getCourses = async () => {
 };
 
 export default async function Home() {
+  const session = await getServerSession(nextAuthOptions);
   const courses = await getCourses();
 
   const videos = (course: Course) =>
@@ -41,7 +42,13 @@ export default async function Home() {
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight pt-4">Cursos</h2>
+      <h2 className="text-3xl font-bold tracking-tight pt-4">
+        Olá, {session?.name}
+      </h2>
+
+      <h3 className="font-bold text-2xl text-gray-400 pt-4">
+        Acesse os cursos disponíveis e comece a aprender agora mesmo!
+      </h3>
 
       {courses?.length === 0 && (
         <div className="flex items-center w-full h-24">

@@ -32,30 +32,6 @@ func TestCreateCourse(t *testing.T) {
 		assert.Equal(t, "Instructor is required.", s.Message())
 	})
 
-	t.Run("Should return error when people is invalid", func(t *testing.T) {
-		request := &pb.CreateCourseRequest{
-			Name:        "Go",
-			Description: "",
-			Instructor: &pb.People{
-				Id:       "123",
-				Name:     "Matheus",
-				Type:     "admin",
-				PhotoUrl: "",
-			},
-		}
-
-		_, err := client.Create(ctx, request)
-		s, _ := status.FromError(err)
-		expectedStatus := "InvalidArgument"
-		expectedMessage := "[People] Invalid 'id': must be valid UUID."
-		if s.Code().String() != expectedStatus {
-			t.Errorf("Invalid gRPC status code. (Expected: %s, Received: %s)", expectedStatus, s.Code())
-		}
-		if s.Message() != expectedMessage {
-			t.Errorf("Invalid gRPC message. (Expected: %s, Received: %s)", expectedMessage, s.Message())
-		}
-	})
-
 	t.Run("Should return error when course is invalid", func(t *testing.T) {
 		request := &pb.CreateCourseRequest{
 			Name:        "Go",

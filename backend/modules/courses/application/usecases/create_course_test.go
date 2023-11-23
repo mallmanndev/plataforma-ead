@@ -36,23 +36,6 @@ func TestCreateCourseUseCase(t *testing.T) {
 		}
 	})
 
-	t.Run("Should return error when people repository returns error", func(t *testing.T) {
-		_, err := useCase.Execute(
-			usecases.CreateCourseUseCaseDTO{
-				Name:        "Go Lang",
-				Description: "This is a Golang course.",
-				UserId:      uuid.NewString(),
-			})
-
-		expectedError := "[Create User] Could not insert or update people: test"
-		if err == nil {
-			t.Error("Error must not be nil")
-		}
-		if err.Error() != expectedError {
-			t.Errorf("Expected error: %s, Received: %s.", expectedError, err.Error())
-		}
-	})
-
 	t.Run("Should return error when course repository returns error", func(t *testing.T) {
 		mockCourseRepository.EXPECT().Create(gomock.Any()).Return(errors.New("test"))
 

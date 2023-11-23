@@ -93,7 +93,6 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 
 	for _, section := range Course.Sections() {
 		var itens []models.CourseItemModel
-
 		for _, item := range section.Itens() {
 			newItem := models.CourseItemModel{
 				Id:          item.Id(),
@@ -108,13 +107,18 @@ func (cr *CoursesRepositories) Update(Course *entities.Course) error {
 			itens = append(itens, newItem)
 		}
 
+		var avaliationUrl string
+		if section.Avaliation() != nil {
+			avaliationUrl = section.Avaliation().String()
+		}
 		newSection := models.CourseSectionModel{
-			Id:          section.Id(),
-			Name:        section.Name(),
-			Description: section.Description(),
-			CreatedAt:   section.CreatedAt(),
-			UpdatedAt:   section.UpdatedAt(),
-			Itens:       itens,
+			Id:            section.Id(),
+			Name:          section.Name(),
+			Description:   section.Description(),
+			CreatedAt:     section.CreatedAt(),
+			UpdatedAt:     section.UpdatedAt(),
+			Itens:         itens,
+			AvaliationUrl: avaliationUrl,
 		}
 		sections = append(sections, newSection)
 	}

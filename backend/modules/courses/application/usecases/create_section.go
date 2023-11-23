@@ -4,6 +4,7 @@ import (
 	errs "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/ports"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/value-objects"
 )
 
 type CreateSectionUseCase struct {
@@ -17,14 +18,20 @@ func NewCreateSectionUseCase(
 }
 
 type CreateSectionDTO struct {
-	UserId      string
-	CourseId    string
-	Name        string
-	Description string
+	UserId        string
+	CourseId      string
+	Name          string
+	Description   string
+	AvaliationUrl string
 }
 
 func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course, error) {
-	section, err := entities.NewCourseSection(Data.Name, Data.Description, Data.CourseId)
+	avaliation, err := cs.getAvaliationUrl(Data.AvaliationUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	section, err := entities.NewCourseSection(Data.Name, Data.Description, Data.CourseId, avaliation)
 	if err != nil {
 		return nil, err
 	}
@@ -43,4 +50,17 @@ func (cs *CreateSectionUseCase) Execute(Data CreateSectionDTO) (*entities.Course
 		return nil, errs.NewCreateSectionUseCaseError("Could not create section", err)
 	}
 	return course, nil
+}
+
+func (cs *CreateSectionUseCase) getAvaliationUrl(url string) (*value_objects.Url, error) {
+	if url == "" {
+		return nil, nil
+	}
+
+	discord, err := value_objects.NewUrl(url)
+	if err != nil {
+		return nil, err
+	}
+
+	return discord, nil
 }

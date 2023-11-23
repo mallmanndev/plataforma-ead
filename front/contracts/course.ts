@@ -27,6 +27,7 @@ export const createSectionSchema = z.object({
   user_id: z.string(),
   name: z.string().min(4),
   description: z.string().min(10),
+  avaliation_url: z.string(),
 });
 export type TCreateSectionData = z.infer<typeof createSectionSchema>;
 
@@ -35,6 +36,7 @@ export const updateSectionSchema = z.object({
   user_id: z.string(),
   name: z.string(),
   description: z.string(),
+  avaliation_url: z.string(),
 });
 export type TUpdateSectionData = z.infer<typeof updateSectionSchema>;
 

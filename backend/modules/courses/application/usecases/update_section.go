@@ -4,6 +4,7 @@ import (
 	errs "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/errors"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/entities"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/ports"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/value-objects"
 )
 
 type UpdateSectionUseCase struct {
@@ -17,10 +18,11 @@ func NewUpdateSectionUseCase(
 }
 
 type UpdateSectionDTO struct {
-	UserId      string
-	SectionId   string
-	Name        string
-	Description string
+	UserId        string
+	SectionId     string
+	Name          string
+	Description   string
+	AvaliationUrl string
 }
 
 func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course, error) {
@@ -34,7 +36,12 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 
 	section := course.FindSection(Data.SectionId)
 
-	if err := section.Update(Data.Name, Data.Description); err != nil {
+	avaliation, err := cs.getAvaliationUrl(Data.AvaliationUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := section.Update(Data.Name, Data.Description, avaliation); err != nil {
 		return nil, err
 	}
 
@@ -43,4 +50,17 @@ func (cs *UpdateSectionUseCase) Execute(Data UpdateSectionDTO) (*entities.Course
 	}
 
 	return course, nil
+}
+
+func (cs *UpdateSectionUseCase) getAvaliationUrl(url string) (*value_objects.Url, error) {
+	if url == "" {
+		return nil, nil
+	}
+
+	discord, err := value_objects.NewUrl(url)
+	if err != nil {
+		return nil, err
+	}
+
+	return discord, nil
 }

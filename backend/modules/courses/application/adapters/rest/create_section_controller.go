@@ -11,9 +11,10 @@ import (
 )
 
 type CreateSectionData struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CourseId    string `json:"course_id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	CourseId      string `json:"course_id"`
+	AvaliationUrl string `json:"avaliation_url"`
 }
 
 func (c *CreateCourseController) CreateSection(ctx *gin.Context) {
@@ -27,10 +28,11 @@ func (c *CreateCourseController) CreateSection(ctx *gin.Context) {
 
 	course, err := c.createSectionUseCase.Execute(
 		usecases.CreateSectionDTO{
-			Name:        createSectionForm.Name,
-			Description: createSectionForm.Description,
-			CourseId:    createSectionForm.CourseId,
-			UserId:      user.Id,
+			Name:          createSectionForm.Name,
+			Description:   createSectionForm.Description,
+			CourseId:      createSectionForm.CourseId,
+			UserId:        user.Id,
+			AvaliationUrl: createSectionForm.AvaliationUrl,
 		},
 	)
 

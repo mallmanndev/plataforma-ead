@@ -1,8 +1,11 @@
 package mappers
 
 import (
+	"fmt"
+
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/adapters/repositories/models"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/entities"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/value-objects"
 )
 
 func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
@@ -19,6 +22,13 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 	)
 
 	for _, section := range Model.Sections {
+
+		var avaliation *value_objects.Url
+		if section.AvaliationUrl != "" {
+			fmt.Println(section.AvaliationUrl)
+			avaliation, _ = value_objects.NewUrl(section.AvaliationUrl)
+		}
+
 		sectionEnity := entities.NewCompleteSection(
 			entities.NewCompleteSectionData{
 				Id:          section.Id,
@@ -26,6 +36,7 @@ func CourseModelToEntityMap(Model models.CourseModel) *entities.Course {
 				Description: section.Description,
 				CreatedAt:   section.CreatedAt,
 				UpdatedAt:   section.UpdatedAt,
+				Avaliation:  avaliation,
 			},
 		)
 

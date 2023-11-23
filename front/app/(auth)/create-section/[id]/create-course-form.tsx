@@ -30,6 +30,7 @@ export default function CreateSectionForm({ courseId }: { courseId: string }) {
   const initialData = {
     name: "",
     description: "",
+    avaliation_url: "",
   };
 
   return (

@@ -27,7 +27,6 @@ type CreateCourseUseCaseDTO struct {
 }
 
 func (cc *CreateCourseUseCase) Execute(Data CreateCourseUseCaseDTO) (*entities.Course, error) {
-
 	discord, err := cc.getDiscordUrl(Data.DiscordUrl)
 	if err != nil {
 		return nil, err

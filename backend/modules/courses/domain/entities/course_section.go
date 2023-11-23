@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	errs "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/application/errors"
+	value_objects "github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/value-objects"
 )
 
 type CourseSection struct {
@@ -14,16 +15,23 @@ type CourseSection struct {
 	courseId    string
 	itens       []*CourseItem
 	order       int16
+	avaliation  *value_objects.Url
 	createdAt   time.Time
 	updatedAt   time.Time
 }
 
-func NewCourseSection(Name string, Description string, CourseId string) (*CourseSection, error) {
+func NewCourseSection(
+	Name string,
+	Description string,
+	CourseId string,
+	avaliation *value_objects.Url,
+) (*CourseSection, error) {
 	section := &CourseSection{
 		id:          uuid.NewString(),
 		name:        Name,
 		description: Description,
 		courseId:    CourseId,
+		avaliation:  avaliation,
 		createdAt:   time.Now(),
 	}
 	if err := section.Validate(); err != nil {
@@ -39,6 +47,7 @@ type NewCompleteSectionData struct {
 	CourseId    string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	Avaliation  *value_objects.Url
 }
 
 func NewCompleteSection(data NewCompleteSectionData) *CourseSection {
@@ -49,12 +58,18 @@ func NewCompleteSection(data NewCompleteSectionData) *CourseSection {
 		courseId:    data.CourseId,
 		createdAt:   data.CreatedAt,
 		updatedAt:   data.UpdatedAt,
+		avaliation:  data.Avaliation,
 	}
 }
 
-func (cs *CourseSection) Update(Name string, Description string) error {
+func (cs *CourseSection) Update(
+	Name string,
+	Description string,
+	avaliation *value_objects.Url,
+) error {
 	cs.name = Name
 	cs.description = Description
+	cs.avaliation = avaliation
 	return cs.Validate()
 }
 
@@ -90,6 +105,10 @@ func (cs *CourseSection) Itens() []*CourseItem {
 
 func (cs *CourseSection) Order() int16 {
 	return cs.order
+}
+
+func (cs *CourseSection) Avaliation() *value_objects.Url {
+	return cs.avaliation
 }
 
 func (cs *CourseSection) SetOrder(order int16) *CourseSection {

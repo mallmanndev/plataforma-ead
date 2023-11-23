@@ -16,6 +16,8 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 	discordUrl, _ := value_objects.NewUrl("https://www.discord.com")
+	avaliation, _ := value_objects.NewUrl("https://www.avaliation.com")
+
 	mockCourseRepository := mocks.NewMockCourseRepository(mockCtrl)
 	useCase := usecases.NewDeleteSectionUseCase(mockCourseRepository)
 	userId := uuid.NewString()
@@ -61,7 +63,12 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return error when delete section return error", func(t *testing.T) {
-		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
+		section, _ := entities.NewCourseSection(
+			"Section one",
+			"This is a section one",
+			course.Id(),
+			avaliation,
+		)
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
@@ -81,7 +88,12 @@ func TestDeleteSectionUseCase(t *testing.T) {
 	})
 
 	t.Run("Should return section when update section successfully", func(t *testing.T) {
-		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
+		section, _ := entities.NewCourseSection(
+			"Section one",
+			"This is a section one",
+			course.Id(),
+			avaliation,
+		)
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)

@@ -14,12 +14,13 @@ type CourseItemModel struct {
 }
 
 type CourseSectionModel struct {
-	Id          string            `bson:"_id"`
-	Name        string            `bson:"name"`
-	Description string            `bson:"description"`
-	Itens       []CourseItemModel `bson:"itens"`
-	CreatedAt   time.Time         `bson:"createdAt"`
-	UpdatedAt   time.Time         `bson:"updatedAt"`
+	Id            string            `bson:"_id"`
+	Name          string            `bson:"name"`
+	Description   string            `bson:"description"`
+	Itens         []CourseItemModel `bson:"itens"`
+	AvaliationUrl string            `bson:"avaliationUrl"`
+	CreatedAt     time.Time         `bson:"createdAt"`
+	UpdatedAt     time.Time         `bson:"updatedAt"`
 }
 
 type CourseModel struct {

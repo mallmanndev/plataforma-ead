@@ -1,14 +1,11 @@
 package mappers
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/entities"
 )
 
 func CourseToGinH(c *entities.Course) gin.H {
-	fmt.Println(c)
 	var discord_url string
 	if c.DiscordUrl() != nil {
 		discord_url = c.DiscordUrl().String()
@@ -30,17 +27,23 @@ func CourseToGinH(c *entities.Course) gin.H {
 }
 
 func CourseSectionToGinH(cs *entities.CourseSection) gin.H {
+	var avaliation_url string
+	if cs.Avaliation() != nil {
+		avaliation_url = cs.Avaliation().String()
+	}
+
 	itemsData := make([]gin.H, len(cs.Itens()))
 	for i, item := range cs.Itens() {
 		itemsData[i] = CourseItemToGinH(item)
 	}
 	return gin.H{
-		"id":          cs.Id(),
-		"name":        cs.Name(),
-		"description": cs.Description(),
-		"createdAt":   cs.CreatedAt(),
-		"updatedAt":   cs.UpdatedAt(),
-		"itens":       itemsData,
+		"id":             cs.Id(),
+		"name":           cs.Name(),
+		"description":    cs.Description(),
+		"createdAt":      cs.CreatedAt(),
+		"updatedAt":      cs.UpdatedAt(),
+		"itens":          itemsData,
+		"avaliation_url": avaliation_url,
 	}
 }
 

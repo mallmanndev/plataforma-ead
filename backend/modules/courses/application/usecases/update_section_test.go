@@ -35,6 +35,7 @@ func setup(t *testing.T) (*mocks.MockCourseRepository, *usecases.UpdateSectionUs
 }
 
 func TestUpdateSectionUseCase(t *testing.T) {
+	avaliation, _ := value_objects.NewUrl("https://www.avaliation.com")
 
 	t.Run("Should return error when course is not found", func(t *testing.T) {
 		mockCourseRepository, useCase, _, closer := setup(t)
@@ -77,7 +78,12 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		mockCourseRepository, useCase, course, closer := setup(t)
 		defer closer()
 
-		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
+		section, _ := entities.NewCourseSection(
+			"Section one",
+			"This is a section one",
+			course.Id(),
+			avaliation,
+		)
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
@@ -97,7 +103,12 @@ func TestUpdateSectionUseCase(t *testing.T) {
 		mockCourseRepository, useCase, course, closer := setup(t)
 		defer closer()
 
-		section, _ := entities.NewCourseSection("Section one", "This is a section one", course.Id())
+		section, _ := entities.NewCourseSection(
+			"Section one",
+			"This is a section one",
+			course.Id(),
+			avaliation,
+		)
 		course.AddSection(section)
 
 		mockCourseRepository.EXPECT().FindBySectionId(section.Id()).Return(course, nil)
@@ -124,6 +135,7 @@ func TestUpdateSectionUseCase(t *testing.T) {
 			"Section one",
 			"This is a section one",
 			course.Id(),
+			avaliation,
 		)
 		course.AddSection(section)
 

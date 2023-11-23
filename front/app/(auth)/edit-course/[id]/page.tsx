@@ -34,7 +34,11 @@ export default async function MyCourses({
       <div className="mt-12 flex-1">
         <UpdateCourseForm
           id={params.id}
-          initialData={{ name: course.name, description: course.description }}
+          initialData={{
+            name: course.name,
+            description: course.description,
+            discord_url: course.discord_url,
+          }}
         />
       </div>
     </>

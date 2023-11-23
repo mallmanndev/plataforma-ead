@@ -11,6 +11,7 @@ type UpdateCourseForm = {
   initialData: {
     name: string;
     description: string;
+    discord_url: string;
   };
 };
 

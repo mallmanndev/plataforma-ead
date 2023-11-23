@@ -14,6 +14,7 @@ export type Section = {
   createdAt: string;
   updatedAt: string;
   itens: Item[];
+  avaliation_url: string;
 };
 
 export type Course = {

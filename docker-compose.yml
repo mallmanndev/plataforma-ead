@@ -37,7 +37,6 @@ services:
       - "3002:3000"
     environment:
       - SERVER_HOST=http://service-course:3000
-      - NEXT_PUBLIC_SERVER_HOST=http://localhost:3002
       - NEXT_PUBLIC_API_URL=http://localhost:3000
       - NEXTAUTH_URL=http://localhost:3002
       - NEXTAUTH_SECRET=teste
@@ -45,7 +44,6 @@ services:
       - service-core-backend
     volumes:
       - ./front:/app
-      - ./videos:/videos
       - /app/node_modules
       - /app/.next
 
