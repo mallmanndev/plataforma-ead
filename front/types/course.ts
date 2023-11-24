@@ -14,6 +14,7 @@ export type Section = {
   createdAt: string;
   updatedAt: string;
   itens: Item[];
+  avaliation_url: string;
 };
 
 export type Course = {
@@ -23,5 +24,6 @@ export type Course = {
   visible: boolean;
   createdAt: string;
   updatedAt: string;
+  discord_url: string;
   sections: Section[];
 };

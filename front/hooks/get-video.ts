@@ -1,6 +1,7 @@
 "use client";
 
 import { Video } from "@/types/video";
+import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 type TUseGetVideo = {
@@ -21,8 +22,12 @@ export default function useGetVideo(id: string): TUseGetVideo {
 
   const refetch = async () => {
     setLoading(true);
+    const session = await getSession();
 
-    const fetchData = await fetch(`/api/video/${id}`);
+    const fetchData = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/videos/${id}`,
+      { headers: { Authorization: `Bearer ${session?.token}` } }
+    );
     if (!fetchData.ok) {
       setError("Não foi possível buscar o curso.");
       return setLoading(false);

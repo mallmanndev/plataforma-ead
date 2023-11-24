@@ -33,15 +33,19 @@ const loginSchema = z.object({
 type TLoginSchema = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const { push } = useRouter();
-  const { loading, login, error, user } = useLogin();
+  const { replace } = useRouter();
+  const { loading, login, error, success } = useLogin();
   const form = useForm<TLoginSchema>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   useEffect(() => {
-    if (user) push("/home");
-  }, [push, user]);
+    if (success) replace(`/home`);
+  }, [replace, success]);
 
   return (
     <Form {...form}>
@@ -96,4 +100,7 @@ export function LoginForm() {
       </form>
     </Form>
   );
+}
+function setTokenCoockie(token: string) {
+  throw new Error("Function not implemented.");
 }

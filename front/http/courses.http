@@ -1,9 +1,0 @@
-### Create Course
-
-POST http://localhost:3002/api/course
-Content-Type: application/json
-
-{
-  "title": "Go lang Test",
-  "description": "Lorem ipsum"
-}

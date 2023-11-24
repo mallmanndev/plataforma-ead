@@ -1,0 +1,57 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Descrição da sua API",
+        "title": "Plataforma EAD",
+        "termsOfService": "https://example.com/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "https://www.example.com/support"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/v1",
+    "paths": {
+        "/users": {
+            "get": {
+                "description": "Obtém uma lista de usuários",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Lista de usuários",
+                "parameters": [
+                    {
+                        "description": "Nome de usuário",
+                        "name": "username",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Senha",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

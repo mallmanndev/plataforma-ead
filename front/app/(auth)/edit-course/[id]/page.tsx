@@ -1,8 +1,12 @@
+import { getServerSession } from "next-auth";
 import UpdateCourseForm from "./update-course-form";
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const getCourse = async (id: string) => {
-  const res = await fetch(`${process.env.SERVER_HOST}/api/courses/${id}`, {
-    cache: "no-cache",
+  const session = await getServerSession(nextAuthOptions);
+
+  const res = await fetch(`${process.env.SERVER_HOST}/courses/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
   });
 
   if (!res.ok) {
@@ -30,7 +34,11 @@ export default async function MyCourses({
       <div className="mt-12 flex-1">
         <UpdateCourseForm
           id={params.id}
-          initialData={{ name: course.name, description: course.description }}
+          initialData={{
+            name: course.name,
+            description: course.description,
+            discord_url: course.discord_url,
+          }}
         />
       </div>
     </>

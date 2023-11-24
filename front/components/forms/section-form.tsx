@@ -86,6 +86,20 @@ export default function SectionForm({
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="avaliation_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Teste</FormLabel>
+                <FormControl>
+                  <Input placeholder="Teste de conhecimento" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />

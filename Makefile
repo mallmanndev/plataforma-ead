@@ -10,10 +10,6 @@ build:
 restart: 
 	docker compose restart
 
-.PHONY: servcore-logs
-servcore-logs:
-	docker logs -f service-core
-
 .PHONY: servcourse-logs
 servcourse-logs:
 	docker logs -f service-course
@@ -30,34 +26,26 @@ down:
 psql:
 	docker exec -it service-core-db psql -U postgres service-core
 
-.PHONY: servcore-bash
-servcore-bash:
-	docker exec -it service-core /bin/bash
-
-.PHONY: servcourse-bash
-servcourse-bash:
+.PHONY: backend-bash
+backend-bash:
 	docker exec -it service-course /bin/bash
 
 .PHONY: front-bash
 front-bash:
 	docker exec -it front /bin/bash
 
-.PHONY: servcore-test
-servcore-test:
-	docker exec -it service-core go test ./...
-
 .PHONY: servcourse-test
 servcourse-test:
 	docker exec -it service-course go test ./...
+
+.PHONY: backend-swag
+backend-swag:
+	docker exec -it service-course swag init -g ./cmd/rest/main.go
 
 .PHONY: servcourse-coverage
 servcourse-coverage:
 	docker exec -it service-course go test -coverprofile=coverage.out ./...
 	docker exec -it service-course go tool cover -html=coverage.out -o coverage.html
-
-.PHONY: servcore-protoc
-servcore-protoc:
-	protoc --go_out=./service-core --go-grpc_out=./service-core ./service-core/protos/*.proto
 
 .PHONY: servcourse-protoc
 servcourse-protoc:

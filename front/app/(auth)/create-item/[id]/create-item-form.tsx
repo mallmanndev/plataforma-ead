@@ -4,6 +4,7 @@ import ItemForm from "@/components/forms/item-form";
 import { toast } from "@/components/ui/use-toast";
 import VideoUpload from "@/components/ui/video-upload";
 import useCreateItem from "@/hooks/create-item";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -31,6 +32,7 @@ export default function CreateItemForm({ sectionId }: { sectionId: string }) {
   }, [error]);
 
   const onFileSelect = async (file: File) => {
+    const session = await getSession();
     const data = new FormData();
     data.set("file", file);
 
@@ -46,7 +48,8 @@ export default function CreateItemForm({ sectionId }: { sectionId: string }) {
       setVideoId(json.id);
     };
 
-    request.open("POST", "/api/video-upload", true);
+    request.open("POST", `${process.env.NEXT_PUBLIC_API_URL}/videos`, true);
+    request.setRequestHeader("Authorization", `Bearer ${session?.token}`);
     request.send(data);
   };
 

@@ -24,6 +24,7 @@ import { useEffect } from "react";
 type Params = {
   name: string;
   description: string;
+  discord_url: string;
 };
 
 type CourseForm = {
@@ -83,6 +84,24 @@ export default function CourseForm({
                 <FormLabel>Descrição*</FormLabel>
                 <FormControl>
                   <Textarea placeholder="Descrição do curso" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discord_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL do Discord</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Insira uma URL para duvidas ou comunidade"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

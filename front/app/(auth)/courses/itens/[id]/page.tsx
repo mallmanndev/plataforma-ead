@@ -1,26 +1,36 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import VideoPlayer from "@/components/video-player";
-import CoursesServiceGrpc from "@/services/courses";
-import FilesServiceGrpc from "@/services/files";
 import { Item } from "@/types/course";
 import { Video } from "@/types/video";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
 
 const getItem = async (id: string): Promise<Item> => {
-  const service = new CoursesServiceGrpc();
-  const { error, response } = await service.GetItem({ id });
+  const session = await getServerSession(nextAuthOptions);
 
-  if (error || !response) throw new Error("Failed to fetch item!");
+  const res = await fetch(`${process.env.SERVER_HOST}/itens/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
+  });
 
-  return response;
+  if (!res.ok) {
+    throw new Error("Failed to fetch item!");
+  }
+
+  return res.json();
 };
 
 const getVideo = async (id: string): Promise<Video> => {
-  const service = new FilesServiceGrpc();
-  const { error, response } = await service.GetVideo(id);
+  const session = await getServerSession(nextAuthOptions);
 
-  if (error || !response) throw new Error("Failed to fetch video!");
+  const res = await fetch(`${process.env.SERVER_HOST}/videos/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
+  });
 
-  return response;
+  if (!res.ok) {
+    throw new Error("Failed to fetch video!");
+  }
+
+  return res.json();
 };
 
 export async function generateMetadata({
@@ -44,7 +54,7 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     <div>
       <div className="mt-8">
         <VideoPlayer
-          source={`${process.env.NEXT_PUBLIC_SERVER_HOST}/api/${video.url}`}
+          source={`${process.env.NEXT_PUBLIC_API_URL}/files${video.url}`}
           qualities={video.resolutions.map((item) => parseInt(item.resolution))}
         />
       </div>

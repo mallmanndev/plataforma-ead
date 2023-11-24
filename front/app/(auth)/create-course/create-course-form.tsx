@@ -16,6 +16,7 @@ export default function CreateCourseForm() {
   const initialData = {
     name: "",
     description: "",
+    discord_url: "",
   };
 
   return (

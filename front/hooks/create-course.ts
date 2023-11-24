@@ -1,4 +1,5 @@
 import { TCreateCourseData } from "@/contracts/course";
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TCourse = {
@@ -21,18 +22,26 @@ const useCreateCourse = (): TUseCreateCourse => {
 
   const createCourse = (data: TCreateCourseData) => {
     (async () => {
-      const response = await fetch(`/api/courses`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const session = await getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/courses`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      const json = await response.json();
 
       if (response.ok) {
-        const course = await response.json();
-        setCourse(course);
+        setCourse(json);
       } else {
-        const errorData = await response.json();
-        setError(errorData.message);
+        setError(json.message);
       }
     })();
   };

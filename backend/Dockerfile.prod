@@ -1,0 +1,21 @@
+FROM golang:latest AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN go mod download
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./cmd/rest/main ./cmd/rest
+
+FROM alpine:latest
+
+WORKDIR /app
+
+RUN apk update && apk add ffmpeg
+
+COPY --from=builder /app/cmd/rest/main .
+
+EXPOSE 3000
+
+CMD ["./main"]

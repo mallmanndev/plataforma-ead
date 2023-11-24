@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 import { useState } from "react";
 
 type TUseDeleteSection = {
@@ -14,10 +15,18 @@ export default function useDeleteSection(): TUseDeleteSection {
 
   const remove = async (id: string) => {
     setLoading(true);
-    const res = await fetch(`/api/sections/${id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+    const session = await getSession();
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/sections/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.token}`,
+        },
+      }
+    );
 
     if (res.ok) {
       setSuccess(true);

@@ -1,3 +1,4 @@
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,17 +7,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CoursesServiceGrpc from "@/services/courses";
 import { Section } from "@/types/course";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth/next";
 
 const getSection = async (id: string): Promise<Section> => {
-  const service = new CoursesServiceGrpc();
-  const { error, response } = await service.GetSection({ id });
+  const session = await getServerSession(nextAuthOptions);
 
-  if (error || !response) throw new Error("Failed to fetch item!");
+  const res = await fetch(`${process.env.SERVER_HOST}/sections/${id}`, {
+    headers: { Authorization: `Bearer ${session?.token}` },
+  });
 
-  return response;
+  if (!res.ok) {
+    throw new Error("Failed to fetch sections!");
+  }
+
+  return res.json();
 };
 
 export async function generateMetadata({
@@ -41,6 +47,15 @@ export default async function CoursePage({
   return (
     <div>
       <h1 className="text-3xl font-bold tracking-tight mt-6">{section.name}</h1>
+
+      <p className="text-lg text-gray-500">{section.description}</p>
+
+      {section.avaliation_url && (
+        <Button className="mt-8">
+          <a href={section.avaliation_url}>ACESSAR A AVALIAÇÃO</a>
+        </Button>
+      )}
+
 
       <div className="items-start justify-center gap-6 rounded-lg pt-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         {section.itens.map((item, key) => (

@@ -14,6 +14,7 @@ export default function UpdateSectionForm({
   initialData: {
     name: string;
     description: string;
+    avaliation_url: string;
   };
 }) {
   const { push } = useRouter();

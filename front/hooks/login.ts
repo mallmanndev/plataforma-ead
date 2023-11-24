@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 type User = {
   id: string;
@@ -15,36 +16,32 @@ type TLoginData = {
 type TUseLogin = {
   loading: boolean;
   error: string | null;
-  user: User | null;
+  success: boolean;
   login: (data: TLoginData) => void;
 };
 
 export const useLogin = (): TUseLogin => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
 
   const login = async (data: TLoginData) => {
     setLoading(true);
-    try {
-      const response = await fetch(`/api/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
 
-      if (response.ok) {
-        const newUser = await response.json();
-        setUser(newUser);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message);
-      }
-    } catch (error) {
-      setError("Ocorreu um erro ao criar o usuário.");
+    const response = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+
+    if (response?.error) {
+      setError(response.error);
+    } else {
+      setSuccess(true);
     }
+
     setLoading(false);
   };
 
-  return { loading, user, error, login };
+  return { loading, success, error, login };
 };

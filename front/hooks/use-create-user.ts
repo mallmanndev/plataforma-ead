@@ -29,7 +29,7 @@ export const useCreateUser = (): TUseCreateUser => {
   const create = async (data: TCreateUserData) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/user`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

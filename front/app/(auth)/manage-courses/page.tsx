@@ -2,16 +2,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import CoursesTable from "./courses-table";
-import validateToken from "@/lib/validate-token";
-import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
+import User from "@/entities/user";
 
 export const metadata = {
   title: "Meus cursos",
 };
 
 export default async function MyCourses() {
-  const user = validateToken();
-  if (!user) return redirect("/login");
+  const user = (await getServerSession(nextAuthOptions)) as User;
 
   return (
     <>

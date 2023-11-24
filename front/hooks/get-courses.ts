@@ -1,6 +1,7 @@
 "use client";
 
 import { Course } from "@/types/course";
+import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 type TUseGetCoursesFilter = {
@@ -24,9 +25,13 @@ const useGetCourses = (filters: TUseGetCoursesFilter): TUseGetCourses => {
   }, []);
 
   const refetch = async () => {
+    const session = await getSession();
     setLoading(true);
 
-    const fetchData = await fetch(`/api/courses?user_id=${filters.user_id}`);
+    const fetchData = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/courses?user_id=${filters.user_id}`,
+      { headers: { Authorization: `Bearer ${session?.token}` } }
+    );
     if (!fetchData.ok) {
       setError("Não foi possível buscar os cursos.");
       return setLoading(false);
