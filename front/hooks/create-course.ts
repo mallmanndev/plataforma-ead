@@ -36,12 +36,12 @@ const useCreateCourse = (): TUseCreateCourse => {
         }
       );
 
+      const json = await response.json();
+
       if (response.ok) {
-        const course = await response.json();
-        setCourse(course);
+        setCourse(json);
       } else {
-        const errorData = await response.json();
-        setError(errorData.message);
+        setError(json.message);
       }
     })();
   };

@@ -27,22 +27,19 @@ export const useLogin = (): TUseLogin => {
 
   const login = async (data: TLoginData) => {
     setLoading(true);
-    try {
-      const response = await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
 
-      if (response?.error) {
-        setError(response.error);
-        return;
-      }
+    const response = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
 
+    if (response?.error) {
+      setError(response.error);
+    } else {
       setSuccess(true);
-    } catch (error) {
-      setError("Ocorreu um erro ao criar o usuário.");
     }
+
     setLoading(false);
   };
 

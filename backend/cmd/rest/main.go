@@ -61,6 +61,11 @@ func main() {
 	}))
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "OK",
+		})
+	})
 	users.Routes(&r.RouterGroup, db)
 	courses.Routes(&r.RouterGroup, db)
 

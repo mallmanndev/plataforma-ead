@@ -21,7 +21,7 @@ func (s *CreateCourseController) UpdateItem(ctx *gin.Context) {
 
 	user := ctx.MustGet("user").(middlewares.User)
 	if err := ctx.ShouldBindJSON(&updateItemData); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -36,7 +36,7 @@ func (s *CreateCourseController) UpdateItem(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
 

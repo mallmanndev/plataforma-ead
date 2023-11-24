@@ -23,7 +23,7 @@ func (c *CreateCourseController) CreateItem(ctx *gin.Context) {
 
 	user := ctx.MustGet("user").(middlewares.User)
 	if err := ctx.ShouldBindJSON(&createItemData); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -40,7 +40,7 @@ func (c *CreateCourseController) CreateItem(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
 

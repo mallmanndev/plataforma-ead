@@ -12,12 +12,12 @@ func (c *CreateCourseController) GetSection(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
 
 	if course == nil {
-		ctx.JSON(404, gin.H{"error": "Course not found"})
+		ctx.JSON(404, gin.H{"message": "Course not found"})
 		return
 	}
 

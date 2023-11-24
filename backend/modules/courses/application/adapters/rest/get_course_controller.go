@@ -24,12 +24,12 @@ func (c *CreateCourseController) GetCourse(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
 
 	if len(courses) == 0 {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Course not found"})
 		return
 	}
 

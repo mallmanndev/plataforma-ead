@@ -10,23 +10,22 @@ const nextAuthOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
-        const response = await fetch(
-          `${process.env.SERVER_HOST}/login`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-          }
-        );
+        const response = await fetch(`${process.env.SERVER_HOST}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: credentials?.email,
+            password: credentials?.password,
+          }),
+        });
 
-        const user = await response.json();
-        if (user && response.ok) {
-          return user;
+        const json = await response.json();
+
+        if (!response.ok) {
+          throw new Error(json.message);
         }
-        return null;
+
+        return json;
       },
     }),
   ],

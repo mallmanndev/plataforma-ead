@@ -24,7 +24,7 @@ func (c *CreateCourseController) VideoUpload(ctx *gin.Context) {
 		user.Id,
 	)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(400, gin.H{"message": err.Error()})
 		return
 	}
 
