@@ -3,9 +3,7 @@ version: "3.9"
 services:
   backend-prod:
     container_name: backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.prod
+    image: 315655993037.dkr.ecr.us-east-1.amazonaws.com/backend:latest
     ports:
       - "3000:3000"
     env_file:
@@ -17,9 +15,7 @@ services:
 
   front-prod:
     container_name: front
-    build:
-      context: ./front
-      dockerfile: Dockerfile.prod
+    image: 315655993037.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
     ports:
       - "3002:3000"
     env_file:
