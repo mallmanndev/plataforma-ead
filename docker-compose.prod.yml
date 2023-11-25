@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  backend-prod:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    env_file:
+      - /etc/environment
+    networks:
+      - plataforma-ead-net
+    volumes:
+      - ./videos:/videos
+
+  front-prod:
+    container_name: front
+    build:
+      context: ./front
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3002:3000"
+    env_file:
+      - /etc/environment
+    networks:
+      - plataforma-ead-net
+
+networks:
+  plataforma-ead-net:
+    driver: "bridge"

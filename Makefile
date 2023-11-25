@@ -22,9 +22,17 @@ front-logs:
 down:
 	docker compose down
 
-.PHONY: psql
-psql:
-	docker exec -it service-core-db psql -U postgres service-core
+.PHONY: up-prod
+up-prod:
+	docker compose -f docker-compose.prod.yml up -d
+
+.PHONY: build-prod
+build-prod:
+	docker compose -f docker-compose.prod.yml up -d --build
+
+.PHONY: restart-prod
+restart-prod:
+	docker compose -f docker-compose.prod.yml restart
 
 .PHONY: backend-bash
 backend-bash:
