@@ -95,7 +95,7 @@ func (p *ProcessVideoTwo) processVideo(video *entities.Video) *entities.Video {
 		return video.SetStatus("error")
 	}
 
-	sorteredResolutions := utils.SortSlice[resolutionTypeTwo](resolutionsTwo, func(i, j int) bool {
+	sorteredResolutions := utils.SortSlice[resolutionTypeTwo](resolutions, func(i, j int) bool {
 		return resolutions[i].height < resolutions[j].height
 	})
 

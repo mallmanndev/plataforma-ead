@@ -1,5 +1,5 @@
-resource "aws_ecr_repository" "service-core-prod-repository" {
-  name                 = "service-core-prod"
+resource "aws_ecr_repository" "backend-repository" {
+  name                 = "backend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -7,17 +7,8 @@ resource "aws_ecr_repository" "service-core-prod-repository" {
   }
 }
 
-resource "aws_ecr_repository" "service-course-prod-repository" {
-  name                 = "service-course-prod"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
-resource "aws_ecr_repository" "front-prod-repository" {
-  name                 = "front-prod"
+resource "aws_ecr_repository" "frontend-repository" {
+  name                 = "frontend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

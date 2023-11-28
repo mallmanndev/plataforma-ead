@@ -25,29 +25,13 @@ module "new-vpc" {
   vpc_cidr_block = var.vpc_cidr_block
 }
 
-/*
-module "eks" {
-  source              = "./modules/eks"
-  prefix              = var.prefix
-  vpc_id              = module.new-vpc.vpc_id
-  subnet_ids          = module.new-vpc.public_subnet_ids
-  cluster_name        = var.cluster_name
-  logs_retention_days = var.logs_retention_days
-  desired_size        = var.desired_size
-  max_size            = var.max_size
-  min_size            = var.min_size
-}
-*/
-
 module "ecr" {
   source = "./modules/ecr"
 }
 
-module "rds" {
-  source     = "./modules/rds"
-  db_name    = "service-core-db"
-  vpc_id     = module.new-vpc.vpc_id
-  subnet_ids = module.new-vpc.private_subnet_ids
-  username   = "postgres"
-  password   = "2RYoaq4iL&P#5gd$x"
+module "ecs" {
+  source = "./modules/ecs"
+  prefix = var.prefix
+  vpc_id = module.new-vpc.vpc_id
+  subnet_ids = module.new-vpc.public_subnet_ids
 }

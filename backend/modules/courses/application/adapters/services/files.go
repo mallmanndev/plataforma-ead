@@ -1,11 +1,14 @@
 package services
 
 import (
+	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/matheusvmallmann/plataforma-ead/backend/modules/courses/domain/ports"
 )
@@ -102,5 +105,22 @@ func (r *FilesService) ProcessVideo(InputUrl string, OutputPath string, Resoluti
 		indexFile,
 	)
 
-	return cmd.Run()
+	var outbuf, errbuf bytes.Buffer
+	cmd.Stdout = &outbuf
+	cmd.Stderr = &errbuf
+
+	log.Printf("Running with user id: %d, group id: %d", os.Getuid(), os.Getgid())
+
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Credential: &syscall.Credential{
+			Uid: uint32(os.Getuid()),
+			Gid: uint32(os.Getgid()),
+		},
+	}
+
+	if err := cmd.Run(); err != nil {
+		log.Println("Terminal error", errbuf.String())
+		return err
+	}
+	return nil
 }

@@ -1,6 +1,19 @@
 version: "3.9"
 
 services:
+  database:
+    image: mongo:latest
+    container_name: database
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - plataforma-ead-net
+    volumes:
+      - ./data/service-course-db:/data/db
+
   backend-prod:
     container_name: backend
     build:
@@ -8,8 +21,10 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "3000:3000"
-    env_file:
-      - /etc/environment
+    environment:
+      - MONGODB_URI=mongodb://root:example@database:27017
+      - RUN_DAEMON=true
+      - JWT_SECRET_KEY=9f5ed436-6492-44b5-b7fc-4fb3c6cb36f2
     networks:
       - plataforma-ead-net
     volumes:
@@ -22,8 +37,10 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "3002:3000"
-    env_file:
-      - /etc/environment
+    environment:
+      - SERVER_HOST=http://backend-prod:3000
+      - NEXTAUTH_URL=http://localhost:3002
+      - NEXTAUTH_SECRET=9f5ed436-6492-44b5-b7fc-4fb3c6cb36f2
     networks:
       - plataforma-ead-net
 

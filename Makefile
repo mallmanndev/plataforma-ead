@@ -10,9 +10,9 @@ build:
 restart: 
 	docker compose restart
 
-.PHONY: servcourse-logs
-servcourse-logs:
-	docker logs -f service-course
+.PHONY: backend-logs
+backend-logs:
+	docker logs -f backend
 
 .PHONY: front-logs
 front-logs:

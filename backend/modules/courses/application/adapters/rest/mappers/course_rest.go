@@ -21,6 +21,7 @@ func CourseToGinH(c *entities.Course) gin.H {
 		"description": c.Description(),
 		"createdAt":   c.CreatedAt(),
 		"updatedAt":   c.UpdatedAt(),
+		"visible":     c.IsVisible(),
 		"sections":    sectionsData,
 		"discord_url": discord_url,
 	}

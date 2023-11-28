@@ -14,14 +14,13 @@ services:
     volumes:
       - ./data/service-course-db:/data/db
 
-  service-course:
-    container_name: service-course
+  backend:
+    container_name: backend
     build: ./backend
     ports:
       - "3000:3000"
     environment:
       - MONGODB_URI=mongodb://root:example@service-course-db:27017
-      - POSTGRES_URI=postgresql://postgres:postgres@service-core-db:5432/service-core?sslmode=disable
       - RUN_DAEMON=true
       - JWT_SECRET_KEY=teste
     networks:
@@ -36,7 +35,7 @@ services:
     ports:
       - "3002:3000"
     environment:
-      - SERVER_HOST=http://service-course:3000
+      - SERVER_HOST=http://backend:3000
       - NEXT_PUBLIC_API_URL=http://localhost:3000
       - NEXTAUTH_URL=http://localhost:3002
       - NEXTAUTH_SECRET=teste
